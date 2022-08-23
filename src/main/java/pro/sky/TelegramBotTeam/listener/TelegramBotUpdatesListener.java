@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.KeyBoardButton;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.List;
 
 @Service
