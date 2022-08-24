@@ -16,13 +16,17 @@ public class UsersService {
     }
 
     @Transactional
-    public void addLastOperationOfUser(String message,
-                                       Long userId,
-                                       Long messageId) {
+    public void addLastOperationOfUser(Long userId,
+                                       String nameuser,
+                                       Long idchat,
+                                       int phone,
+                                       int idmenu) {
         Users users = new Users();
-        users.setText(message);
         users.setUserId(userId);
-        users.setMessageId(messageId);
+        users.setNameuser(nameuser);
+        users.setIdchat(idchat);
+        users.setPhone(phone);
+        users.setIdmenu(idmenu);
         usersRepository.save(users);
     }
 
