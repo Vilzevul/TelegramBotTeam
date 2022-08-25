@@ -30,6 +30,11 @@ public class KeyBoardButton {
             });
 
 */
+
+    /**
+     * Создание основной клавиатуры с кнопками
+     * @return кнопки с вариантами выбора
+     */
     public Keyboard getMainKeyboardMarkup() {
         Keyboard mainKeyboardMarkup = new ReplyKeyboardMarkup(
                 new String[]{DOGMAIN, CATMAIN},
@@ -42,7 +47,11 @@ public class KeyBoardButton {
         return mainKeyboardMarkup;
     }
 
-
+    /**
+     * Создание инлайн клавиатуры
+     * @param flag передача команды и определение содержания клавиатуры
+     * @return меню инлайн клавиатуры
+     */
     public InlineKeyboardMarkup getInlineKeyboard(String flag) {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         if (flag.equals(DOGMAIN)) {
@@ -83,7 +92,7 @@ public class KeyBoardButton {
         }
         if (flag.equals("CATABOUT")) {
             return "<b>" + CATABOUT + "</b> \n " +
-                    "Приют находится по адресу ..." +
+            "Приют находится по адресу ..." +
                     "Время работы с 7-00   до  19-00"+
                     "\nЗдесь будет список документов" + "\n" +
                     "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
