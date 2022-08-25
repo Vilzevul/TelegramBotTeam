@@ -2,6 +2,9 @@ package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
 
+/**
+ * Содержит информацию поступивших сообщений от пользователей
+ */
 @Entity
 @Table(name = "users")
 public class Users {
@@ -9,8 +12,8 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nameuser;
+    private String message;
     private Long idchat;
-
     private int phone;
 
     private int idmenu;
@@ -21,6 +24,14 @@ public class Users {
 
     public void setUserId(Long id) {
         this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Long getIdchat() {

@@ -2,11 +2,14 @@ package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
 
+/**
+ * Использется для получения информации о владельце питомца
+ */
 @Entity
 @Table(name = "parentpets")
 public class Parentpets {
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "idpets")

@@ -2,11 +2,14 @@ package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
 
+/**
+ * Используется для хранения информации о животном находящемся в приюте
+ */
 @Entity
 @Table(name = "pets")
 public class Pets {
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "type")

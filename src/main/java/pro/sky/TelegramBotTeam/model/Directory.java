@@ -2,11 +2,14 @@ package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
 
+/**
+ * Содержит справочную информацию, которая хранится в БД для пользователей
+ */
 @Entity
 @Table(name = "directory")
 public class Directory {
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")

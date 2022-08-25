@@ -2,11 +2,14 @@ package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
 
+/**
+ * Содержит информацию о волонтерах приюта
+ */
 @Entity
 @Table(name = "volunteers")
 public class Volunteers {
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "fio")

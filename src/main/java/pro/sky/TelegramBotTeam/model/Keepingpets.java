@@ -2,11 +2,16 @@ package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
 
+/**
+ * Класс "Keepingpets" cоответствует структуре и названию таблицы "keepingpets" БД myDb
+ * Используется для получения и сохранения в БД myDb отчета пользователей о питомце
+ */
 @Entity
 @Table(name = "keepingpets")
 public class Keepingpets {
+
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "idpets")
