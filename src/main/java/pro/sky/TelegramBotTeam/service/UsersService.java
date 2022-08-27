@@ -5,7 +5,6 @@ import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.repository.UsersRepository;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 public class UsersService {
@@ -23,6 +22,8 @@ public class UsersService {
      * @param nameuser сохранение имени пользователя для последующего обращения к нему по имени
      * @param idchat сохранение уникального индентификатора чата из которого пришло сообщение
      * @param phone сохранение контактного номера телефона пользователя от которого пришло сообщение
+     * @param idmenu сохранение кода меню - что искал пользователь
+     * @param role сохранение кода роли: 1-пользователь; 2-усыновитель; 3-волонтер
      */
     @Transactional
     public void addMessage(Long userId,
@@ -30,7 +31,9 @@ public class UsersService {
                            String nameuser,
                            Long idchat,
                            int phone,
-                           int idmenu) {
+                           int idmenu,
+                           int role
+    ) {
         Users users = new Users();
         users.setUserId(userId);
         users.setMessage(message);
@@ -38,6 +41,7 @@ public class UsersService {
         users.setIdchat(idchat);
         users.setPhone(phone);
         users.setIdmenu(idmenu);
+        users.setRole(role);
         usersRepository.save(users);
     }
 

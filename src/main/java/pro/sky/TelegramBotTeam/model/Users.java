@@ -15,8 +15,8 @@ public class Users {
     private String message;
     private Long idchat;
     private int phone;
-
     private int idmenu;
+    private int role;
 
     public Long getUserId() {
         return id;
@@ -64,6 +64,14 @@ public class Users {
 
     public void setIdmenu(int idmenu) {
         this.idmenu = idmenu;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.idmenu = role;
     }
 
 }
