@@ -73,7 +73,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             message.from().firstName() + ", hello!" + "\n" + keyBoardButton.getText("text"))
                             .parseMode(ParseMode.HTML)
                             .replyMarkup(keyBoardButton.getMainKeyboardMarkup()));
-                    long chatId = update.message().chat().id();
+
+                    long chatId = update.message().from().id();
                     System.out.println(chatId);
                     String username = update.message().from().firstName();
                     System.out.println(username);

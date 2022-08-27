@@ -13,7 +13,7 @@ public class UsersService {
     public UsersService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
-
+/*
     /**
      * Сохранение сообщений от пользователя в бд, для последующей обработки этих сообщений работниками приюта.
      *
@@ -25,7 +25,7 @@ public class UsersService {
      * @param idmenu сохранение кода меню - что искал пользователь
      * @param role сохранение кода роли: 1-пользователь; 2-усыновитель; 3-волонтер
      */
-    public void addMessage(Long userId,
+  /*  public void addMessage(Long userId,
                            String nameuser,
                            String message,
                            Long idchat,
@@ -42,7 +42,7 @@ public class UsersService {
         users.setIdmenu(idmenu);
         users.setRole(role);
         usersRepository.save(users);
-    }
+    }*/
 
     /**
      * Сохранение пользователей, которые интересуются приютом питомцев.
