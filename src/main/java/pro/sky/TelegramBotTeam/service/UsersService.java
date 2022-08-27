@@ -49,9 +49,14 @@ public class UsersService {
      */
     @Transactional
     public Users createUsers(Users users) {
+        Users baseUsers = usersRepository.findById(users.getId())
+                .orElse(new Users(users.getId(), users.getNameuser(), users.getIdmenu(),users.getRole()));
+        baseUsers.setIdmenu(users.getIdmenu());
         System.out.println("Попали в сохранение");
         return usersRepository.save(users);
     }
+
+
  /*
 
     /**
