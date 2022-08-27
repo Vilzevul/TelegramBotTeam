@@ -34,3 +34,20 @@ CREATE TABLE directory
     id        integer PRIMARY KEY,
     name      text
 );
+
+--Изменение users
+alter table users
+    drop column idchat;
+
+alter table users
+    drop column phone;
+
+alter table users
+    alter column id type bigint using id::bigint;
+
+alter table users
+    alter column idmenu type varchar(36) using idmenu::varchar(36);
+
+alter table users
+    alter column role type varchar(36) using role::varchar(36);
+
