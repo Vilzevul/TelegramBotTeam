@@ -2,6 +2,8 @@ package pro.sky.TelegramBotTeam.service;
 
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.model.Users;
+import pro.sky.TelegramBotTeam.model.UsersMenu;
+import pro.sky.TelegramBotTeam.repository.UsersMenuRepository;
 import pro.sky.TelegramBotTeam.repository.UsersRepository;
 
 import javax.transaction.Transactional;
@@ -9,9 +11,10 @@ import javax.transaction.Transactional;
 @Service
 public class UsersService {
     private final UsersRepository usersRepository;
-
-    public UsersService(UsersRepository usersRepository) {
+private final UsersMenuRepository usersMenuRepository;
+    public UsersService(UsersRepository usersRepository, UsersMenuRepository usersMenuRepository) {
         this.usersRepository = usersRepository;
+        this.usersMenuRepository = usersMenuRepository;
     }
 /*
     /**
@@ -48,14 +51,18 @@ public class UsersService {
      * Сохранение пользователей, которые интересуются приютом питомцев.
      */
     @Transactional
-    public Users createUsers(Users users) {
-        Users baseUsers = usersRepository.findById(users.getId())
-                .orElse(new Users(users.getId(), users.getNameuser(), users.getIdmenu(),users.getRole()));
-        baseUsers.setIdmenu(users.getIdmenu());
+    public UsersMenu createUsers(UsersMenu usersMenu) {
+        UsersMenu baseUsers = usersMenuRepository.findById(usersMenu.getId())
+                .orElse(new UsersMenu(usersMenu.getId(), usersMenu.getNameuser(), usersMenu.getIdmenu(),usersMenu.getRole()));
+        baseUsers.setIdmenu(usersMenu.getIdmenu());
+        System.out.println("Попали в сохранение");
+        return usersMenuRepository.save(usersMenu);
+    }
+
+    public Users createUsersAll(Users users) {
         System.out.println("Попали в сохранение");
         return usersRepository.save(users);
     }
-
 
  /*
 

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
 import pro.sky.TelegramBotTeam.model.Users;
+import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
@@ -89,7 +90,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
  * сюда вставляем функционал кнопок
  */
         // Запись в БД
-        Users usersBase = usersService.createUsers(new Users(userId, userName, btnStatus, "role"));
+        //так
+        UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
+//или так
+
+        System.out.println(userId);
+        System.out.println(userName);
+        int phone = 0;
+        Users users = new Users(userId, userName, phone,1,1);
+        System.out.println(users);
+        usersService.createUsersAll(users);
 
 
         //if((str==null) && (users.getIdmenu().equals(keyBoardButton.STATE_SERVICE))) {
@@ -102,7 +112,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                 .parseMode(ParseMode.HTML)
         );
-        return usersBase;
+        return null;
     }
 
 

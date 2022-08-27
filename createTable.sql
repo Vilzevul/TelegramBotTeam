@@ -35,19 +35,15 @@ CREATE TABLE directory
     name      text
 );
 
---Изменение users
-alter table users
-    drop column idchat;
+--Создание таблицы user "Пользователи"
+CREATE TABLE usersmenu
+(
+    id       BIGINT PRIMARY KEY,
+    nameUser varchar(36) NOT NULL,
+    idMenu   varchar(36),
+    role     varchar(36)
+);
 
-alter table users
-    drop column phone;
 
-alter table users
-    alter column id type bigint using id::bigint;
 
-alter table users
-    alter column idmenu type varchar(36) using idmenu::varchar(36);
-
-alter table users
-    alter column role type varchar(36) using role::varchar(36);
 

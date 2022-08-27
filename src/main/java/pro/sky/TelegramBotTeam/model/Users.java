@@ -10,14 +10,18 @@ import java.util.Objects;
 @Table(name = "users")
 public class Users {
     @Id
+    @GeneratedValue
     private Long id;
     private String nameuser;
-    private String idmenu;
-    private String role;
+    private Long idchat;
+    private int phone;
+    private int idmenu;
+    private int role;
 
-    public Users(Long id, String nameuser, String idmenu, String role) {
-        this.id = id;
+    public Users(Long idchat, String nameuser, int phone, int idmenu, int role) {
+        this.idchat = idchat;
         this.nameuser = nameuser;
+        this.phone = phone;
         this.idmenu = idmenu;
         this.role = role;
     }
@@ -34,6 +38,14 @@ public class Users {
         this.id = id;
     }
 
+    public Long getIdchat() {
+        return idchat;
+    }
+
+    public void setIdchat(Long idchat) {
+        this.idchat = idchat;
+    }
+
     public String getNameuser() {
         return nameuser;
     }
@@ -42,19 +54,52 @@ public class Users {
         this.nameuser = nameuser;
     }
 
-    public String getIdmenu() {
+    public int getPhone() {
+        return phone;
+    }
+
+    public void setPhone(int phone) {
+        this.phone = phone;
+    }
+
+    public int getIdmenu() {
         return idmenu;
     }
 
-    public void setIdmenu(String idmenu) {
+    public void setIdmenu(int idmenu) {
         this.idmenu = idmenu;
     }
 
-    public String getRole() {
+    public int getRole() {
         return role;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(int role) {
+        this.idmenu = role;
     }
+
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", idchat='" + idchat + '\'' +
+                ", nameuser='" + nameuser + '\'' +
+                ", phone='" + phone + '\'' +
+                ", idmenu='" + idmenu + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Users task = (Users) o;
+        return idchat == task.idchat && id.equals(task.id) && nameuser.equals(task.nameuser);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, idchat, nameuser, phone, idmenu, role);
+    }
+
 }
