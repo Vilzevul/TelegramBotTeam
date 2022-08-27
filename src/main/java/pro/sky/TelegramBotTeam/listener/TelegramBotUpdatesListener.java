@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.KeyBoardButton;
+import pro.sky.TelegramBotTeam.model.Users;
+import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private final KeyBoardButton keyBoardButton;
+    private final UsersService usersService;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     String text, btnCommand;
     Long userId;
@@ -30,8 +33,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Autowired
     private TelegramBot telegramBot;
 
-    public TelegramBotUpdatesListener(KeyBoardButton keyBoardButton) {
+    public TelegramBotUpdatesListener(KeyBoardButton keyBoardButton, UsersService usersService) {
         this.keyBoardButton = keyBoardButton;
+        this.usersService = usersService;
     }
 
     @PostConstruct
@@ -69,6 +73,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             message.from().firstName() + ", hello!" + "\n" + keyBoardButton.getText("text"))
                             .parseMode(ParseMode.HTML)
                             .replyMarkup(keyBoardButton.getMainKeyboardMarkup()));
+                    long chatId = update.message().chat().id();
+                    System.out.println(chatId);
+                    String username = update.message().from().firstName();
+                    System.out.println(username);
+                    int phone = 0;
+                    Users users = new Users(chatId, username, phone,1,1);
+                    System.out.println(users);
+                    usersService.createUsers(users);
                     return;
                 }
 

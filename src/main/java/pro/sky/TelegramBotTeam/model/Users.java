@@ -1,6 +1,7 @@
 package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Содержит информацию поступивших сообщений от пользователей
@@ -12,11 +13,22 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nameuser;
-    private String message;
     private Long idchat;
     private int phone;
     private int idmenu;
     private int role;
+
+    public Users(Long idchat, String nameuser, int phone, int idmenu, int role) {
+        this.idchat = idchat;
+        this.nameuser = nameuser;
+        this.phone = phone;
+        this.idmenu = idmenu;
+        this.role = role;
+    }
+
+    public Users() {
+
+    }
 
     public Long getUserId() {
         return id;
@@ -24,14 +36,6 @@ public class Users {
 
     public void setUserId(Long id) {
         this.id = id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public Long getIdchat() {
@@ -72,6 +76,30 @@ public class Users {
 
     public void setRole(int role) {
         this.idmenu = role;
+    }
+
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", idchat='" + idchat + '\'' +
+                ", nameuser='" + nameuser + '\'' +
+                ", phone='" + phone + '\'' +
+                ", idmenu='" + idmenu + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Users task = (Users) o;
+        return idchat == task.idchat && id.equals(task.id) && nameuser.equals(task.nameuser);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, idchat, nameuser, phone, idmenu, role);
     }
 
 }

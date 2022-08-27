@@ -25,10 +25,9 @@ public class UsersService {
      * @param idmenu сохранение кода меню - что искал пользователь
      * @param role сохранение кода роли: 1-пользователь; 2-усыновитель; 3-волонтер
      */
-    @Transactional
     public void addMessage(Long userId,
-                           String message,
                            String nameuser,
+                           String message,
                            Long idchat,
                            int phone,
                            int idmenu,
@@ -36,7 +35,7 @@ public class UsersService {
     ) {
         Users users = new Users();
         users.setUserId(userId);
-        users.setMessage(message);
+       // users.setUserMessage(message);
         users.setNameuser(nameuser);
         users.setIdchat(idchat);
         users.setPhone(phone);
@@ -44,6 +43,16 @@ public class UsersService {
         users.setRole(role);
         usersRepository.save(users);
     }
+
+    /**
+     * Сохранение пользователей, которые интересуются приютом питомцев.
+     */
+    @Transactional
+    public Users createUsers(Users users) {
+        System.out.println("Попали в сохранение");
+        return usersRepository.save(users);
+    }
+ /*
 
     /**
      * Находит всех пользователей от которых поступило сообщение
