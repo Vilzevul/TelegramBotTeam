@@ -58,7 +58,7 @@ private final UsersMenuRepository usersMenuRepository;
         System.out.println("Попали в сохранение");
         return usersMenuRepository.save(usersMenu);
     }
-
+    @Transactional
     public Users createUsersAll(Users users) {
         System.out.println("Попали в сохранение");
         return usersRepository.save(users);

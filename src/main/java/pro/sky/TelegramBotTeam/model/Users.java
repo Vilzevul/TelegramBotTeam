@@ -14,21 +14,19 @@ public class Users {
     private Long id;
     private String nameuser;
     private Long idchat;
-    private int phone;
-    private int idmenu;
+    private String menu;
     private int role;
 
-    public Users(Long idchat, String nameuser, int phone, int idmenu, int role) {
+    public Users(Long idchat, String nameuser, String menu, int role) {
         this.idchat = idchat;
         this.nameuser = nameuser;
-        this.phone = phone;
-        this.idmenu = idmenu;
+        this.menu = menu;
         this.role = role;
     }
 
     public Users() {
-
     }
+
 
     public Long getId() {
         return id;
@@ -54,20 +52,12 @@ public class Users {
         this.nameuser = nameuser;
     }
 
-    public int getPhone() {
-        return phone;
+    public String getmenu() {
+        return menu;
     }
 
-    public void setPhone(int phone) {
-        this.phone = phone;
-    }
-
-    public int getIdmenu() {
-        return idmenu;
-    }
-
-    public void setIdmenu(int idmenu) {
-        this.idmenu = idmenu;
+    public void setmenu(String menu) {
+        this.menu = menu;
     }
 
     public int getRole() {
@@ -75,7 +65,7 @@ public class Users {
     }
 
     public void setRole(int role) {
-        this.idmenu = role;
+        this.role = role;
     }
 
     public String toString() {
@@ -83,8 +73,7 @@ public class Users {
                 "id=" + id +
                 ", idchat='" + idchat + '\'' +
                 ", nameuser='" + nameuser + '\'' +
-                ", phone='" + phone + '\'' +
-                ", idmenu='" + idmenu + '\'' +
+                ", menu='" + menu + '\'' +
                 ", role=" + role +
                 '}';
     }
@@ -99,7 +88,7 @@ public class Users {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, idchat, nameuser, phone, idmenu, role);
+        return Objects.hash(id, idchat, nameuser, menu, role);
     }
 
 }

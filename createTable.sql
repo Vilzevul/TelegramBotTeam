@@ -1,11 +1,10 @@
 --Создание таблицы user "Пользователи"
 CREATE TABLE users
 (
-    id       integer PRIMARY KEY,
-    idChat   integer     NOT NULL,
+    id       bigint PRIMARY KEY,
+    idChat   bigint      NOT NULL,
     nameUser varchar(36) NOT NULL,
-    phone    integer,
-    idMenu   integer,
+    menu     varchar,
     role     integer
 );
 --Создание таблицы pets "Питомцы"
@@ -31,8 +30,8 @@ CREATE TABLE keepingPets
 --Создание таблицы directory "Справочник"
 CREATE TABLE directory
 (
-    id        integer PRIMARY KEY,
-    name      text
+    id   integer PRIMARY KEY,
+    name text
 );
 
 --Создание таблицы user "Пользователи"

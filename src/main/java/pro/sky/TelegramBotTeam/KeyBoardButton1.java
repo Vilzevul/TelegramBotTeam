@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam;
+/*package pro.sky.TelegramBotTeam;
 
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
@@ -35,7 +35,7 @@ public class KeyBoardButton {
      * Создание основной клавиатуры с кнопками
      * @return кнопки с вариантами выбора
      */
-    public Keyboard getMainKeyboardMarkup() {
+ /*   public Keyboard getMainKeyboardMarkup() {
         Keyboard mainKeyboardMarkup = new ReplyKeyboardMarkup(
                 new String[]{DOGMAIN, CATMAIN},
                 new String[]{SERVICE, HALP})
@@ -52,7 +52,7 @@ public class KeyBoardButton {
      * @param flag передача команды и определение содержания клавиатуры
      * @return меню инлайн клавиатуры
      */
-    public InlineKeyboardMarkup getInlineKeyboard(String flag) {
+ /*   public InlineKeyboardMarkup getInlineKeyboard(String flag) {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         if (flag.equals(DOGMAIN)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
@@ -133,4 +133,4 @@ public class KeyBoardButton {
 
         return flag;
     }
-}
+}*/

@@ -96,9 +96,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         System.out.println(userId);
         System.out.println(userName);
-        int phone = 0;
-        Users users = new Users(userId, userName, phone,1,1);
+        Users users = new Users(userId, userName,btnStatus,1);
         System.out.println(users);
+        System.out.println(btnStatus);
         usersService.createUsersAll(users);
 
 

@@ -97,13 +97,26 @@ public class KeyBoardButton {
             return STATE_SERVICE;
         }
 
+        if (flag.equals("Приют для собак")) {
+            return DOGMAIN;
+        }
+        if (flag.equals("О приюте для собак")) {
+            return DOGABOUT;
+        }
+        if (flag.equals("Правила приюта для собак")) {
+            return DOGRULES;
+        }
+        if (flag.equals("Прислать отчет")) {
+            return DOGSEND;
+        }
+
         return btnStatus;
     }
 
     /**
      * возвращает текст, который будет передан в сообщение
      * @param flag команды с клавиатуры, зависит выбор текста
-     * @param users
+     * @param btnStatus
      * @return
      */
     public String getText(String flag,String btnStatus) {
