@@ -20,12 +20,13 @@ public class KeyBoardButton {
     private final String DOGZN = "Правила знакомства с собакой";
     private final String DOGDOCUMENTS = "Список документов, чтобы взять собаку";
     private final String DOGHOMEPUPPY = "Список рекомендаций по обустройству дома для щенка";
-    private final String DOGHOMEDOG = "Список рекомендаций по обустройству дома для взрослой собаки";
-    private final String DOGHOMEDOGLIMITED = "Список рекомендаций по обустройству дома для собаки с ограниченными возможностями";
+    private final String DOGHOMEDOG = "Список рекомендаций по обустройству дома для взр. собаки";
+    private final String DOGHOMEDOGLIMITED = "Список реком. по обустройству дома для собаки с огран. возможностями";
     private final String DOGADVICECYNOLOGIST = "Советы кинолога по первичному общению с собакой";
-    private final String DOGRECOMMENDATION = "Рекомендации по проверенным кинологам для дальнейшего обращения к ним";
+    private final String DOGRECOMMENDATION = "Рекомендации кинолога для дальнейшего обращения к ним";
     private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
     private final String DOGCONTACT = "Принять и записать контактные данные для связи";
+    private final String DOGVOLONTER = "Связаться с волонтером";
     private final String CATMAIN = "Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
@@ -85,22 +86,38 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATRULES).callbackData("CATRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData("CATSEND"));
         }
-
+//Если нажали кнопку "Как взять собаку из приюта"
         if (flag.equals(DOGTAKE)) {
-            System.out.println("Попали в DOGTAKE");
             inlineKeyboard.addRow(
                     new InlineKeyboardButton[]{
-                            new InlineKeyboardButton(DOGZN).callbackData("DOGZN"),
-                            new InlineKeyboardButton(DOGDOCUMENTS).callbackData("DOGDOCUMENTS"),
-                            new InlineKeyboardButton(DOGHOMEPUPPY).callbackData("DOGHOMEPUPPY"),
-                            new InlineKeyboardButton(DOGHOMEDOG).callbackData("DOGHOMEDOG"),
-                            new InlineKeyboardButton(DOGHOMEDOGLIMITED).callbackData("DOGHOMEDOGLIMITED"),
-                            new InlineKeyboardButton(DOGADVICECYNOLOGIST).callbackData("DOGADVICECYNOLOGIST"),
-                            new InlineKeyboardButton(DOGRECOMMENDATION).callbackData("DOGRECOMMENDATION"),
-                            new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"),
-                            new InlineKeyboardButton(DOGCONTACT).callbackData("DOGCONTACT")
-                    });
-
+                            new InlineKeyboardButton(DOGZN).callbackData("DOGZN")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGDOCUMENTS).callbackData("DOGDOCUMENTS")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGHOMEPUPPY).callbackData("DOGHOMEPUPPY")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGHOMEDOG).callbackData("DOGHOMEDOG")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGHOMEDOGLIMITED).callbackData("DOGHOMEDOGLIMITED")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGADVICECYNOLOGIST).callbackData("DOGADVICECYNOLOGIST")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGRECOMMENDATION).callbackData("DOGRECOMMENDATION")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGCONTACT).callbackData("DOGCONTACT")});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGVOLONTER).callbackData("DOGVOLONTER")});
         }
         return inlineKeyboard;
     }
@@ -202,9 +219,15 @@ public class KeyBoardButton {
 
         if (flag.equals("DOGRULES")) {
             return "<b>" + DOGRULES + "</b> \n " +
-                    "\nЗдесь будет список документов" + "\n" +
-                    "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
-                    "<i>" + "скачать - /file2_cat" + "</i>";
+                    "\nЗАПРЕЩАЕТСЯ:" + "\n" +
+                    " <i>" + "- Самостоятельно открывать выгулы и вольеры без разрешения работника приюта." + "</i>\n" +
+                    " <i>" + "- Кормить животных. Этим Вы можете спровоцировать драку. Угощения разрешены только постоянным опекунам и волонтерам, во время прогулок с животными на поводке" + "</i>\n" +
+                    " <i>" + "- Оставлять после себя мусор на территории приюта и прилегающей территории." + "</i>\n" +
+                    " <i>" + "- Подходить близко к вольерам и гладить собак через сетку на выгулах. Животные могут быть агрессивны!" + "</i>\n" +
+                    " <i>" + "- Кричать, размахивать руками, бегать между будками или вольерами, пугать и дразнить животных." + "</i>\n" +
+                    " <i>" + "- Посещение приюта для детей дошкольного и младшего школьного возраста без сопровождения взрослых." + "</i>\n" +
+                    " <i>" + "- Нахождение на территории приюта детей среднего и старшего школьного возраста без  сопровождения взрослых или письменной справки-разрешения от родителей или законных представителей." + "</i>\n" +
+                    " <i>" + "- Посещение приюта в состоянии алкогольного, наркотического опьянения." + "</i>";
         }
 
         if (flag.equals("CATRULES")) {
