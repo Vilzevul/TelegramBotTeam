@@ -46,7 +46,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.setUpdatesListener(this);
     }
 
-
     /**
      * после команды или нажатия на кнопки перехватываем юзера и его возвращаем
      *
@@ -59,12 +58,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             text = btnCommand = callbackQuery.data();
             userUpdate = callbackQuery.from();
             logger.info("- Processing telegramBot() - " + btnCommand);
+
         }
         Message message = update.message();
         if (message != null) {
             userUpdate = message.from();
             btnCommand = text = message.text();
             logger.info("- Processing telegramBot() - " + text);
+
         }
         return userUpdate;
     }
@@ -93,25 +94,34 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         //так
         UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
 //или так
-
         System.out.println(userId);
         System.out.println(userName);
-        Users users = new Users(userId, userName,btnStatus,1);
+        Users users = new Users(userId, userName, btnStatus, 1);
         System.out.println(users);
         System.out.println(btnStatus);
+        System.out.println("btnCommand " + btnCommand);
         usersService.createUsersAll(users);
-
 
         //if((str==null) && (users.getIdmenu().equals(keyBoardButton.STATE_SERVICE))) {
         //    if(!volunteersService.getVolunteers().isEmpty())
         //        userId = volunteersService.getVolunteers().get(0).getUserId();
         // }
 
-        SendResponse response = telegramBot.execute(new SendMessage(userId, text)
-                .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
-                .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
-                .parseMode(ParseMode.HTML)
-        );
+
+        // Приветствие бота по имени пользователя.
+        if (text.equals("/start")) {
+            System.out.println("Попали в старт");
+            SendResponse response = telegramBot.execute(new SendMessage(userId,
+                    userName + ", Привет!")
+                    .parseMode(ParseMode.HTML)
+                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup()));
+        } else {
+            SendResponse response = telegramBot.execute(new SendMessage(userId, text)
+                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                    .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                    .parseMode(ParseMode.HTML)
+            );
+        }
         return null;
     }
 

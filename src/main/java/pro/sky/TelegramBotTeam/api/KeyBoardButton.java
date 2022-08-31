@@ -10,15 +10,22 @@ import pro.sky.TelegramBotTeam.model.Users;
 @Component
 public class KeyBoardButton {
 
-
     private final String HELP = "Помощь";
     private final String SERVICE = "Оставить сообщение";
-
     private final String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
+    private final String DOGTAKE = "Как взять собаку из приюта";
     private final String DOGSEND = "Прислать отчет";
-
+    private final String DOGZN = "Правила знакомства с собакой";
+    private final String DOGDOCUMENTS = "Список документов, чтобы взять собаку";
+    private final String DOGHOMEPUPPY = "Список рекомендаций по обустройству дома для щенка";
+    private final String DOGHOMEDOG = "Список рекомендаций по обустройству дома для взрослой собаки";
+    private final String DOGHOMEDOGLIMITED = "Список рекомендаций по обустройству дома для собаки с ограниченными возможностями";
+    private final String DOGADVICECYNOLOGIST = "Советы кинолога по первичному общению с собакой";
+    private final String DOGRECOMMENDATION = "Рекомендации по проверенным кинологам для дальнейшего обращения к ним";
+    private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
+    private final String DOGCONTACT = "Принять и записать контактные данные для связи";
     private final String CATMAIN = "Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
@@ -26,12 +33,12 @@ public class KeyBoardButton {
     private final String START = "/start";
 
 
-    public final  String  STATE_HELP = "HELP";
-    public final   String STATE_DOG = "DOG";
-    public final   String STATE_CAT = "CAT";
-    public final  String STATE_SEND_LETTER = "SEND_LETTER";
-    public final  String STATE_START = "START";
-    public final  String STATE_SERVICE = "SERVICE";
+    public final String STATE_HELP = "HELP";
+    public final String STATE_DOG = "DOG";
+    public final String STATE_CAT = "CAT";
+    public final String STATE_SEND_LETTER = "SEND_LETTER";
+    public final String STATE_START = "START";
+    public final String STATE_SERVICE = "SERVICE";
 
 
     /*    private InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
@@ -44,6 +51,7 @@ public class KeyBoardButton {
 
     /**
      * Создание основной клавиатуры
+     *
      * @return
      */
     public Keyboard getMainKeyboardMarkup() {
@@ -60,6 +68,7 @@ public class KeyBoardButton {
 
     /**
      * создание инлайн клавиатуры, от команды зависит содержание клавиатуры
+     *
      * @param flag параметр передает команду
      * @return
      */
@@ -68,6 +77,7 @@ public class KeyBoardButton {
         if (flag.equals(DOGMAIN)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData("DOGRULES"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData("DOGSEND"));
         }
         if (flag.equals(CATMAIN)) {
@@ -76,17 +86,34 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData("CATSEND"));
         }
 
+        if (flag.equals(DOGTAKE)) {
+            System.out.println("Попали в DOGTAKE");
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(DOGZN).callbackData("DOGZN"),
+                            new InlineKeyboardButton(DOGDOCUMENTS).callbackData("DOGDOCUMENTS"),
+                            new InlineKeyboardButton(DOGHOMEPUPPY).callbackData("DOGHOMEPUPPY"),
+                            new InlineKeyboardButton(DOGHOMEDOG).callbackData("DOGHOMEDOG"),
+                            new InlineKeyboardButton(DOGHOMEDOGLIMITED).callbackData("DOGHOMEDOGLIMITED"),
+                            new InlineKeyboardButton(DOGADVICECYNOLOGIST).callbackData("DOGADVICECYNOLOGIST"),
+                            new InlineKeyboardButton(DOGRECOMMENDATION).callbackData("DOGRECOMMENDATION"),
+                            new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"),
+                            new InlineKeyboardButton(DOGCONTACT).callbackData("DOGCONTACT")
+                    });
+
+        }
         return inlineKeyboard;
     }
 
     /**
      * Возвращает строку - нажатой кнопки , последние команды
+     *
      * @param flag
      * @return
      */
-    public String getState(String flag,String btnStatus){
-        if(flag.equals(HELP)) {
-            return  STATE_HELP;
+    public String getState(String flag, String btnStatus) {
+        if (flag.equals(HELP)) {
+            return STATE_HELP;
         }
 
         if (flag.equals(START)) {
@@ -97,17 +124,38 @@ public class KeyBoardButton {
             return STATE_SERVICE;
         }
 
-        if (flag.equals("Приют для собак")) {
+        if (flag.equals(DOGMAIN)) {
             return DOGMAIN;
         }
-        if (flag.equals("О приюте для собак")) {
-            return DOGABOUT;
+        if (flag.equals(DOGTAKE)) {
+            return DOGTAKE;
         }
-        if (flag.equals("Правила приюта для собак")) {
-            return DOGRULES;
+        if (flag.equals(DOGZN)) {
+            return DOGZN;
         }
-        if (flag.equals("Прислать отчет")) {
-            return DOGSEND;
+        if (flag.equals(DOGDOCUMENTS)) {
+            return DOGDOCUMENTS;
+        }
+        if (flag.equals(DOGHOMEPUPPY)) {
+            return DOGHOMEPUPPY;
+        }
+        if (flag.equals(DOGHOMEDOG)) {
+            return DOGHOMEDOG;
+        }
+        if (flag.equals(DOGHOMEDOGLIMITED)) {
+            return DOGHOMEDOGLIMITED;
+        }
+        if (flag.equals(DOGADVICECYNOLOGIST)) {
+            return DOGADVICECYNOLOGIST;
+        }
+        if (flag.equals(DOGRECOMMENDATION)) {
+            return DOGRECOMMENDATION;
+        }
+        if (flag.equals(DOGREFUSAL)) {
+            return DOGREFUSAL;
+        }
+        if (flag.equals(DOGCONTACT)) {
+            return DOGCONTACT;
         }
 
         return btnStatus;
@@ -115,11 +163,12 @@ public class KeyBoardButton {
 
     /**
      * возвращает текст, который будет передан в сообщение
-     * @param flag команды с клавиатуры, зависит выбор текста
+     *
+     * @param flag      команды с клавиатуры, зависит выбор текста
      * @param btnStatus
      * @return
      */
-    public String getText(String flag,String btnStatus) {
+    public String getText(String flag, String btnStatus) {
 
         if (flag.equals(HELP)) {
             return "<b>" + HELP + "</b> \n " +
@@ -136,7 +185,7 @@ public class KeyBoardButton {
         if (flag.equals("DOGABOUT")) {
             return "<b>" + DOGABOUT + "</b> \n " +
                     "Приют находится по адресу ..." +
-                    "Время работы с 7-00   до  19-00"+
+                    "Время работы с 7-00   до  19-00" +
                     "\nЗдесь будет список документов" + "\n" +
                     "<i>" + "скачать - /file1_dog" + "</i>" + "\n" +
                     "<i>" + "скачать - /file2_dog" + "</i>";
@@ -144,7 +193,7 @@ public class KeyBoardButton {
         if (flag.equals("CATABOUT")) {
             return "<b>" + CATABOUT + "</b> \n " +
                     "Приют находится по адресу ..." +
-                    "Время работы с 7-00   до  19-00"+
+                    "Время работы с 7-00   до  19-00" +
                     "\nЗдесь будет список документов" + "\n" +
                     "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
                     "<i>" + "скачать - /file2_cat" + "</i>";
@@ -171,7 +220,7 @@ public class KeyBoardButton {
                     "\n- *Фото животного" +
                     "\n- *Рацион животного" +
                     "\n- *Общее самочувствие и привыкание к новому месту" +
-                    "\n- *Изменение в поведении: отказ от старых привычек, приобретение новых"+ "</i>";
+                    "\n- *Изменение в поведении: отказ от старых привычек, приобретение новых" + "</i>";
         }
         if (flag.equals("CATSEND")) {
             return "<b>" + CATSEND + "</b> \n " +
@@ -179,7 +228,46 @@ public class KeyBoardButton {
                     "\n- *Фото животного" +
                     "\n- *Рацион животного" +
                     "\n- *Общее самочувствие и привыкание к новому месту" +
-                    "\n- *Изменение в поведении: отказ от старых привычек, приобретение новых"+ "</i>";
+                    "\n- *Изменение в поведении: отказ от старых привычек, приобретение новых" + "</i>";
+        }
+
+        if (flag.equals("DOGZN")) {
+            return "<b>" + DOGZN + "</b> \n " +
+                    "<i>" + "\nПравила знакомства с собакой:" + "\n" + "</i>";
+        }
+
+        if (flag.equals("DOGDOCUMENTS")) {
+            return "<b>" + DOGDOCUMENTS + "</b> \n " +
+                    "<i>" + "\nСписок документов, чтобы взять собаку:" + "\n" + "</i>";
+        }
+
+        if (flag.equals("DOGHOMEPUPPY")) {
+            return "<b>" + DOGHOMEPUPPY + "</b> \n " +
+                    "<i>" + "\nСписок рекомендаций по обустройству дома для щенка:" + "\n" + "</i>";
+        }
+        if (flag.equals("DOGHOMEDOG")) {
+            return "<b>" + DOGHOMEDOG + "</b> \n " +
+                    "<i>" + "\nСписок рекомендаций по обустройству дома для взрослой собаки:" + "\n" + "</i>";
+        }
+        if (flag.equals("DOGHOMEDOGLIMITED")) {
+            return "<b>" + DOGHOMEDOGLIMITED + "</b> \n " +
+                    "<i>" + "\nСписок рекомендаций по обустройству дома для собаки с ограниченными возможностями:" + "\n" + "</i>";
+        }
+        if (flag.equals("DOGADVICECYNOLOGIST")) {
+            return "<b>" + DOGADVICECYNOLOGIST + "</b> \n " +
+                    "<i>" + "\nСоветы кинолога по первичному общению с собакой:" + "\n" + "</i>";
+        }
+        if (flag.equals("DOGRECOMMENDATION")) {
+            return "<b>" + DOGRECOMMENDATION + "</b> \n " +
+                    "<i>" + "\nРекомендации по проверенным кинологам для дальнейшего обращения к ним:" + "\n" + "</i>";
+        }
+        if (flag.equals("DOGREFUSAL")) {
+            return "<b>" + DOGREFUSAL + "</b> \n " +
+                    "<i>" + "\nСписок причин отказа в заборе собаки из приюта:" + "\n" + "</i>";
+        }
+        if (flag.equals("DOGCONTACT")) {
+            return "<b>" + DOGCONTACT + "</b> \n " +
+                    "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
         }
 
         return null;
