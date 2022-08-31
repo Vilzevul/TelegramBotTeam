@@ -1,9 +1,6 @@
 package pro.sky.TelegramBotTeam.api;
 
-import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.Keyboard;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -110,6 +107,11 @@ public class KeyBoardButton {
      */
     @Nullable
     public String getState(String command) {
+        if (command == null) {
+            LOGGER.error("Command is null");
+            throw new NullPointerException("Command is null");
+        }
+
         if (command.equals(HELP)) {
             return STATE_HELP;
         }
