@@ -8,10 +8,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
 import pro.sky.TelegramBotTeam.model.Users;
@@ -23,20 +22,18 @@ import java.util.List;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+
     private final KeyBoardButton keyBoardButton;
     private final UsersService usersService;
-    private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
-    String text, btnCommand;
-    Long userId;
-    User userUpdate;
-    Message message;
-    CallbackQuery callbackQuery;
-    String btnStatus = null;
+    private final TelegramBot telegramBot;
 
-    @Autowired
-    private TelegramBot telegramBot;
+    String btnCommand;
 
-    public TelegramBotUpdatesListener(KeyBoardButton keyBoardButton, UsersService usersService) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot,
+                                      KeyBoardButton keyBoardButton,
+                                      UsersService usersService) {
+        this.telegramBot = telegramBot;
         this.keyBoardButton = keyBoardButton;
         this.usersService = usersService;
     }
@@ -47,107 +44,95 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * после команды или нажатия на кнопки перехватываем юзера и его возвращаем
+     * Функция возвращает пользователя, который прислал сообщение/нажал на кнопку.
      *
-     * @param update
-     * @return
+     * @param update обновления в чате телеграмм-бота.
+     * @return пользователь, инициирующий обновление. Может быть null.
+     * @throws NullPointerException параметр <code>update</code> равен null.
      */
-    User getUpdates(Update update) {
+    @Nullable
+    private User getUpdates(Update update) {
+        if (update == null) {
+            LOGGER.error("Update structure is null");
+            throw new NullPointerException("Update structure is null");
+        }
+
         CallbackQuery callbackQuery = update.callbackQuery();
         if (callbackQuery != null) {
-            text = btnCommand = callbackQuery.data();
-            userUpdate = callbackQuery.from();
-            logger.info("- Processing telegramBot() - " + btnCommand);
-
+            btnCommand = callbackQuery.data();
+            LOGGER.info("- Processing telegramBot() - " + btnCommand);
+            return callbackQuery.from();
         }
+
         Message message = update.message();
         if (message != null) {
-            userUpdate = message.from();
-            btnCommand = text = message.text();
-            logger.info("- Processing telegramBot() - " + text);
-
+            btnCommand = message.text();
+            LOGGER.info("- Processing telegramBot() - " + btnCommand);
+            return message.from();
         }
-        return userUpdate;
+
+        return null;
     }
 
     /**
-     * Запускаем после  getUpdates
+     * Функция обрабатывает сообщение от пользователя.
      *
-     * @param user - юзер -
-     * @param user - юзер - возвращает getUpdates
-     *             btnStatus - статус команды  idmenu
-     *             createUsers - создает в БД пользователя или если существует - меняет последнюю команду
-     *             getText - возвращает текст для сообщения в зависимости от выбранной команды
-     * @return
+     * @param user пользователь.
+     * @throws NullPointerException параметр <code>user</code> равен null.
      */
-    Users makeProcess(User user) {
+    private void makeProcess(User user) {
+        if (user == null) {
+            LOGGER.error("User is null");
+            throw new NullPointerException("User is null");
+        }
+
+        String btnStatus = keyBoardButton.getState(btnCommand);
+        String btnMessage = keyBoardButton.getMessage(btnCommand);
+        String message = (btnMessage != null) ? btnMessage : btnCommand;
+
         Long userId = user.id();
         String userName = user.firstName();
-        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-        String str = keyBoardButton.getText(btnCommand, btnStatus);
-        if (str != null) text = str;
-        else text = btnCommand;
-/**
- * сюда вставляем функционал кнопок
- */
+
+
         // Запись в БД
         //так
         UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
 //или так
         System.out.println(userId);
         System.out.println(userName);
-        Users users = new Users(userId, userName, btnStatus, 1);
-        System.out.println(users);
         System.out.println(btnStatus);
         System.out.println("btnCommand " + btnCommand);
+        Users users = new Users(userId, userName, btnStatus, 1);
+        System.out.println(users);
         usersService.createUsersAll(users);
 
-        //if((str==null) && (users.getIdmenu().equals(keyBoardButton.STATE_SERVICE))) {
-        //    if(!volunteersService.getVolunteers().isEmpty())
-        //        userId = volunteersService.getVolunteers().get(0).getUserId();
-        // }
 
 
-        // Приветствие бота по имени пользователя.
-        if (text.equals("/start")) {
-            System.out.println("Попали в старт");
-            SendResponse response = telegramBot.execute(new SendMessage(userId,
-                    userName + ", Привет!")
-                    .parseMode(ParseMode.HTML)
-                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup()));
+
+        if (message.equals("/start")) {
+            telegramBot.execute(new SendMessage(userId,userName + ", привет!")
+                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                    .parseMode(ParseMode.HTML));
         } else {
-            SendResponse response = telegramBot.execute(new SendMessage(userId, text)
+            telegramBot.execute(new SendMessage(userId, message)
                     .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
                     .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                     .parseMode(ParseMode.HTML)
             );
         }
-        return null;
     }
-
 
     @Override
     public int process(List<Update> updates) throws RuntimeException {
         updates.forEach(update -> {
-            logger.info("Processing update: {}", update);
-            try {
-                userUpdate = getUpdates(update);
-                //               userId = userUpdate.id();
-                //          text = keyBoardButton.getText(btnCommand);
-            } catch (RuntimeException e) {
-                return;
-            }
-
-            try {
-                makeProcess(userUpdate);
-            } catch (RuntimeException e) {
-                return;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            LOGGER.info("Processing update: {}", update);
+            if (update != null) {
+                User user = getUpdates(update);
+                if (user != null) {
+                    makeProcess(user);
+                }
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
-    }//public int process(
-
-
-}//class
+    }
+}

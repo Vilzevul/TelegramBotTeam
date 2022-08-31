@@ -11,8 +11,10 @@ import javax.transaction.Transactional;
 @Service
 public class UsersService {
     private final UsersRepository usersRepository;
-private final UsersMenuRepository usersMenuRepository;
-    public UsersService(UsersRepository usersRepository, UsersMenuRepository usersMenuRepository) {
+    private final UsersMenuRepository usersMenuRepository;
+
+    public UsersService(UsersRepository usersRepository,
+                        UsersMenuRepository usersMenuRepository) {
         this.usersRepository = usersRepository;
         this.usersMenuRepository = usersMenuRepository;
     }
@@ -58,6 +60,7 @@ private final UsersMenuRepository usersMenuRepository;
         System.out.println("Попали в сохранение");
         return usersMenuRepository.save(usersMenu);
     }
+
     @Transactional
     public Users createUsersAll(Users users) {
         System.out.println("Попали в сохранение");
