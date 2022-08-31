@@ -29,6 +29,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final TelegramBot telegramBot;
 
     String btnCommand;
+    String userContacts;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
@@ -59,14 +60,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         CallbackQuery callbackQuery = update.callbackQuery();
         if (callbackQuery != null) {
-            btnCommand = callbackQuery.data();
+            btnCommand = (callbackQuery.data() == null) ? "undefined" : callbackQuery.data();
             LOGGER.info("- Processing telegramBot() - " + btnCommand);
             return callbackQuery.from();
         }
 
         Message message = update.message();
         if (message != null) {
-            btnCommand = message.text();
+            if (message.contact() != null) {
+                btnCommand = KeyBoardButton.CONTACTS;
+                userContacts = message.contact().phoneNumber();
+            } else {
+                btnCommand = (message.text() == null) ? "undefined" : message.text();
+            }
             LOGGER.info("- Processing telegramBot() - " + btnCommand);
             return message.from();
         }
@@ -92,6 +98,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         Long userId = user.id();
         String userName = user.firstName();
+
+        if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
+            LOGGER.info("Пользователь прислал контакты: {}", userContacts);
+        }
+
+
 
 
         // Запись в БД

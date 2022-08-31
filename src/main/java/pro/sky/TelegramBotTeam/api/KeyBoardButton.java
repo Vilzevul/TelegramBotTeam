@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class KeyBoardButton {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
 
+    public final static String CONTACTS = "Оставить контакты";
     private final String HELP = "Помощь";
     private final String SERVICE = "Оставить сообщение";
     private final String DOGMAIN = "Приют для собак";
@@ -46,12 +47,16 @@ public class KeyBoardButton {
      * @return созданный объект клавиатуры.
      */
     public Keyboard getMainKeyboardMarkup() {
-        return new ReplyKeyboardMarkup(
+        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(
                 new String[]{ DOGMAIN, CATMAIN },
                 new String[]{ SERVICE, HELP })
                 .oneTimeKeyboard(false)     // optional
                 .resizeKeyboard(true)       // optional
                 .selective(true);           // optional
+
+        keyboard.addRow(new KeyboardButton(CONTACTS).requestContact(true));
+
+        return keyboard;
     }
 
     /**
@@ -110,6 +115,10 @@ public class KeyBoardButton {
         if (command == null) {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
+        }
+
+        if (command.equals(CONTACTS)) {
+            return CONTACTS;
         }
 
         if (command.equals(HELP)) {
@@ -183,6 +192,10 @@ public class KeyBoardButton {
         if (command == null) {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
+        }
+
+        if (command.equals(CONTACTS)) {
+            return "Спасибо за предоставленные контакты. Будем на связи!";
         }
 
         if (command.equals(HELP)) {
