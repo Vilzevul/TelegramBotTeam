@@ -15,6 +15,10 @@ import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.repository.UsersRepository;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -50,24 +54,23 @@ class TelegramBotUpdatesListenerTest {
         Assertions.assertThat(telegramBotUpdatesListener).isNotNull();
     }
 
-/*    @Test
+    @Test
     User getUpdates() {
 
         return null;
-    }*/
+    }
 
     @Test
     void makeProcess() {
-        Users users = new Users(1L, "L", START, 1);//new user
+        Users users = new Users(1L, "L", START, 1);
         Assertions.assertThat(users).isNotNull();
-
         when(usersRepository.save(any(Users.class))).thenReturn(users);
-        verify(usersRepository, times(1)).save(any(Users.class));
     }
 
-/*    @Test
+
+    @Test
     void process() {
 
-    }*/
+    }
 
 }
