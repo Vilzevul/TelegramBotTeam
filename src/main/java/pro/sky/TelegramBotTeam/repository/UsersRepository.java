@@ -9,10 +9,10 @@ import java.util.List;
 
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Long>{
+
 /**
      * Отобрать всех пользователей от которых поступило сообщения
      * @return
      */
 //Collection<Users> findByNameUsers(Long Id);
-/*    List<Users> findUsersByMessage();*/
 }

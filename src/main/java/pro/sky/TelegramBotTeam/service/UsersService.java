@@ -1,6 +1,9 @@
 package pro.sky.TelegramBotTeam.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.TelegramBotTeam.listener.TelegramBotUpdatesListener;
 import pro.sky.TelegramBotTeam.model.Keepingpets;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.model.UsersMenu;
@@ -13,6 +16,7 @@ import java.util.List;
 
 @Service
 public class UsersService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsersService.class);
     private final UsersRepository usersRepository;
     private final UsersMenuRepository usersMenuRepository;
     private final KeepingpetsRepository keepingpetsRepository;
@@ -23,36 +27,6 @@ public class UsersService {
         this.usersMenuRepository = usersMenuRepository;
         this.keepingpetsRepository = keepingpetsRepository;
     }
-/*
-    /**
-     * Сохранение сообщений от пользователя в бд, для последующей обработки этих сообщений работниками приюта.
-     *
-     * @param userId уникальный идентификатор соответствует полю в таблице "users", генерируется автоматически
-     * @param message используется для получения сообщения от пользователя и сохранения в БД, для последующей обработки волонтерами приюта
-     * @param nameuser сохранение имени пользователя для последующего обращения к нему по имени
-     * @param idchat сохранение уникального индентификатора чата из которого пришло сообщение
-     * @param phone сохранение контактного номера телефона пользователя от которого пришло сообщение
-     * @param idmenu сохранение кода меню - что искал пользователь
-     * @param role сохранение кода роли: 1-пользователь; 2-усыновитель; 3-волонтер
-     */
-  /*  public void addMessage(Long userId,
-                           String nameuser,
-                           String message,
-                           Long idchat,
-                           int phone,
-                           int idmenu,
-                           int role
-    ) {
-        Users users = new Users();
-        users.setUserId(userId);
-       // users.setUserMessage(message);
-        users.setNameuser(nameuser);
-        users.setIdchat(idchat);
-        users.setPhone(phone);
-        users.setIdmenu(idmenu);
-        users.setRole(role);
-        usersRepository.save(users);
-    }*/
 
     /**
      * Сохранение пользователей, которые интересуются приютом питомцев.
@@ -60,22 +34,31 @@ public class UsersService {
     @Transactional
     public UsersMenu createUsers(UsersMenu usersMenu) {
         UsersMenu baseUsers = usersMenuRepository.findById(usersMenu.getId())
-                .orElse(new UsersMenu(usersMenu.getId(), usersMenu.getNameuser(), usersMenu.getIdmenu(),usersMenu.getRole()));
+                .orElse(new UsersMenu(usersMenu.getId(), usersMenu.getNameuser(), usersMenu.getIdmenu(), usersMenu.getRole()));
         baseUsers.setIdmenu(usersMenu.getIdmenu());
-        System.out.println("Попали в сохранение");
+        LOGGER.info("Попали в сохранение");
         return usersMenuRepository.save(usersMenu);
     }
 
     @Transactional
     public Users createUsersAll(Users users) {
-        System.out.println("Попали в сохранение");
+        LOGGER.info("Попали в сохранение");
         return usersRepository.save(users);
     }
 
-
-
-/*    *//**
+    /**
+     * Сохраняем всех пользователей с отчетами
+     * @param keepingpets
+     * @return
+     */
+    @Transactional
+    public Keepingpets createUsersWithReportAll(Keepingpets keepingpets) {
+        LOGGER.info("Попали в сохранение");
+        return keepingpetsRepository.save(keepingpets);
+    }
+    /**
      * Находит всех пользователей от которых поступил отчет
+     *
      * @return выводит всех пользователей от которых пришли отчеты
      */
     public List<Keepingpets> getUsersWitReport() {
@@ -84,6 +67,7 @@ public class UsersService {
 
     /**
      * Удаляет пользователей по Id
+     *
      * @param userId уникальный индентификатор пользователя по которому производится удаление
      */
     public void deleteUsersById(Long userId) {

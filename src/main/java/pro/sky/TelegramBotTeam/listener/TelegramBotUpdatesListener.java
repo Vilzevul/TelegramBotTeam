@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
+import pro.sky.TelegramBotTeam.model.Keepingpets;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
@@ -76,7 +77,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             LOGGER.info("- Processing telegramBot() - " + btnCommand);
             return message.from();
         }
-
         return null;
     }
 
@@ -103,26 +103,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
 
-
-
-
         // Запись в БД
-        //так
         UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
-//или так
-        System.out.println(userId);
-        System.out.println(userName);
-        System.out.println(btnStatus);
-        System.out.println("btnCommand " + btnCommand);
         Users users = new Users(userId, userName, btnStatus, 1);
-        System.out.println(users);
         usersService.createUsersAll(users);
 
-
-
+        if (btnCommand.equals("DOGSEND")) {
+            Keepingpets keepingpets = new Keepingpets();
+            usersService.createUsersWithReportAll(keepingpets);
+        }
 
         if (message.equals("/start")) {
-            telegramBot.execute(new SendMessage(userId,userName + ", привет!")
+            telegramBot.execute(new SendMessage(userId, userName + ", привет!")
                     .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
                     .parseMode(ParseMode.HTML));
         } else {

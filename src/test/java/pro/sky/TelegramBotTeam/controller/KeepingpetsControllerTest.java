@@ -38,6 +38,5 @@ class KeepingpetsControllerTest {
         Assertions
                 .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/users_report", String.class))
                 .isNotNull();
-
     }
 }

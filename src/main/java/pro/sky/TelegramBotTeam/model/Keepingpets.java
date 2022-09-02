@@ -32,6 +32,16 @@ public class Keepingpets {
     @Column(name = "behavior")
     private String behavior;
 
+    public Keepingpets(Long idpets, Long idusers, String foto, String diet, String wellbeing, String behavior) {
+        this.idpets = idpets;
+        this.idusers = idusers;
+        this.foto = foto;
+        this.diet = diet;
+        this.wellbeing = wellbeing;
+        this.behavior = behavior;
+    }
+    public Keepingpets() {
+    }
     public Long getId() {
         return this.id;
     }
