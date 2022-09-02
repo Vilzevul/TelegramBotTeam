@@ -11,10 +11,8 @@ import pro.sky.TelegramBotTeam.service.UsersService;
 
 import java.util.List;
 
-/*@Slf4j*/
 @RestController
-@RequestMapping("${telegram.bot.token}")
-/*@RequiredArgsConstructor*/
+@RequestMapping("/reports")
 @SuppressWarnings("unused")
 public class KeepingpetsController {
     private final UsersService usersService;
