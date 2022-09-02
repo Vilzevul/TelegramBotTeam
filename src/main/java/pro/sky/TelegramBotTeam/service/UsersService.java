@@ -1,22 +1,27 @@
 package pro.sky.TelegramBotTeam.service;
 
 import org.springframework.stereotype.Service;
+import pro.sky.TelegramBotTeam.model.Keepingpets;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.model.UsersMenu;
+import pro.sky.TelegramBotTeam.repository.KeepingpetsRepository;
 import pro.sky.TelegramBotTeam.repository.UsersMenuRepository;
 import pro.sky.TelegramBotTeam.repository.UsersRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class UsersService {
     private final UsersRepository usersRepository;
     private final UsersMenuRepository usersMenuRepository;
+    private final KeepingpetsRepository keepingpetsRepository;
 
     public UsersService(UsersRepository usersRepository,
-                        UsersMenuRepository usersMenuRepository) {
+                        UsersMenuRepository usersMenuRepository, KeepingpetsRepository keepingpetsRepository) {
         this.usersRepository = usersRepository;
         this.usersMenuRepository = usersMenuRepository;
+        this.keepingpetsRepository = keepingpetsRepository;
     }
 /*
     /**
@@ -67,18 +72,18 @@ public class UsersService {
         return usersRepository.save(users);
     }
 
- /*
 
-    /**
-     * Находит всех пользователей от которых поступило сообщение
-     * @return выводит всех пользователей от которых пришли сообщения
+
+/*    *//**
+     * Находит всех пользователей от которых поступил отчет
+     * @return выводит всех пользователей от которых пришли отчеты
      */
-/*    public List<Users> findUsersWithMessage() {
-        return usersRepository.findUsersByMessage();
-    }*/
+    public List<Keepingpets> getUsersWitReport() {
+        return keepingpetsRepository.findAll();
+    }
 
     /**
-     * Удаляет удаляет пользователей по Id
+     * Удаляет пользователей по Id
      * @param userId уникальный индентификатор пользователя по которому производится удаление
      */
     public void deleteUsersById(Long userId) {
