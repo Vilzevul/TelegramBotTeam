@@ -2,12 +2,11 @@ package pro.sky.TelegramBotTeam.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.CallbackQuery;
-import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -19,6 +18,12 @@ import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -31,6 +36,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     String btnCommand;
     String userContacts;
+    Document document;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
@@ -71,6 +77,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             if (message.contact() != null) {
                 btnCommand = KeyBoardButton.CONTACTS;
                 userContacts = message.contact().phoneNumber();
+            }
+            if (message.document() != null) {
+                btnCommand = KeyBoardButton.DOGSEND;
+                document = message.document();
             } else {
                 btnCommand = (message.text() == null) ? "undefined" : message.text();
             }
@@ -109,8 +119,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
-            Report report = new Report();
-            usersService.createUsersWithReportAll(report);
+//            Report report = new Report();
+//            usersService.createUsersWithReportAll(report);
+        }
+
+        if (btnCommand.equals(keyBoardButton.DOGSEND)) {
+            try {
+                if (document != null) {byte[] content = getFile(document);}
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
         if (message.equals("/start")) {
@@ -124,6 +143,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     .parseMode(ParseMode.HTML)
             );
         }
+        LOGGER.info("Команда: {}  Статус {}", btnCommand, btnStatus);
     }
 
     @Override
@@ -138,5 +158,44 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    private byte[] getFile(Document document) throws IOException {
+        GetFile request = new GetFile(document.fileId());
+        GetFileResponse getFileResponse = telegramBot.execute(request);
+
+        File file = getFileResponse.file(); // com.pengrad.telegrambot.model.File
+        file.fileId();
+        byte[] fileContent = telegramBot.getFileContent(file);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileContent);
+
+        BufferedImage imgIn = ImageIO.read(byteArrayInputStream);
+        if (imgIn == null) return null;
+
+        double height = imgIn.getHeight() / (imgIn.getWidth() / 100d);
+        BufferedImage imgOut = new BufferedImage(100, (int) height, imgIn.getType());
+        Graphics2D graphics = imgOut.createGraphics();
+        graphics.drawImage((Image) imgIn, 0, 0, 100, (int) height, null);
+        graphics.dispose();
+
+        ImageIO.write(imgOut, getExtension(document.fileName()), baos);
+
+        java.io.File file1 = new java.io.File("c:/2", "23.jpg");
+        ImageIO.write(imgOut, getExtension(document.fileName()), file1);
+        file.filePath();  // относительный путь
+        file.fileSize();
+        return baos.toByteArray();
+
+    }
+
+    private String getExtension(String fileName) {
+        String extension = "";
+
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+        return extension;
     }
 }

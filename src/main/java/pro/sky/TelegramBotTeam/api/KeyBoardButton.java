@@ -11,13 +11,14 @@ public class KeyBoardButton {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
 
     public final static String CONTACTS = "Оставить контакты";
+    public final static String DOGSEND = "Прислать отчет";
+
     private final String HELP = "Помощь";
     private final String SERVICE = "Оставить сообщение";
     private final String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
     private final String DOGTAKE = "Как взять собаку из приюта";
-    private final String DOGSEND = "Прислать отчет";
     private final String DOGZN = "Правила знакомства с собакой";
     private final String DOGDOCUMENTS = "Список документов, чтобы взять собаку";
     private final String DOGHOMEPUPPY = "Список рекомендаций по обустройству дома для щенка";
@@ -78,7 +79,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData("DOGRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
-            inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData("DOGSEND"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND));
         }
 
         if (command.equals(CATMAIN)) {
@@ -175,6 +176,9 @@ public class KeyBoardButton {
 
         if (command.equals(DOGCONTACT)) {
             return DOGCONTACT;
+        }
+        if (command.equals(DOGSEND)) {
+            return DOGSEND;
         }
 
         return null;
