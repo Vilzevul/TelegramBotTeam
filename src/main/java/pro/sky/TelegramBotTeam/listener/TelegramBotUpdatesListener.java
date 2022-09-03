@@ -2,18 +2,19 @@ package pro.sky.TelegramBotTeam.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.*;
+import com.pengrad.telegrambot.model.CallbackQuery;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
+import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
-import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
@@ -117,13 +118,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         LOGGER.info("begin makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
         // Запись в БД
-        UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
         Users users = new Users(userId, userName, btnStatus, 1);
         usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
-//            Report report = new Report();
-//            usersService.createUsersWithReportAll(report);
+            LOGGER.info("Пользователь прислал отчет");
+  //          Report report = new Report();
+   //         usersService.createUsersWithReportAll(report);
         }
 
 // Блок отправки отчета
