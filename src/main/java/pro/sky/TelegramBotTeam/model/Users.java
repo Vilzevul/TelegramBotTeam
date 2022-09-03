@@ -17,6 +17,10 @@ public class Users {
     private String menu;
     private int role;
 
+    @ManyToOne
+    @JoinColumn(name = "report_id")
+    private Report report;
+
     public Users(Long idchat, String nameuser, String menu, int role) {
         this.idchat = idchat;
         this.nameuser = nameuser;

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
-import pro.sky.TelegramBotTeam.model.Keepingpets;
+import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
@@ -109,8 +109,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
-            Keepingpets keepingpets = new Keepingpets();
-            usersService.createUsersWithReportAll(keepingpets);
+            Report report = new Report();
+            usersService.createUsersWithReportAll(report);
         }
 
         if (message.equals("/start")) {

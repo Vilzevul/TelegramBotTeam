@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import pro.sky.TelegramBotTeam.repository.KeepingpetsRepository;
+import pro.sky.TelegramBotTeam.repository.ReportRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class KeepingpetsControllerTest {
@@ -16,10 +16,10 @@ class KeepingpetsControllerTest {
     private int port;
 
     @Autowired
-    private KeepingpetsController keepingpetsController;
+    private ReportController keepingpetsController;
 
     @MockBean
-    private KeepingpetsRepository keepingpetsRepository;
+    private ReportRepository reportRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;

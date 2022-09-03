@@ -17,12 +17,12 @@ CREATE TABLE pets
     comment varchar(36)
 );
 --Создание таблицы keepingPets "Ведение питомца"
-CREATE TABLE keepingPets
+CREATE TABLE report
 (
     id        integer PRIMARY KEY,
     idPets    integer NOT NULL,
     idUsers   integer NOT NULL,
-    foto      varchar,
+    foto      bytea,
     diet      varchar(36),
     wellBeing varchar,
     behavior  varchar

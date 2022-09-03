@@ -1,14 +1,17 @@
 package pro.sky.TelegramBotTeam.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Класс "Keepingpets" cоответствует структуре и названию таблицы "keepingpets" БД myDb
+ * Класс "Report" cоответствует структуре и названию таблицы "keepingpets" БД myDb
  * Используется для получения и сохранения в БД myDb отчета пользователей о питомце
  */
 @Entity
-@Table(name = "keepingpets")
-public class Keepingpets {
+@Table(name = "report")
+public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,12 +20,14 @@ public class Keepingpets {
     @Column(name = "idpets")
     private Long idpets;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "report")
+    private Collection<Users> users;
     @Column(name = "idusers")
     private Long idusers;
 
     @Column(name = "foto")
-    private String foto;
-
+    private byte[] foto;
     @Column(name = "diet")
     private String diet;
 
@@ -31,17 +36,6 @@ public class Keepingpets {
 
     @Column(name = "behavior")
     private String behavior;
-
-    public Keepingpets(Long idpets, Long idusers, String foto, String diet, String wellbeing, String behavior) {
-        this.idpets = idpets;
-        this.idusers = idusers;
-        this.foto = foto;
-        this.diet = diet;
-        this.wellbeing = wellbeing;
-        this.behavior = behavior;
-    }
-    public Keepingpets() {
-    }
     public Long getId() {
         return this.id;
     }
@@ -66,11 +60,11 @@ public class Keepingpets {
         this.idusers = idusers;
     }
 
-    public String getFoto() {
-        return this.foto;
+    public byte[] getFoto() {
+        return foto;
     }
 
-    public void setFoto(String foto) {
+    public void setFoto(byte[] foto) {
         this.foto = foto;
     }
 
