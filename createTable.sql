@@ -7,16 +7,8 @@ CREATE TABLE users
     menu     varchar,
     role     integer
 );
---Создание таблицы pets "Питомцы"
-CREATE TABLE pets
-(
-    id      integer PRIMARY KEY,
-    type    integer     NOT NULL,
-    name    varchar(36) NOT NULL,
-    age     integer,
-    comment varchar(36)
-);
---Создание таблицы keepingPets "Ведение питомца"
+
+--Создание таблицы report "Ведение питомца"
 CREATE TABLE report
 (
     id        integer PRIMARY KEY,
@@ -27,21 +19,8 @@ CREATE TABLE report
     wellBeing varchar,
     behavior  varchar
 );
---Создание таблицы directory "Справочник"
-CREATE TABLE directory
-(
-    id   integer PRIMARY KEY,
-    name text
-);
 
---Создание таблицы user "Пользователи"
-CREATE TABLE usersmenu
-(
-    id       BIGINT PRIMARY KEY,
-    nameUser varchar(36) NOT NULL,
-    idMenu   varchar(36),
-    role     varchar(36)
-);
+
 
 
 

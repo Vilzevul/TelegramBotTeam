@@ -1,6 +1,9 @@
 package pro.sky.TelegramBotTeam.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -17,9 +20,9 @@ public class Users {
     private String menu;
     private int role;
 
-    @ManyToOne
-    @JoinColumn(name = "report_id")
-    private Report report;
+    @JsonIgnore
+    @OneToMany(mappedBy = "users")
+    private Collection<Report> report;
 
     public Users(Long idchat, String nameuser, String menu, int role) {
         this.idchat = idchat;

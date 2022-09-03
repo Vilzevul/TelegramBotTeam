@@ -11,7 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import pro.sky.TelegramBotTeam.repository.ReportRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class KeepingpetsControllerTest {
+class ReportControllerTest {
     @LocalServerPort
     private int port;
 

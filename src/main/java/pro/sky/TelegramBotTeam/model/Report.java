@@ -20,9 +20,10 @@ public class Report {
     @Column(name = "idpets")
     private Long idpets;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "report")
-    private Collection<Users> users;
+    @ManyToOne
+    @JoinColumn(name = "report_id")
+    private Users users;
+
     @Column(name = "idusers")
     private Long idusers;
 
