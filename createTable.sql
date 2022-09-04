@@ -5,7 +5,8 @@ CREATE TABLE users
     idChat   bigint      NOT NULL,
     nameUser varchar(36) NOT NULL,
     menu     varchar,
-    role     integer
+    role     integer,
+    report_Id integer REFERENCES report (id)
 );
 
 --Создание таблицы report "Ведение питомца"
