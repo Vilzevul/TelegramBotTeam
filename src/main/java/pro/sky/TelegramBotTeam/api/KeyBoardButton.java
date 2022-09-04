@@ -11,11 +11,16 @@ public class KeyBoardButton {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
 
     public final static String CONTACTS = "Оставить контакты";
+    public final static String DOCUMENT = "DOCUMENT";
+    public final static String ERROR = "ERROR";
+
     public final static String DOGSEND = "Прислать отчет";
+    public final static String DOGSEND_TXT = "Напишите текст отчета";
+    public final static String DOGSEND_MSG = "Отправьте фото отчета";
 
     private final String HELP = "Помощь";
     private final String SERVICE = "Оставить сообщение";
-    private final String DOGMAIN = "Приют для собак";
+    public final static String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
     private final String DOGTAKE = "Как взять собаку из приюта";
@@ -34,6 +39,8 @@ public class KeyBoardButton {
     private final String CATRULES = "Правила приюта для кошек";
     private final String CATSEND = "Прислать отчет";
     private final String START = "/start";
+    private final String ESCAPE = "Отмена";
+    private final String FORVARD = "Дальше";
 
     public final String STATE_HELP = "HELP";
     public final String STATE_DOG = "DOG";
@@ -79,7 +86,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData("DOGRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
-            inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND));
+            inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND_MSG));
         }
 
         if (command.equals(CATMAIN)) {
@@ -101,6 +108,16 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGVOLONTER).callbackData("DOGVOLONTER"));
         }
 
+        if (command.equals(DOGSEND_MSG)) {
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN),
+                            new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)});
+        }
+        if (command.equals(DOGSEND_TXT)) {
+            inlineKeyboard.addRow( new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN));
+        }
+
         return inlineKeyboard;
     }
 
@@ -112,10 +129,14 @@ public class KeyBoardButton {
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
     @Nullable
-    public String getState(String command) {
+    public String getState(String command,String status) {
         if (command == null) {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
+        }
+        if (status == null) {
+            LOGGER.error("status is null");
+            throw new NullPointerException("status is null");
         }
 
         if (command.equals(CONTACTS)) {
@@ -180,8 +201,13 @@ public class KeyBoardButton {
         if (command.equals(DOGSEND)) {
             return DOGSEND;
         }
-
-        return null;
+        if (command.equals(DOGSEND_MSG)) {
+            return DOGSEND_MSG;
+        }
+        if (command.equals(DOGSEND_TXT)) {
+            return DOGSEND_TXT;
+        }
+        return status;
     }
 
     /**
@@ -251,14 +277,12 @@ public class KeyBoardButton {
                     "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
                     "<i>" + "скачать - /file2_cat" + "</i>";
         }
-
-        if (command.equals("DOGSEND")) {
-            return "<b>" + DOGSEND + "</b> \n " +
-                    "<i>" + "\nОтчет должен содержать:" + "\n" +
-                    "\n- *Фото животного" +
-                    "\n- *Рацион животного" +
-                    "\n- *Общее самочувствие и привыкание к новому месту" +
-                    "\n- *Изменение в поведении: отказ от старых привычек, приобретение новых" + "</i>";
+        //Отправка отчета
+        if (command.equals(DOGSEND_MSG)) {
+            return "<b>" + DOGSEND_MSG + "</b>  ";
+        }
+        if (command.equals(DOGSEND_TXT)) {
+            return "<b>" + DOGSEND_TXT + "</b>  " ;
         }
 
         if (command.equals("CATSEND")) {
@@ -496,6 +520,6 @@ public class KeyBoardButton {
                     "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
         }
 
-        return null;
+        return command;
     }
 }

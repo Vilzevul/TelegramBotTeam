@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
-import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
@@ -34,9 +33,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final UsersService usersService;
     private final TelegramBot telegramBot;
 
-    String btnCommand;
+
+    String btnCommand = "undefined";
     String userContacts;
     Document document;
+    String btnStatus = "undefined";
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
@@ -44,6 +45,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         this.telegramBot = telegramBot;
         this.keyBoardButton = keyBoardButton;
         this.usersService = usersService;
+
     }
 
     @PostConstruct
@@ -68,7 +70,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         CallbackQuery callbackQuery = update.callbackQuery();
         if (callbackQuery != null) {
             btnCommand = (callbackQuery.data() == null) ? "undefined" : callbackQuery.data();
-            LOGGER.info("- Processing telegramBot() - " + btnCommand);
+            LOGGER.info("- getUpdates(callbackQuery) - " + btnCommand);
             return callbackQuery.from();
         }
 
@@ -79,12 +81,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 userContacts = message.contact().phoneNumber();
             }
             if (message.document() != null) {
-                btnCommand = KeyBoardButton.DOGSEND;
+                btnCommand = btnCommand;
                 document = message.document();
             } else {
                 btnCommand = (message.text() == null) ? "undefined" : message.text();
             }
-            LOGGER.info("- Processing telegramBot() - " + btnCommand);
+            LOGGER.info("- getUpdates(message) - " + btnCommand);
             return message.from();
         }
         return null;
@@ -102,7 +104,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             throw new NullPointerException("User is null");
         }
 
-        String btnStatus = keyBoardButton.getState(btnCommand);
+
+        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
         String btnMessage = keyBoardButton.getMessage(btnCommand);
         String message = (btnMessage != null) ? btnMessage : btnCommand;
 
@@ -112,7 +115,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
-
+        LOGGER.info("begin makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
         // Запись в БД
         UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
         Users users = new Users(userId, userName, btnStatus, 1);
@@ -123,14 +126,35 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //            usersService.createUsersWithReportAll(report);
         }
 
-        if (btnCommand.equals(keyBoardButton.DOGSEND)) {
+// Блок отправки отчета
+        //пользователь отправляет фото
+        if (btnCommand.equals(keyBoardButton.DOGSEND_MSG)) {
             try {
-                if (document != null) {byte[] content = getFile(document);}
+                if (document != null) { //если файл отправлен
+                    byte[] reportContent = getFile(document);
+                    if (reportContent != null) {  //если отправлена картинка
+                        // content сохраняем в БД
+                        btnCommand = KeyBoardButton.DOGSEND_TXT; // перейти к отправке текста
+                        message = " Файл принят\n";
+                        message = message + keyBoardButton.getMessage(btnCommand);
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                    } else {
+                        btnCommand = KeyBoardButton.ERROR;
+                    }
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
+//пользователь отправляет текст
+        if (((btnStatus.equals(keyBoardButton.DOGSEND_TXT)))
+                && (!btnCommand.equals(keyBoardButton.DOGSEND_TXT))) {
+            String reportText = message;
+            // reportText сохраняем в БД
+            btnCommand = KeyBoardButton.DOGMAIN;
+            message = "❗️Отчет принят\n";
+        }
+//конец блока отправки отчета
 
         if (message.equals("/start")) {
             telegramBot.execute(new SendMessage(userId, userName + ", привет!")
@@ -143,7 +167,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     .parseMode(ParseMode.HTML)
             );
         }
-        LOGGER.info("Команда: {}  Статус {}", btnCommand, btnStatus);
+        LOGGER.info("end makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
+
     }
 
     @Override
@@ -160,38 +185,76 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
+    /**
+     * Принимает от пользователя фото отчета, обрабатывает и возвращает byte[] для
+     * последующей записи в БД в Report
+     *
+     * @param document
+     * @return
+     * @throws IOException
+     */
+
     private byte[] getFile(Document document) throws IOException {
+/**
+ * com.pengrad.telegrambot
+ * оюработка входящего сообщения и получение фото в виде байт массива
+ */
         GetFile request = new GetFile(document.fileId());
         GetFileResponse getFileResponse = telegramBot.execute(request);
-
         File file = getFileResponse.file(); // com.pengrad.telegrambot.model.File
         file.fileId();
         byte[] fileContent = telegramBot.getFileContent(file);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        /**
+         *поток вывода - byteArrayOutputStream -, использующий массив байтов в качестве места вывода
+         * и
+         * входной поток,- byteArrayInputStream - использующий в качестве источника данных массив байтов
+         * (присланный файл)
+         */
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileContent);
-
+/**
+ *BufferedImage - класс который представляет изображение, которое хранится в памяти
+ */
         BufferedImage imgIn = ImageIO.read(byteArrayInputStream);
         if (imgIn == null) return null;
-
+        /**
+         * преобразуем изображение в  формат меньшего размера
+         */
         double height = imgIn.getHeight() / (imgIn.getWidth() / 100d);
         BufferedImage imgOut = new BufferedImage(100, (int) height, imgIn.getType());
         Graphics2D graphics = imgOut.createGraphics();
         graphics.drawImage((Image) imgIn, 0, 0, 100, (int) height, null);
         graphics.dispose();
+/**
+ * После  обработки изображение, его сохраняем обратно в поток вывода (byteArrayOutputStream)
+ */
+        ImageIO.write(imgOut, getExtension(document.fileName()), byteArrayOutputStream);
+        /**
+         * И проверить что файл сохраняется
 
-        ImageIO.write(imgOut, getExtension(document.fileName()), baos);
+        java.io.File dir = new java.io.File("c:/temp");
+        dir.mkdir();
+        java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
+        ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
+         */
 
-        java.io.File file1 = new java.io.File("c:/2", "23.jpg");
-        ImageIO.write(imgOut, getExtension(document.fileName()), file1);
-        file.filePath();  // относительный путь
-        file.fileSize();
-        return baos.toByteArray();
-
+        /**
+         * и преобразуем обратно в массив байтов
+         */
+        return byteArrayOutputStream.toByteArray();
     }
 
+    /**
+     * получаем расширение файла - fileName
+     * можно заменить этим
+     * org.apache.commons.io.FilenameUtils
+     * Maven: commons-io:commons-io:2.11.0 (commons-io-2.11.0.jar)
+     *
+     * @param fileName
+     * @return
+     */
     private String getExtension(String fileName) {
         String extension = "";
-
         int i = fileName.lastIndexOf('.');
         if (i > 0) {
             extension = fileName.substring(i + 1);
