@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
 import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
-import pro.sky.TelegramBotTeam.model.UsersMenu;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
@@ -104,11 +103,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
 
         // Запись в БД
-        UsersMenu usersMenuBase = usersService.createUsers(new UsersMenu(userId, userName, btnStatus, "role"));
         Users users = new Users(userId, userName, btnStatus, 1);
         usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
+            LOGGER.info("Пользователь прислал отчет");
             Report report = new Report();
             usersService.createUsersWithReportAll(report);
         }
