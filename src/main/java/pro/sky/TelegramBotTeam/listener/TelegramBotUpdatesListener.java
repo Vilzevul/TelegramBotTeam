@@ -2,12 +2,11 @@ package pro.sky.TelegramBotTeam.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.CallbackQuery;
-import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -105,14 +104,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             throw new NullPointerException("User is null");
         }
 
-
         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
         String btnMessage = keyBoardButton.getMessage(btnCommand);
         String message = (btnMessage != null) ? btnMessage : btnCommand;
 
         Long userId = user.id();
         String userName = user.firstName();
-
+        System.out.println("btnCommand"+btnCommand);
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
