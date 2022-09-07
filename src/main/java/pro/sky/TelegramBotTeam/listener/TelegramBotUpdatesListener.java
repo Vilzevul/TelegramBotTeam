@@ -62,7 +62,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     @Nullable
     private User getUpdates(Update update) {
-        if (update == null) {
+     /*   if (update == null) {
             LOGGER.error("Update structure is null");
             throw new NullPointerException("Update structure is null");
         }
@@ -89,6 +89,25 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             LOGGER.info("- getUpdates(message) - " + btnCommand);
             return message.from();
         }
+        return null;*/
+        Message message = update.message();
+        if (message != null) {
+            if (message.contact() != null) {
+                btnCommand = KeyBoardButton.CONTACTS;
+                userContacts = message.contact().phoneNumber();
+                return message.from();
+            }
+
+            if (message.document() != null) {
+                btnCommand = btnCommand;
+                document = message.document();
+                return message.from();
+            }}
+        else {
+            btnCommand = (message.text() == null) ? "undefined" : message.text();
+
+        }
+        LOGGER.info("getUpdates: {}", update);
         return null;
     }
 
@@ -111,6 +130,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Long userId = user.id();
         String userName = user.firstName();
         System.out.println("btnCommand"+btnCommand);
+
+
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
