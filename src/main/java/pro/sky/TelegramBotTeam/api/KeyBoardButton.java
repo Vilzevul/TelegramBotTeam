@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class KeyBoardButton {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
 
     public final static String CONTACTS = "Оставить контакты";
@@ -34,10 +35,13 @@ public class KeyBoardButton {
     private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
     private final String DOGCONTACT = "Принять и записать контактные данные для связи";
     private final String DOGVOLONTER = "Связаться с волонтером";
-    private final String CATMAIN = "Приют для кошек";
+    public static final String CATMAIN = "Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
+    private final String CATTAKE = "Как взять кошку из приюта";
     private final String CATSEND = "Прислать отчет";
+    public final static String CATSEND_TXT = "Напишите текст отчета";
+    public final static String CATSEND_MSG = "Отправьте фото отчета";
     private final String START = "/start";
     private final String ESCAPE = "Отмена";
     private final String FORVARD = "Дальше";
@@ -92,6 +96,7 @@ public class KeyBoardButton {
         if (command.equals(CATMAIN)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData("CATABOUT"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATRULES).callbackData("CATRULES"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATTAKE).callbackData("CATTAKE"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData("CATSEND"));
         }
 
@@ -115,7 +120,17 @@ public class KeyBoardButton {
                             new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)});
         }
         if (command.equals(DOGSEND_TXT)) {
-            inlineKeyboard.addRow( new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN));
+            inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN));
+        }
+
+        if (command.equals(CATSEND_MSG)) {
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN),
+                            new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)});
+        }
+        if (command.equals(CATSEND_TXT)) {
+            inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN));
         }
 
         return inlineKeyboard;
@@ -129,7 +144,7 @@ public class KeyBoardButton {
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
     @Nullable
-    public String getState(String command,String status) {
+    public String getState(String command, String status) {
         if (command == null) {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
@@ -140,7 +155,6 @@ public class KeyBoardButton {
         }
 
         if (command.equals(CONTACTS)) {
-            System.out.println("Попали в контакты getState");
             return CONTACTS;
         }
 
@@ -209,6 +223,18 @@ public class KeyBoardButton {
         if (command.equals(DOGSEND_TXT)) {
             return DOGSEND_TXT;
         }
+        if (command.equals(CATSEND)) {
+            return CATSEND;
+        }
+        if (command.equals(CATSEND_MSG)) {
+            return CATSEND_MSG;
+        }
+        if (command.equals(CATSEND_TXT)) {
+            return CATSEND_TXT;
+        }
+        if (command.equals(CATTAKE)) {
+            return CATTAKE;
+        }
         return status;
     }
 
@@ -227,7 +253,6 @@ public class KeyBoardButton {
         }
 
         if (command.equals(CONTACTS)) {
-            System.out.println("Попали в контакты");
             return "Спасибо за предоставленные контакты. Будем на связи!";
         }
 
@@ -276,31 +301,45 @@ public class KeyBoardButton {
 
         if (command.equals("CATRULES")) {
             return "<b>" + CATRULES + "</b> \n " +
-                    "\nЗдесь будет список документов" + "\n" +
-                    "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
-                    "<i>" + "скачать - /file2_cat" + "</i>";
+                    "\nЗАПРЕЩАЕТСЯ:" + "\n" +
+                    " <i>" + "- Самостоятельно открывать клетки без разрешения работника приюта." + "</i>\n" +
+                    " <i>" + "- Кормить животных. Этим Вы можете спровоцировать драку. Угощения разрешены только постоянным опекунам и волонтерам, во время прогулок с животными на поводке" + "</i>\n" +
+                    " <i>" + "- Оставлять после себя мусор на территории приюта и прилегающей территории." + "</i>\n" +
+                    " <i>" + "- Кричать, размахивать руками, бегать между клетками или вольерами, пугать и дразнить животных." + "</i>\n" +
+                    " <i>" + "- Посещение приюта для детей дошкольного и младшего школьного возраста без сопровождения взрослых." + "</i>\n" +
+                    " <i>" + "- Нахождение на территории приюта детей среднего и старшего школьного возраста без  сопровождения взрослых или письменной справки-разрешения от родителей или законных представителей." + "</i>\n" +
+                    " <i>" + "- Посещение приюта в состоянии алкогольного, наркотического опьянения." + "</i>";
         }
         //Отправка отчета
         if (command.equals(DOGSEND_MSG)) {
             return "<b>" + DOGSEND_MSG + "</b>  ";
         }
         if (command.equals(DOGSEND_TXT)) {
-            return "<b>" + DOGSEND_TXT + "</b>  " ;
+            return "<b>" + DOGSEND_TXT + "</b>  ";
         }
 
-        if (command.equals("CATSEND")) {
-            return "<b>" + CATSEND + "</b> \n " +
-                    "<i>" + "\nОтчет должен содержать:" + "\n" +
-                    "\n- *Фото животного" +
-                    "\n- *Рацион животного" +
-                    "\n- *Общее самочувствие и привыкание к новому месту" +
-                    "\n- *Изменение в поведении: отказ от старых привычек, приобретение новых" + "</i>";
+        //Отправка отчета
+        if (command.equals(CATSEND_MSG)) {
+            return "<b>" + CATSEND_MSG + "</b>  ";
+        }
+        if (command.equals(CATSEND_TXT)) {
+            return "<b>" + CATSEND_TXT + "</b>  ";
+        }
+
+        if (command.equals("CATTAKE")) {
+            return "<b>" + CATTAKE + "</b> \n " +
+                    "Съездите посмотреть на кошек в приют. Расспросите сотрудников о животных, попросите подобрать вам питомца.\n" +
+                    "Купите всё, что нужно кошке: корм по рекомендации из приюта, лоток, наполнитель, миски, когтеточку, игрушки,\n" +
+                    " домик, переноску. \n" +
+                    "Выделите животному тихое место, где он сможет адаптироваться к новой обстановке.\n" +
+                    "Заберите животное. В первые дни не нужно его тормошить — дайте ему время на то, чтобы привыкнуть к дому.\n" +
+                    "Свозите кошку к ветеринару. В приютах обычно есть свои специалисты, но не лишним будет перестраховаться. ";
         }
 
         if (command.equals("DOGZN")) {
             return "<b>" + DOGZN + "</b> \n " +
-                   /* "<i>" + "\nПравила знакомства с собакой:" + "\n" + "</i>"+*/
-                    "\nСтарайтесь говорить как можно меньше, не мешайте собаке спокойно познакомиться с вами,"+
+                    /* "<i>" + "\nПравила знакомства с собакой:" + "\n" + "</i>"+*/
+                    "\nСтарайтесь говорить как можно меньше, не мешайте собаке спокойно познакомиться с вами," +
                     "вашими близкими и вашим домом. Походите за собакой молча, посмотрите, где она ляжет или сядет.";
         }
 
@@ -489,12 +528,12 @@ public class KeyBoardButton {
 
         if (command.equals("DOGRECOMMENDATION")) {
             return "<b>" + DOGRECOMMENDATION + "</b> \n " +
-                    "<i>" + "\nРекомендации по проверенным кинологам для дальнейшего обращения к ним:" + "\n" + "</i>"+
-                    "\nПервым делом необходимо вымыть собаку. Но делать это нужно с осторожностью. "+
-                    "Если с собакой еще не установился полноценный контакт и доверительные отношения,"+
-                    "купание может стать для нее сильным стрессом. При возможности чуть-чуть повремените с этой процедурой"+
+                    "<i>" + "\nРекомендации по проверенным кинологам для дальнейшего обращения к ним:" + "\n" + "</i>" +
+                    "\nПервым делом необходимо вымыть собаку. Но делать это нужно с осторожностью. " +
+                    "Если с собакой еще не установился полноценный контакт и доверительные отношения," +
+                    "купание может стать для нее сильным стрессом. При возможности чуть-чуть повремените с этой процедурой" +
                     "\nВ течение первых дней после того, как собака появилась в доме, с ней обязательно необходимо посетить" +
-                    "\nветеринарного врача и получить рекомендации по содержанию, уходу, кормлению, вакцинации и обработке питомца от паразитов"+
+                    "\nветеринарного врача и получить рекомендации по содержанию, уходу, кормлению, вакцинации и обработке питомца от паразитов" +
                     "\nГлавное правило первых дней пребывания собаки в доме — не надоедать и не давить на собаку";
         }
 
@@ -528,8 +567,8 @@ public class KeyBoardButton {
 
         if (command.equals("DOGCONTACT")) {
             return "<b>" + CONTACTS + "</b> \n " +
-            "Спасибо за предоставленные контакты. Будем на связи!";
-                   // "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
+                    "Спасибо за предоставленные контакты. Будем на связи!";
+            // "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
         }
 
         return command;

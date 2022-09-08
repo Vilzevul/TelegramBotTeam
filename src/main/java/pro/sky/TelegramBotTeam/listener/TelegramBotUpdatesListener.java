@@ -33,7 +33,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final UsersService usersService;
     private final TelegramBot telegramBot;
 
-
     String btnCommand = "undefined";
     String userContacts;
     Document document;
@@ -62,7 +61,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     @Nullable
     private User getUpdates(Update update) {
-     /*   if (update == null) {
+        if (update == null) {
             LOGGER.error("Update structure is null");
             throw new NullPointerException("Update structure is null");
         }
@@ -79,31 +78,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             if (message.contact() != null) {
                 btnCommand = KeyBoardButton.CONTACTS;
                 userContacts = message.contact().phoneNumber();
+                return message.from();
             }
             if (message.document() != null) {
                 btnCommand = btnCommand;
                 document = message.document();
-            } else {
-                btnCommand = (message.text() == null) ? "undefined" : message.text();
-            }
-            LOGGER.info("- getUpdates(message) - " + btnCommand);
-            return message.from();
-        }
-        return null;*/
-        Message message = update.message();
-        if (message != null) {
-            if (message.contact() != null) {
-                btnCommand = KeyBoardButton.CONTACTS;
-                userContacts = message.contact().phoneNumber();
                 return message.from();
             }
-
-            if (message.document() != null) {
-                btnCommand = btnCommand;
-                document = message.document();
+            if (message.text() != null) {
+                btnCommand = message.text();
                 return message.from();
-            }}
-        else {
+            }
+        } else {
             btnCommand = (message.text() == null) ? "undefined" : message.text();
 
         }
@@ -112,7 +98,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Функция обрабатывает сообщение от пользователя.
+     * Функция обрабатывает сообщение от пользователя и записывает в БД
      *
      * @param user пользователь.
      * @throws NullPointerException параметр <code>user</code> равен null.
@@ -129,21 +115,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         Long userId = user.id();
         String userName = user.firstName();
-        System.out.println("btnCommand"+btnCommand);
+        System.out.println("btnCommand" + btnCommand);
 
 
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
         LOGGER.info("begin makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
-        // Запись в БД
+
         Users users = new Users(userId, userName, btnStatus, 1);
         usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
             LOGGER.info("Пользователь прислал отчет");
-  //          Report report = new Report();
-   //         usersService.createUsersWithReportAll(report);
+            //          Report report = new Report();
+            //         usersService.createUsersWithReportAll(report);
         }
 
 // Блок отправки отчета
@@ -175,6 +161,46 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             message = "❗️Отчет принят\n";
         }
 //конец блока отправки отчета
+
+        if (btnCommand.equals("DOGSEND")) {
+            LOGGER.info("Пользователь прислал отчет");
+            //          Report report = new Report();
+            //         usersService.createUsersWithReportAll(report);
+        }
+
+// Блок отправки отчета
+        //пользователь отправляет фото
+        if (btnCommand.equals(keyBoardButton.CATSEND_MSG)) {
+            try {
+                if (document != null) { //если файл отправлен
+                    byte[] reportContent = getFile(document);
+                    if (reportContent != null) {  //если отправлена картинка
+                        // content сохраняем в БД
+                        btnCommand = KeyBoardButton.CATSEND_TXT; // перейти к отправке текста
+                        message = " Файл принят\n";
+                        message = message + keyBoardButton.getMessage(btnCommand);
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                    } else {
+                        btnCommand = KeyBoardButton.ERROR;
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+//пользователь отправляет текст
+        if (((btnStatus.equals(keyBoardButton.CATSEND_TXT)))
+                && (!btnCommand.equals(keyBoardButton.CATSEND_TXT))) {
+            String reportText = message;
+            // reportText сохраняем в БД
+            btnCommand = KeyBoardButton.CATMAIN;
+            message = "❗️Отчет принят\n";
+        }
+//конец блока отправки отчета
+
+        if (btnCommand.equals("CATSEND")) {
+            LOGGER.info("Пользователь прислал отчет");
+        }
 
         if (message.equals("/start")) {
             telegramBot.execute(new SendMessage(userId, userName + ", привет!")
@@ -252,10 +278,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         /**
          * И проверить что файл сохраняется
 
-        java.io.File dir = new java.io.File("c:/temp");
-        dir.mkdir();
-        java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
-        ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
+         java.io.File dir = new java.io.File("c:/temp");
+         dir.mkdir();
+         java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
+         ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
          */
 
         /**
