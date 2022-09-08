@@ -35,8 +35,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
 
     String btnCommand = "undefined";
-    String userContacts=null;
-    Document document=null;
+    String userContacts = null;
+    Document document = null;
     String btnStatus = "undefined";
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
@@ -63,10 +63,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Nullable
     private User getUpdates(Update update) {
 
-         userContacts=null;
-         document=null;
+        userContacts = null;
+        document = null;
 
-        if (update == null) {
         if (update == null) {
             LOGGER.error("Update structure is null");
             throw new NullPointerException("Update structure is null");
@@ -95,9 +94,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 btnCommand = message.text();
                 return message.from();
             }
-        }
-        else {
-            btnCommand =  "undefined" ;
+        } else {
+            btnCommand = "undefined";
 
         }
         LOGGER.info("getUpdates: {}", update);
@@ -105,7 +103,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Функция обрабатывает сообщение от пользователя и записывает в БД
+     * Функция обрабатывает сообщение от пользователя.
      *
      * @param user пользователь.
      * @throws NullPointerException параметр <code>user</code> равен null.
@@ -129,7 +127,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
         LOGGER.info("begin makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
-
 
         // Запись в БД
         Users users = new Users(userId, userName, btnStatus, 1);
@@ -249,10 +246,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         /**
          * И проверить что файл сохраняется
 
-         java.io.File dir = new java.io.File("c:/temp");
-         dir.mkdir();
-         java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
-         ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
+        java.io.File dir = new java.io.File("c:/temp");
+        dir.mkdir();
+        java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
+        ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
          */
 
         /**

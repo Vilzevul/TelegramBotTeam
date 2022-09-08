@@ -39,9 +39,9 @@ public class KeyBoardButton {
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
     private final String CATTAKE = "Как взять кошку из приюта";
-    private final String CATSEND = "Прислать отчет";
-    public final static String CATSEND_TXT = "Напишите текст отчета";
-    public final static String CATSEND_MSG = "Отправьте фото отчета";
+    private final String CATSEND = "Прислать отчет для кошек";
+    public final static String CATSEND_TXT = "Напишите текст отчета для кошек";
+    public final static String CATSEND_MSG = "Отправьте фото отчета для кошек";
     private final String START = "/start";
     private final String ESCAPE = "Отмена";
     private final String FORVARD = "Дальше";
