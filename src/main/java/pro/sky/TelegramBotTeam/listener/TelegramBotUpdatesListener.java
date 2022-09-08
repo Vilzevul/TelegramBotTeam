@@ -35,8 +35,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
 
     String btnCommand = "undefined";
-    String userContacts;
-    Document document;
+    String userContacts=null;
+    Document document=null;
     String btnStatus = "undefined";
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
@@ -62,7 +62,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     @Nullable
     private User getUpdates(Update update) {
-      if (update == null) {
+
+         userContacts=null;
+         document=null;
+
+        if (update == null) {
             LOGGER.error("Update structure is null");
             throw new NullPointerException("Update structure is null");
         }
@@ -117,21 +121,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         Long userId = user.id();
         String userName = user.firstName();
-        System.out.println("btnCommand"+btnCommand);
+        System.out.println("btnCommand" + btnCommand);
 
 
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
         LOGGER.info("begin makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
+
         // Запись в БД
         Users users = new Users(userId, userName, btnStatus, 1);
         usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
             LOGGER.info("Пользователь прислал отчет");
-  //          Report report = new Report();
-   //         usersService.createUsersWithReportAll(report);
+            //          Report report = new Report();
+            //         usersService.createUsersWithReportAll(report);
         }
 
 // Блок отправки отчета
@@ -140,15 +145,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             try {
                 if (document != null) { //если файл отправлен
                     byte[] reportContent = getFile(document);
-                    if (reportContent != null) {  //если отправлена картинка
-                        // content сохраняем в БД
-                        btnCommand = KeyBoardButton.DOGSEND_TXT; // перейти к отправке текста
-                        message = " Файл принят\n";
-                        message = message + keyBoardButton.getMessage(btnCommand);
-                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-                    } else {
-                        btnCommand = KeyBoardButton.ERROR;
-                    }
+
+                    // content сохраняем в БД
+                    btnCommand = KeyBoardButton.DOGSEND_TXT; // перейти к отправке текста
+
+                    if (reportContent != null)   //если отправлена картинка
+                        message = "❗️Файл принят\n";
+                    else message = "❌  Это не фото отчета \n";
+
+                    message = message + keyBoardButton.getMessage(btnCommand);
+                    btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -176,6 +182,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             );
         }
         LOGGER.info("end makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
+        LOGGER.info("end makeProcess - document: {} ", document);
 
     }
 
