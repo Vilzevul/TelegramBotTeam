@@ -23,7 +23,16 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.io.File;
+
+
+import static pro.sky.TelegramBotTeam.api.Code.getFile;
+import static pro.sky.TelegramBotTeam.api.Code.readFile;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
@@ -103,7 +112,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Функция обрабатывает сообщение от пользователя.
+     * обрабатывает сообщение от пользователя.
      *
      * @param user пользователь.
      * @throws NullPointerException параметр <code>user</code> равен null.
@@ -120,7 +129,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         Long userId = user.id();
         String userName = user.firstName();
-        System.out.println("btnCommand" + btnCommand);
 
 
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
@@ -143,7 +151,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (btnCommand.equals(keyBoardButton.DOGSEND_MSG)) {
             try {
                 if (document != null) { //если файл отправлен
-                    byte[] reportContent = getFile(document);
+                    byte[] reportContent = getFile(telegramBot, document);
 
                     // content сохраняем в БД
                     btnCommand = KeyBoardButton.DOGSEND_TXT; // перейти к отправке текста
@@ -199,80 +207,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    /**
-     * Принимает от пользователя фото отчета, обрабатывает и возвращает byte[] для
-     * последующей записи в БД в Report
-     *
-     * @param document
-     * @return
-     * @throws IOException
-     */
 
-    private byte[] getFile(Document document) throws IOException {
-/**
- * com.pengrad.telegrambot
- * оюработка входящего сообщения и получение фото в виде байт массива
- */
-        GetFile request = new GetFile(document.fileId());
-        GetFileResponse getFileResponse = telegramBot.execute(request);
-        File file = getFileResponse.file(); // com.pengrad.telegrambot.model.File
-        file.fileId();
-        byte[] fileContent = telegramBot.getFileContent(file);
-        /**
-         *поток вывода - byteArrayOutputStream -, использующий массив байтов в качестве места вывода
-         * и
-         * входной поток,- byteArrayInputStream - использующий в качестве источника данных массив байтов
-         * (присланный файл)
-         */
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileContent);
-/**
- *BufferedImage - класс который представляет изображение, которое хранится в памяти
- */
-        BufferedImage imgIn = ImageIO.read(byteArrayInputStream);
-        if (imgIn == null) return null;
-        /**
-         * преобразуем изображение в  формат меньшего размера
-         */
-        double height = imgIn.getHeight() / (imgIn.getWidth() / 100d);
-        BufferedImage imgOut = new BufferedImage(100, (int) height, imgIn.getType());
-        Graphics2D graphics = imgOut.createGraphics();
-        graphics.drawImage((Image) imgIn, 0, 0, 100, (int) height, null);
-        graphics.dispose();
-/**
- * После  обработки изображение, его сохраняем обратно в поток вывода (byteArrayOutputStream)
- */
-        ImageIO.write(imgOut, getExtension(document.fileName()), byteArrayOutputStream);
-        /**
-         * И проверить что файл сохраняется
 
-        java.io.File dir = new java.io.File("c:/temp");
-        dir.mkdir();
-        java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
-        ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
-         */
-
-        /**
-         * и преобразуем обратно в массив байтов
-         */
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    /**
-     * получаем расширение файла - fileName
-     * можно заменить этим
-     * org.apache.commons.io.FilenameUtils
-     * Maven: commons-io:commons-io:2.11.0 (commons-io-2.11.0.jar)
-     *
-     * @param fileName
-     * @return
-     */
-    private String getExtension(String fileName) {
-        String extension = "";
-        int i = fileName.lastIndexOf('.');
-        if (i > 0) {
-            extension = fileName.substring(i + 1);
-        }
-        return extension;
-    }
 }

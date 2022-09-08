@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import static pro.sky.TelegramBotTeam.api.Code.readFile;
 
 @Component
 public class KeyBoardButton {
@@ -20,7 +21,7 @@ public class KeyBoardButton {
     public final static String DOGSEND_MSG = "Отправьте фото отчета";
 
     private final String HELP = "Помощь";
-    private final String SERVICE = "Оставить сообщение";
+    public final String SERVICE = "Оставить сообщение";
     public final static String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
@@ -88,7 +89,7 @@ public class KeyBoardButton {
 
         if (command.equals(DOGMAIN)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData("DOGRULES"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData(DOGRULES));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND_MSG));
         }
@@ -285,8 +286,8 @@ public class KeyBoardButton {
                     "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
                     "<i>" + "скачать - /file2_cat" + "</i>";
         }
-
-        if (command.equals("DOGRULES")) {
+/*
+        if (command.equals(DOGRULES)) {
             return "<b>" + DOGRULES + "</b> \n " +
                     "\nЗАПРЕЩАЕТСЯ:" + "\n" +
                     " <i>" + "- Самостоятельно открывать выгулы и вольеры без разрешения работника приюта." + "</i>\n" +
@@ -298,6 +299,12 @@ public class KeyBoardButton {
                     " <i>" + "- Нахождение на территории приюта детей среднего и старшего школьного возраста без  сопровождения взрослых или письменной справки-разрешения от родителей или законных представителей." + "</i>\n" +
                     " <i>" + "- Посещение приюта в состоянии алкогольного, наркотического опьянения." + "</i>";
         }
+ */
+        if (command.equals(DOGRULES)) {
+            return "<b>" + DOGRULES + "</b> \n " + readFile("documents/DOGRULES.txt");
+        }
+
+
 
         if (command.equals("CATRULES")) {
             return "<b>" + CATRULES + "</b> \n " +
