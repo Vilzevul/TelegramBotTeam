@@ -4,35 +4,20 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
-import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.io.File;
 
-
-import static pro.sky.TelegramBotTeam.api.Code.getFile;
-import static pro.sky.TelegramBotTeam.api.Code.readFile;
+import static pro.sky.TelegramBotTeam.api.Code.*;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
@@ -42,11 +27,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final UsersService usersService;
     private final TelegramBot telegramBot;
 
-
-    String btnCommand = "undefined";
     String userContacts = null;
-    Document document = null;
+    Document userDocument = null;
+    PhotoSize userPhoto = null;
     String btnStatus = "undefined";
+    String btnCommand = "undefined";
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
@@ -54,7 +39,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         this.telegramBot = telegramBot;
         this.keyBoardButton = keyBoardButton;
         this.usersService = usersService;
-
     }
 
     @PostConstruct
@@ -63,7 +47,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Функция возвращает пользователя, который прислал сообщение/нажал на кнопку.
+     * Возвращает пользователя, который прислал сообщение/нажал на кнопку.
      *
      * @param update обновления в чате телеграмм-бота.
      * @return пользователь, инициирующий обновление. Может быть null.
@@ -71,9 +55,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     @Nullable
     private User getUpdates(Update update) {
-
         userContacts = null;
-        document = null;
+        userDocument = null;
+        userPhoto = null;
 
         if (update == null) {
             LOGGER.error("Update structure is null");
@@ -94,25 +78,33 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 userContacts = message.contact().phoneNumber();
                 return message.from();
             }
+
             if (message.document() != null) {
                 btnCommand = btnCommand;
-                document = message.document();
+                userDocument = message.document();
                 return message.from();
             }
+
+            if (message.photo() != null) {
+                btnCommand = btnCommand;
+                userPhoto = message.photo()[message.photo().length - 1];
+                return message.from();
+            }
+
             if (message.text() != null) {
                 btnCommand = message.text();
                 return message.from();
             }
         } else {
             btnCommand = "undefined";
-
         }
+
         LOGGER.info("getUpdates: {}", update);
         return null;
     }
 
     /**
-     * обрабатывает сообщение от пользователя.
+     * Обрабатывает сообщение от пользователя.
      *
      * @param user пользователь.
      * @throws NullPointerException параметр <code>user</code> равен null.
@@ -127,55 +119,49 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         String btnMessage = keyBoardButton.getMessage(btnCommand);
         String message = (btnMessage != null) ? btnMessage : btnCommand;
 
+        LOGGER.info("begin makeProcess - команда: {} статус: {} текст: {}", btnCommand, btnStatus, message);
+
         Long userId = user.id();
         String userName = user.firstName();
-
 
         if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
             LOGGER.info("Пользователь прислал контакты: {}", userContacts);
         }
-        LOGGER.info("begin makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
-
-        // Запись в БД
-        Users users = new Users(userId, userName, btnStatus, 1);
-        usersService.createUsersAll(users);
 
         if (btnCommand.equals("DOGSEND")) {
             LOGGER.info("Пользователь прислал отчет");
-            //          Report report = new Report();
-            //         usersService.createUsersWithReportAll(report);
         }
 
-// Блок отправки отчета
-        //пользователь отправляет фото
-        if (btnCommand.equals(keyBoardButton.DOGSEND_MSG)) {
+        //Запись в БД
+        Users users = new Users(userId, userName, btnStatus, 1);
+        usersService.createUsersAll(users);
+
+        //Блок отправки отчета
+        //Пользователь отправляет фото
+        if (btnCommand.equals(KeyBoardButton.DOGSEND_MSG)) {
             try {
-                if (document != null) { //если файл отправлен
-                    byte[] reportContent = getFile(telegramBot, document);
-
-                    // content сохраняем в БД
-                    btnCommand = KeyBoardButton.DOGSEND_TXT; // перейти к отправке текста
-
-                    if (reportContent != null)   //если отправлена картинка
-                        message = "❗️Файл принят\n";
-                    else message = "❌  Это не фото отчета \n";
-
-                    message = message + keyBoardButton.getMessage(btnCommand);
+                if ((userDocument != null) || (userPhoto  != null)) {
+                    byte[] reportContent = (userDocument != null) ?
+                            getDocumentContent(telegramBot, userDocument) :
+                            getPhotoContent(telegramBot, userPhoto);
+                    //reportContent сохраняем в БД
+                    btnCommand = KeyBoardButton.DOGSEND_TXT;
                     btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                    message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
+                    message += keyBoardButton.getMessage(btnCommand);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-//пользователь отправляет текст
-        if (((btnStatus.equals(keyBoardButton.DOGSEND_TXT)))
-                && (!btnCommand.equals(keyBoardButton.DOGSEND_TXT))) {
+        //Пользователь отправляет текст
+        if (btnStatus.equals(KeyBoardButton.DOGSEND_TXT) && !btnCommand.equals(KeyBoardButton.DOGSEND_TXT)) {
             String reportText = message;
-            // reportText сохраняем в БД
+            //reportText сохраняем в БД
             btnCommand = KeyBoardButton.DOGMAIN;
             message = "❗️Отчет принят\n";
         }
-//конец блока отправки отчета
+        //Конец блока отправки отчета
 
         if (message.equals("/start")) {
             telegramBot.execute(new SendMessage(userId, userName + ", привет!")
@@ -188,9 +174,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     .parseMode(ParseMode.HTML)
             );
         }
-        LOGGER.info("end makeProcess - Команда: {}  Статус {} текст {}", btnCommand, btnStatus, message);
-        LOGGER.info("end makeProcess - document: {} ", document);
 
+        LOGGER.info("end makeProcess - команда: {} статус: {} текст: {}", btnCommand, btnStatus, message);
+        LOGGER.info("end makeProcess - document: {} ", userDocument);
     }
 
     @Override
@@ -206,7 +192,4 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
-
-
-
 }

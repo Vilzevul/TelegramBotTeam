@@ -3,6 +3,7 @@ package pro.sky.TelegramBotTeam.api;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Document;
 import com.pengrad.telegrambot.model.File;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.response.GetFileResponse;
 
@@ -17,76 +18,88 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Code {
-
-
-    /**
-     * Принимает от пользователя фото отчета, обрабатывает и возвращает byte[] для
-     * последующей записи в БД в Report
-     *
-     * @param document
-     * @return
-     * @throws IOException
-     */
-
-    public static byte[] getFile(TelegramBot telegramBot,Document document) throws IOException {
 /**
- * com.pengrad.telegrambot
- * оюработка входящего сообщения и получение фото в виде байт массива
+ * Вспомогательный класс для работы с файлами.
  */
+public class Code {
+    /**
+     * Принимает, обрабатывает и возвращает содержимое документа в виде массива байт.
+     *
+     * @param document документ пользователя.
+     * @return данные документа в виде массива байт.
+     */
+    public static byte[] getDocumentContent(TelegramBot telegramBot, Document document) throws IOException {
         GetFile request = new GetFile(document.fileId());
         GetFileResponse getFileResponse = telegramBot.execute(request);
-        File file = getFileResponse.file(); // com.pengrad.telegrambot.model.File
-        file.fileId();
+        File file = getFileResponse.file();
         byte[] fileContent = telegramBot.getFileContent(file);
-        /**
-         *поток вывода - byteArrayOutputStream -, использующий массив байтов в качестве места вывода
-         * и
-         * входной поток,- byteArrayInputStream - использующий в качестве источника данных массив байтов
-         * (присланный файл)
-         */
+
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileContent);
-/**
- *BufferedImage - класс который представляет изображение, которое хранится в памяти
- */
         BufferedImage imgIn = ImageIO.read(byteArrayInputStream);
         if (imgIn == null) return null;
-        /**
-         * преобразуем изображение в  формат меньшего размера
-         */
+
+        //Преобразовать изображение в  формат меньшего размера
         double height = imgIn.getHeight() / (imgIn.getWidth() / 100d);
         BufferedImage imgOut = new BufferedImage(100, (int) height, imgIn.getType());
         Graphics2D graphics = imgOut.createGraphics();
         graphics.drawImage((Image) imgIn, 0, 0, 100, (int) height, null);
         graphics.dispose();
-/**
- * После  обработки изображение, его сохраняем обратно в поток вывода (byteArrayOutputStream)
- */
+
         ImageIO.write(imgOut, getExtension(document.fileName()), byteArrayOutputStream);
-        /**
-         * И проверить что файл сохраняется
-         */
-         java.io.File dir = new java.io.File("c:/temp");
-         dir.mkdir();
-         java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
-         ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
 
+        //Проверить, что файл сохраняется
+        java.io.File dir = new java.io.File("c:/temp");
+        dir.mkdir();
+        java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(document.fileName()));
+        ImageIO.write(imgOut, getExtension(document.fileName()), fileOut);
 
-        /**
-         * и преобразуем обратно в массив байтов
-         */
         return byteArrayOutputStream.toByteArray();
     }
 
     /**
-     * получаем расширение файла - fileName
-     * можно заменить этим
+     * Принимает, обрабатывает и возвращает содержимое фото в виде массива байт.
+     *
+     * @param photo фото пользователя.
+     * @return данные фото в виде массива байт.
+     */
+    public static byte[] getPhotoContent(TelegramBot telegramBot, PhotoSize photo) throws IOException {
+        GetFile request = new GetFile(photo.fileId());
+        GetFileResponse getFileResponse = telegramBot.execute(request);
+        File file = getFileResponse.file();
+        byte[] fileContent = telegramBot.getFileContent(file);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileContent);
+        BufferedImage imgIn = ImageIO.read(byteArrayInputStream);
+        if (imgIn == null) return null;
+
+        //Преобразовать изображение в  формат меньшего размера
+        double height = imgIn.getHeight() / (imgIn.getWidth() / 100d);
+        BufferedImage imgOut = new BufferedImage(100, (int) height, imgIn.getType());
+        Graphics2D graphics = imgOut.createGraphics();
+        graphics.drawImage((Image) imgIn, 0, 0, 100, (int) height, null);
+        graphics.dispose();
+
+        ImageIO.write(imgOut, getExtension(file.filePath()), byteArrayOutputStream);
+
+        //Проверить, что файл сохраняется
+        java.io.File dir = new java.io.File("c:/temp");
+        dir.mkdir();
+        java.io.File fileOut = new java.io.File("c:/temp", "test." + getExtension(file.filePath()));
+        ImageIO.write(imgOut, getExtension(file.filePath()), fileOut);
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * Возвращает расширение файла.
+     * Можно заменить этим:
      * org.apache.commons.io.FilenameUtils
      * Maven: commons-io:commons-io:2.11.0 (commons-io-2.11.0.jar)
      *
-     * @param fileName
-     * @return
+     * @param fileName имя файла.
+     * @return расширение файла.
      */
     private static String getExtension(String fileName) {
         String extension = "";
@@ -98,19 +111,19 @@ public class Code {
     }
 
     /**
-     * считывает текстовый файл в строку
-     * @param file
-     * @return
+     * Преобразует текстовый файл в строку
+     *
+     * @param file файл.
+     * @return содержимое файла в виде строки.
      */
     public static String readFile(String file) {
-
         Path path = Paths.get(file);
         if (Files.exists(path)) {
             String contents = null;
             try {
                 contents = Files.readString(path, StandardCharsets.UTF_8);
             } catch (IOException ex) {
-                // Handle exception
+                //Handle exception
             }
             return contents;
         }

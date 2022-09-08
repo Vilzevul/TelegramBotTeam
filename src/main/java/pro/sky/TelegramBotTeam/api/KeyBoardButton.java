@@ -9,7 +9,6 @@ import static pro.sky.TelegramBotTeam.api.Code.readFile;
 
 @Component
 public class KeyBoardButton {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
 
     public final static String CONTACTS = "Оставить контакты";
@@ -118,8 +117,10 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(
                     new InlineKeyboardButton[]{
                             new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN),
-                            new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)});
+                            new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)
+                    });
         }
+
         if (command.equals(DOGSEND_TXT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN));
         }
@@ -128,8 +129,10 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(
                     new InlineKeyboardButton[]{
                             new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN),
-                            new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)});
+                            new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)
+                    });
         }
+
         if (command.equals(CATSEND_TXT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN));
         }
@@ -141,7 +144,8 @@ public class KeyBoardButton {
      * Функция возвращает имя нажатой кнопки соответствующей команде пользователя.
      *
      * @param command команда пользователя.
-     * @return имя кнопки. Может быть null.
+     * @param status результат, который возвращается в случае отсутствия совпадений.
+     * @return имя кнопки.
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
     @Nullable
@@ -150,9 +154,10 @@ public class KeyBoardButton {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
         }
+
         if (status == null) {
-            LOGGER.error("status is null");
-            throw new NullPointerException("status is null");
+            LOGGER.error("Status is null");
+            throw new NullPointerException("Status is null");
         }
 
         if (command.equals(CONTACTS)) {
@@ -212,30 +217,37 @@ public class KeyBoardButton {
         }
 
         if (command.equals(DOGCONTACT)) {
-            //return DOGCONTACT;
             return CONTACTS;
         }
+
         if (command.equals(DOGSEND)) {
             return DOGSEND;
         }
+
         if (command.equals(DOGSEND_MSG)) {
             return DOGSEND_MSG;
         }
+
         if (command.equals(DOGSEND_TXT)) {
             return DOGSEND_TXT;
         }
+
         if (command.equals(CATSEND)) {
             return CATSEND;
         }
+
         if (command.equals(CATSEND_MSG)) {
             return CATSEND_MSG;
         }
+
         if (command.equals(CATSEND_TXT)) {
             return CATSEND_TXT;
         }
+
         if (command.equals(CATTAKE)) {
             return CATTAKE;
         }
+
         return status;
     }
 
@@ -286,25 +298,10 @@ public class KeyBoardButton {
                     "<i>" + "скачать - /file1_cat" + "</i>" + "\n" +
                     "<i>" + "скачать - /file2_cat" + "</i>";
         }
-/*
-        if (command.equals(DOGRULES)) {
-            return "<b>" + DOGRULES + "</b> \n " +
-                    "\nЗАПРЕЩАЕТСЯ:" + "\n" +
-                    " <i>" + "- Самостоятельно открывать выгулы и вольеры без разрешения работника приюта." + "</i>\n" +
-                    " <i>" + "- Кормить животных. Этим Вы можете спровоцировать драку. Угощения разрешены только постоянным опекунам и волонтерам, во время прогулок с животными на поводке" + "</i>\n" +
-                    " <i>" + "- Оставлять после себя мусор на территории приюта и прилегающей территории." + "</i>\n" +
-                    " <i>" + "- Подходить близко к вольерам и гладить собак через сетку на выгулах. Животные могут быть агрессивны!" + "</i>\n" +
-                    " <i>" + "- Кричать, размахивать руками, бегать между будками или вольерами, пугать и дразнить животных." + "</i>\n" +
-                    " <i>" + "- Посещение приюта для детей дошкольного и младшего школьного возраста без сопровождения взрослых." + "</i>\n" +
-                    " <i>" + "- Нахождение на территории приюта детей среднего и старшего школьного возраста без  сопровождения взрослых или письменной справки-разрешения от родителей или законных представителей." + "</i>\n" +
-                    " <i>" + "- Посещение приюта в состоянии алкогольного, наркотического опьянения." + "</i>";
-        }
- */
+
         if (command.equals(DOGRULES)) {
             return "<b>" + DOGRULES + "</b> \n " + readFile("documents/DOGRULES.txt");
         }
-
-
 
         if (command.equals("CATRULES")) {
             return "<b>" + CATRULES + "</b> \n " +
@@ -317,18 +314,19 @@ public class KeyBoardButton {
                     " <i>" + "- Нахождение на территории приюта детей среднего и старшего школьного возраста без  сопровождения взрослых или письменной справки-разрешения от родителей или законных представителей." + "</i>\n" +
                     " <i>" + "- Посещение приюта в состоянии алкогольного, наркотического опьянения." + "</i>";
         }
-        //Отправка отчета
+
         if (command.equals(DOGSEND_MSG)) {
             return "<b>" + DOGSEND_MSG + "</b>  ";
         }
+
         if (command.equals(DOGSEND_TXT)) {
             return "<b>" + DOGSEND_TXT + "</b>  ";
         }
 
-        //Отправка отчета
         if (command.equals(CATSEND_MSG)) {
             return "<b>" + CATSEND_MSG + "</b>  ";
         }
+
         if (command.equals(CATSEND_TXT)) {
             return "<b>" + CATSEND_TXT + "</b>  ";
         }
