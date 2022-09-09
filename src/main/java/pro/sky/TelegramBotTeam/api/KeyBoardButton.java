@@ -15,6 +15,7 @@ public class KeyBoardButton {
     public final static String CONTACTS = "Оставить контакты";
     public final static String DOCUMENT = "DOCUMENT";
     public final static String ERROR = "ERROR";
+    public final static String BACK = "Назад";
 
     public final static String DOGSEND = "Прислать отчет";
     public final static String DOGSEND_TXT = "Напишите текст отчета";
@@ -67,7 +68,10 @@ public class KeyBoardButton {
      * @return созданный объект клавиатуры.
      */
     public Keyboard getMainKeyboardMarkup() {
-        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(new String[]{DOGMAIN, CATMAIN}, new String[]{SERVICE, HELP}).oneTimeKeyboard(false)     // optional
+        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(
+                new String[]{DOGMAIN, CATMAIN},
+                new String[]{SERVICE, HELP})
+                .oneTimeKeyboard(false)     // optional
                 .resizeKeyboard(true)       // optional
                 .selective(true);           // optional
 
@@ -92,7 +96,7 @@ public class KeyBoardButton {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
 
         if (command.equals(DOGMAIN)) {
-            inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData(DOGABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData(DOGRULES));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND_MSG));
@@ -132,7 +136,11 @@ public class KeyBoardButton {
         }
 
         if (command.equals(DOGSEND_MSG)) {
-            inlineKeyboard.addRow(new InlineKeyboardButton[]{new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN), new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN),
+                            new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)
+                    });
         }
 
         if (command.equals(DOGSEND_TXT)) {
@@ -140,15 +148,42 @@ public class KeyBoardButton {
         }
 
         if (command.equals(CATSEND_MSG)) {
-            inlineKeyboard.addRow(new InlineKeyboardButton[]{new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN), new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)});
+            inlineKeyboard.addRow(
+                    new InlineKeyboardButton[]{
+                            new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN),
+                            new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)
+                    });
         }
 
         if (command.equals(CATSEND_TXT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN));
         }
+//Конец - Кнопки отправки отчета
 
+//Кнопка "Назад"
+        switch (command) {
+            case "DOGZN":
+            case "DOGDOCUMENTS":
+            case "DOGHOMEPUPPY":
+            case "DOGHOMEDOG":
+            case "DOGHOMEDOGLIMITED":
+            case "DOGADVICECYNOLOGIST":
+            case "DOGRECOMMENDATION":
+            case "DOGREFUSAL":
+            case "DOGCONTACT":
+            case "DOGVOLONTER":
+                inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
+        }
+        switch (command) {
+            case DOGRULES:
+            case DOGTAKE:
+            case DOGABOUT:
+                inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGMAIN));
+        }
         return inlineKeyboard;
     }
+//конец - Кнопка "Назад"
+
 
     /**
      * Функция возвращает имя нажатой кнопки соответствующей команде пользователя.
@@ -229,6 +264,10 @@ public class KeyBoardButton {
             return DOGREFUSAL;
         }
 
+        if (command.equals(DOGCONTACT)) {
+            return CONTACTS;
+        }
+
         if (command.equals(DOGSEND)) {
             return DOGSEND;
         }
@@ -303,11 +342,15 @@ public class KeyBoardButton {
         }
 
         if (command.equals(HELP)) {
-            return "<b>" + HELP + "</b> \n " + "\n/start - старт бота" + "\n" + "\n/list - список животных" + "\n" + "\n/... - и т.д. ";
+            return "<b>" + HELP + "</b> \n " +
+                    "\n/start - старт бота" + "\n" +
+                    "\n/list - список животных" + "\n" +
+                    "\n/... - и т.д. ";
         }
 
         if (command.equals(SERVICE)) {
-            return "<b>" + SERVICE + "</b> \n " + "\nОставьте сообщение для работников приюта" + "\n";
+            return "<b>" + SERVICE + "</b> \n " +
+                    "\nОставьте сообщение для работников приюта" + "\n";
         }
 
         if (command.equals("DOGABOUT")) {
@@ -391,6 +434,7 @@ public class KeyBoardButton {
             return "<b>" + CONTACTS + "</b> \n " + "Спасибо за предоставленные контакты. Будем на связи!";
             // "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
         }
+
         return command;
     }
 }
