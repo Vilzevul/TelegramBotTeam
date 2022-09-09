@@ -12,18 +12,16 @@ import org.springframework.stereotype.Service;
 @Configuration
 
 public class TelegramBotConfiguration {
-    private Logger logger = LoggerFactory.getLogger(TelegramBotConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TelegramBotConfiguration.class);
 
     @Value("${telegram.bot.token}")
     private String token;
 
     @Bean
-
-       public TelegramBot telegramBot() {
-        logger.info("- Processing telegramBot() - 1");
+    public TelegramBot telegramBot() {
+        LOGGER.info("- Processing telegramBot() - 1");
         TelegramBot bot = new TelegramBot(token);
         bot.execute(new DeleteMyCommands());
         return bot;
     }
-
 }
