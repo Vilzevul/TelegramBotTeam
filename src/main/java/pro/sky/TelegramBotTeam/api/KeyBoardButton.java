@@ -15,6 +15,7 @@ public class KeyBoardButton {
     public final static String CONTACTS = "Оставить контакты";
     public final static String DOCUMENT = "DOCUMENT";
     public final static String ERROR = "ERROR";
+    public final static String BACK = "Назад";
 
     public final static String DOGSEND = "Прислать отчет";
     public final static String DOGSEND_TXT = "Напишите текст отчета";
@@ -88,7 +89,7 @@ public class KeyBoardButton {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
 
         if (command.equals(DOGMAIN)) {
-            inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData("DOGABOUT"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData(DOGABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData(DOGRULES));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND_MSG));
@@ -114,6 +115,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGVOLONTER).callbackData("DOGVOLONTER"));
         }
 
+//Кнопки отправки отчета
         if (command.equals(DOGSEND_MSG)) {
             inlineKeyboard.addRow(
                     new InlineKeyboardButton[]{
@@ -133,13 +135,35 @@ public class KeyBoardButton {
                             new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)
                     });
         }
-
         if (command.equals(CATSEND_TXT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN));
         }
+//Конец - Кнопки отправки отчета
 
+//Кнопка "Назад"
+        switch (command) {
+            case "DOGZN":
+            case "DOGDOCUMENTS":
+            case "DOGHOMEPUPPY":
+            case "DOGHOMEDOG":
+            case "DOGHOMEDOGLIMITED":
+            case "DOGADVICECYNOLOGIST":
+            case "DOGRECOMMENDATION":
+            case "DOGREFUSAL":
+            case "DOGCONTACT":
+            case "DOGVOLONTER":
+                inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
+        }
+        switch (command) {
+            case DOGRULES:
+            case DOGTAKE:
+            case DOGABOUT:
+                inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGMAIN));
+        }
         return inlineKeyboard;
     }
+//конец - Кнопка "Назад"
+
 
     /**
      * Функция возвращает имя нажатой кнопки соответствующей команде пользователя.
@@ -282,7 +306,7 @@ public class KeyBoardButton {
                     "\nОставьте сообщение для работников приюта" + "\n";
         }
 
-        if (command.equals("DOGABOUT")) {
+        if (command.equals(DOGABOUT)) {
             return "<b>" + DOGABOUT + "</b> \n " +
                     "Приют находится по адресу ..." +
                     "Время работы с 7-00   до  19-00" +
