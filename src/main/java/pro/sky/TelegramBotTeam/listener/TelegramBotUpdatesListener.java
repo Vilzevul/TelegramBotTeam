@@ -142,8 +142,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             try {
                 if ((userDocument != null) || (userPhoto  != null)) {
                     byte[] reportContent = (userDocument != null) ?
-                            getDocumentContent(telegramBot, userDocument) :
-                            getPhotoContent(telegramBot, userPhoto);
+                            getFileContent(telegramBot, userDocument.fileId()) :
+                            getFileContent(telegramBot, userPhoto.fileId());
                     //reportContent сохраняем в БД
                     btnCommand = KeyBoardButton.DOGSEND_TXT;
                     btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
