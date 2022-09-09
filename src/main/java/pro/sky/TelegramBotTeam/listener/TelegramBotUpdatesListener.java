@@ -28,8 +28,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final TelegramBot telegramBot;
 
     String userContacts = null;
-    Document userDocument = null;
-    PhotoSize userPhoto = null;
+    String userFileId = null;
     String btnStatus = "undefined";
     String btnCommand = "undefined";
 
@@ -56,8 +55,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Nullable
     private User getUpdates(Update update) {
         userContacts = null;
-        userDocument = null;
-        userPhoto = null;
+        userFileId = null;
 
         if (update == null) {
             LOGGER.error("Update structure is null");
@@ -81,13 +79,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             if (message.document() != null) {
                 btnCommand = btnCommand;
-                userDocument = message.document();
+                userFileId = message.document().fileId();
                 return message.from();
             }
 
             if (message.photo() != null) {
                 btnCommand = btnCommand;
-                userPhoto = message.photo()[message.photo().length - 1];
+                userFileId = message.photo()[message.photo().length - 1].fileId();
                 return message.from();
             }
 
@@ -140,10 +138,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         //Пользователь отправляет фото
         if (btnCommand.equals(KeyBoardButton.DOGSEND_MSG)) {
             try {
-                if ((userDocument != null) || (userPhoto  != null)) {
-                    byte[] reportContent = (userDocument != null) ?
-                            getFileContent(telegramBot, userDocument.fileId()) :
-                            getFileContent(telegramBot, userPhoto.fileId());
+                if (userFileId != null) {
+                    byte[] reportContent = getFileContent(telegramBot, userFileId);
                     //reportContent сохраняем в БД
                     btnCommand = KeyBoardButton.DOGSEND_TXT;
                     btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
@@ -176,7 +172,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
 
         LOGGER.info("end makeProcess - команда: {} статус: {} текст: {}", btnCommand, btnStatus, message);
-        LOGGER.info("end makeProcess - document: {} ", userDocument);
+        LOGGER.info("end makeProcess - file id: {} ", userFileId);
     }
 
     @Override
