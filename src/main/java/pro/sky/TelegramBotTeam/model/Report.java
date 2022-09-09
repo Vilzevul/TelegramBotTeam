@@ -3,6 +3,7 @@ package pro.sky.TelegramBotTeam.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 /**
@@ -12,31 +13,19 @@ import java.util.Collection;
 @Entity
 @Table(name = "report")
 public class Report {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "idpets")
-    private Long idpets;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "report_id")
     private Users users;
 
-    @Column(name = "idusers")
-    private Long idusers;
+    @Column(name = "report_image")
+    private byte[] report_image;
 
-    @Column(name = "foto")
-    private byte[] foto;
-    @Column(name = "diet")
-    private String diet;
+    private LocalDateTime report_date;
+    private String report_message;
 
-    @Column(name = "wellbeing")
-    private String wellbeing;
-
-    @Column(name = "behavior")
-    private String behavior;
     public Long getId() {
         return this.id;
     }
@@ -45,51 +34,28 @@ public class Report {
         this.id = id;
     }
 
-    public Long getIdpets() {
-        return this.idpets;
+    public byte[] getReport_image() {
+        return report_image;
     }
 
-    public void setIdpets(Long idpets) {
-        this.idpets = idpets;
+    public void setReport_image(byte[] report_image) {
+        this.report_image = report_image;
     }
 
-    public Long getIdusers() {
-        return this.idusers;
+    public LocalDateTime getReport_date() {
+        return report_date;
     }
 
-    public void setIdusers(Long idusers) {
-        this.idusers = idusers;
+    public void setReport_date(LocalDateTime report_date) {
+        this.report_date = report_date;
     }
 
-    public byte[] getFoto() {
-        return foto;
+    public String getReport_message() {
+        return report_message;
     }
 
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
+    public void setReport_message(String report_message) {
+        this.report_message = report_message;
     }
 
-    public String getDiet() {
-        return this.diet;
-    }
-
-    public void setDiet(String diet) {
-        this.diet = diet;
-    }
-
-    public String getWellbeing() {
-        return this.wellbeing;
-    }
-
-    public void setWellbeing(String wellbeing) {
-        this.wellbeing = wellbeing;
-    }
-
-    public String getBehavior() {
-        return this.behavior;
-    }
-
-    public void setBehavior(String behavior) {
-        this.behavior = behavior;
-    }
 }

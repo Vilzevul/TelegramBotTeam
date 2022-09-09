@@ -47,8 +47,6 @@ class TelegramBotUpdatesListenerTest {
     @Autowired
     private TestRestTemplate restTemplate;//тестовый шаблон запросов
 
-    private final String START = "/start";
-
     @Test
     void telegramBotUpdatesListenerLoads() throws Exception {//проверяем проинициализировался ли наш класс
         Assertions.assertThat(telegramBotUpdatesListener).isNotNull();
@@ -62,7 +60,7 @@ class TelegramBotUpdatesListenerTest {
 
     @Test
     void makeProcess() {
-        Users users = new Users(1L, "L", START, 1);
+        Users users = new Users(1L, "L", 0, 1);
         Assertions.assertThat(users).isNotNull();
         when(usersRepository.save(any(Users.class))).thenReturn(users);
     }

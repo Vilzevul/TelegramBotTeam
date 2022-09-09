@@ -13,34 +13,22 @@ import java.util.Objects;
 @Table(name = "users")
 public class Users {
     @Id
-    @GeneratedValue
-    private Long id;
-    private String nameuser;
     private Long idchat;
-    private String menu;
+    private String nameuser;
+    private int phone;
     private int role;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "users")
-    private Collection<Report> report;
+    @OneToOne(mappedBy = "users")//один отчет на 1-го пользователя
+    private Report report;
 
-    public Users(Long idchat, String nameuser, String menu, int role) {
+    public Users(Long idchat, String nameuser, int phone, int role) {
         this.idchat = idchat;
         this.nameuser = nameuser;
-        this.menu = menu;
+        this.phone = phone;
         this.role = role;
     }
 
     public Users() {
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getIdchat() {
@@ -59,12 +47,12 @@ public class Users {
         this.nameuser = nameuser;
     }
 
-    public String getmenu() {
-        return menu;
+    public int getPhone() {
+        return phone;
     }
 
-    public void setmenu(String menu) {
-        this.menu = menu;
+    public void setPhone(int phone) {
+        this.phone = phone;
     }
 
     public int getRole() {
@@ -77,10 +65,9 @@ public class Users {
 
     public String toString() {
         return "Users{" +
-                "id=" + id +
                 ", idchat='" + idchat + '\'' +
                 ", nameuser='" + nameuser + '\'' +
-                ", menu='" + menu + '\'' +
+                ", phone ='" + phone + '\'' +
                 ", role=" + role +
                 '}';
     }
@@ -90,12 +77,12 @@ public class Users {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Users task = (Users) o;
-        return idchat == task.idchat && id.equals(task.id) && nameuser.equals(task.nameuser);
+        return idchat == task.idchat && nameuser.equals(task.nameuser) && phone == task.phone && role == task.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, idchat, nameuser, menu, role);
+        return Objects.hash(idchat, nameuser, phone, role);
     }
 
 }
