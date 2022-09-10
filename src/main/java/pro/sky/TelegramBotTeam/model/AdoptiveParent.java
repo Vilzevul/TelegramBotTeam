@@ -1,3 +1,4 @@
+/*
 package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
@@ -9,14 +10,12 @@ public class AdoptiveParent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    Long id_user;
-
-    Long id_volunteer;
+    private Long id_volunteer;
 
     @OneToOne
     @JoinColumns({
-            @JoinColumn(name="adoptiveParent_id_user", referencedColumnName="idchat"),
-            @JoinColumn(name="adoptiveParent_id_volunteer", referencedColumnName="idchat")
+            @JoinColumn(name="id_user", referencedColumnName="idchat"),
+            @JoinColumn(name="id_volunteer", referencedColumnName="idchat")
     })
     private Users users;
 
@@ -24,20 +23,15 @@ public class AdoptiveParent {
     int end_date;
     int status;
 
+    public AdoptiveParent() {
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getId_user() {
-        return id_user;
-    }
-
-    public void setId_user(Long id_user) {
-        this.id_user = id_user;
     }
 
     public Long getId_volunteer() {
@@ -73,3 +67,4 @@ public class AdoptiveParent {
     }
 
 }
+*/

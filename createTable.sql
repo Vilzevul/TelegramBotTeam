@@ -22,8 +22,8 @@ CREATE TABLE report
 CREATE TABLE adoptiveParent
 (
     id           integer PRIMARY KEY,
-    idUser       users_idChat integer REFERENCES users (idChat),
-    id_volunteer users_idChat integer REFERENCES users (idChat),
+    idUser       integer REFERENCES users (idChat),
+    id_volunteer integer REFERENCES users (idChat),
     start_date   integer,
     end_date     integer,
     status       integer
