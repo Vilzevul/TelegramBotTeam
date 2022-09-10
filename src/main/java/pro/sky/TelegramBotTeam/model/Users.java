@@ -1,88 +1,86 @@
 package pro.sky.TelegramBotTeam.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
-/**
- * Содержит информацию поступивших сообщений от пользователей
- */
 @Entity
 @Table(name = "users")
 public class Users {
     @Id
-    private Long idchat;
+    @Column(name = "iduser")//он же id chat
+    private Long idUser;
+
+    @Column(name = "nameuser")
     private String nameuser;
-    private int phone;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "role")
     private int role;
 
-    @OneToOne(mappedBy = "users")//один отчет на 1-го пользователя
-    private Report report;
-
-    public Users(Long idchat, String nameuser, int phone, int role) {
-        this.idchat = idchat;
+    public Users(Long idUser, String nameuser, String phone, int role) {
+        this.idUser = idUser;
         this.nameuser = nameuser;
         this.phone = phone;
         this.role = role;
     }
 
     public Users() {
+
     }
 
-    public Long getIdchat() {
-        return idchat;
+    public Long getIduser() {
+        return this.idUser;
     }
 
-    public void setIdchat(Long idchat) {
-        this.idchat = idchat;
+    public void setIduser(Long iduser) {
+        this.idUser = idUser;
     }
 
     public String getNameuser() {
-        return nameuser;
+        return this.nameuser;
     }
 
     public void setNameuser(String nameuser) {
         this.nameuser = nameuser;
     }
 
-    public int getPhone() {
-        return phone;
+    public String getPhone() {
+        return this.phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
     public int getRole() {
-        return role;
+        return this.role;
     }
 
     public void setRole(int role) {
         this.role = role;
     }
 
-    public String toString() {
-        return "Users{" +
-                ", idchat='" + idchat + '\'' +
-                ", nameuser='" + nameuser + '\'' +
-                ", phone ='" + phone + '\'' +
-                ", role=" + role +
-                '}';
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Users task = (Users) o;
-        return idchat == task.idchat && nameuser.equals(task.nameuser) && phone == task.phone && role == task.role;
+        if (!(o instanceof Users users)) return false;
+        return role == users.role && idUser.equals(users.idUser) && nameuser.equals(users.nameuser) && Objects.equals(phone, users.phone);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idchat, nameuser, phone, role);
+        return Objects.hash(idUser, nameuser, phone, role);
     }
 
+    @Override
+    public String toString() {
+        return "Users{" +
+                "idUser=" + idUser +
+                ", nameuser='" + nameuser + '\'' +
+                ", phone='" + phone + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }

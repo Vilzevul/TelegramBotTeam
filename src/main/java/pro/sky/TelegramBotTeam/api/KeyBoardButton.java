@@ -264,9 +264,9 @@ public class KeyBoardButton {
             return DOGREFUSAL;
         }
 
-        if (command.equals(DOGCONTACT)) {
+/*        if (command.equals(DOGCONTACT)) {
             return CONTACTS;
-        }
+        }*/
 
         if (command.equals(DOGSEND)) {
             return DOGSEND;

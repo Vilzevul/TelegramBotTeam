@@ -31,7 +31,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     String userFileId = null;
     String btnStatus = "undefined";
     String btnCommand = "undefined";
-    int phone = 0;//т.к. в user было добавлено поле phone
+    String phone = null;//т.к. в user было добавлено поле phone
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
