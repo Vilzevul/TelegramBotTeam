@@ -31,7 +31,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     String userFileId = null;
     String btnStatus = "undefined";
     String btnCommand = "undefined";
-    String phone = null;//т.к. в user было добавлено поле phone
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
@@ -123,17 +122,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Long userId = user.id();
         String userName = user.firstName();
 
-        if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
-            LOGGER.info("Пользователь прислал контакты: {}", userContacts);
-        }
-
         if (btnCommand.equals("DOGSEND")) {
             LOGGER.info("Пользователь прислал отчет");
         }
 
         //Запись в БД
-        Users users = new Users(userId, userName, phone,1);//удален btnStatus, добавлено поле phone в users
-        usersService.createUsersAll(users);
+        usersService.addUser(new Users(userId, userName));
+
+        if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
+            usersService.updateUserPhone(userContacts, userId);
+        }
 
         //Блок отправки отчета
         //Пользователь отправляет фото
