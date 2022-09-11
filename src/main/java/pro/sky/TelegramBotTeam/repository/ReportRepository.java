@@ -14,5 +14,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query(value = "SELECT MAX(report_date) from reports WHERE id_adoption = :idAdoption", nativeQuery = true)
     Optional<Date> findMaxReportDateByIdAdoption(Long idAdoption);
 
-   Optional<Report> findByReportDate(LocalDate date);
+    @Query(value = "SELECT * FROM reports WHERE report_date = :date LIMIT 1", nativeQuery = true)
+   Optional<Report> findByReportDateSql(LocalDate date);
 }

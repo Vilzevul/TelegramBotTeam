@@ -28,11 +28,25 @@ public class ReportService {
      * @param report отчет.
      */
     public Report addReport(Report report) {
-        reportRepository.findByReportDate(LocalDate.now()).
+        reportRepository.findByReportDateSql(LocalDate.now()).
                 orElse(new Report(report.getAdoption(), report.getReportDate(), report.getReportImage(), report.getReportMessage()));
         return reportRepository.save(report);
     }
+public Report  getReport(LocalDate date) {
+    return reportRepository.findByReportDateSql(date).orElse(null);
+}
 
+public Report createReport(Report report){
+        Report reportDate = getReport(LocalDate.now());
+        if (reportDate == null)
+        {return reportRepository.save(report);}
+        else {
+            if(report.getReportMessage() != null)  reportDate.setReportMessage(report.getReportMessage());
+           if(report.getReportImage() != null) reportDate.setReportImage(report.getReportImage());
+
+            return reportRepository.save(reportDate);
+        }
+}
 
     public List<Report> getReportByDate(LocalDate date) {
         return reportRepository.findAll().stream().

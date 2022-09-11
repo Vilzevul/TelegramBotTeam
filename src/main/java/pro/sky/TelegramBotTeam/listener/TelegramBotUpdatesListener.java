@@ -165,7 +165,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             Adoption adoption = adoptionService.getAdoption(userId);
                             if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                                 Report report = new Report(adoption, LocalDate.now(), reportContent, null);
-                                reportService.addReport(report);
+                                report= reportService.createReport(report);
                                 //                   Date lastReportDate = reportService.getLastReportDate(adoption.getId());
                                 LOGGER.info("report: {}", report);
                             }
@@ -190,7 +190,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                         Report report = new Report(adoption, LocalDate.now(), null, reportText);
 
-                        report = reportService.addReport(report);
+                   //     report = reportService.addReport(report);
+                       report= reportService.createReport(report);
                         //                   Date lastReportDate = reportService.getLastReportDate(adoption.getId());
                         LOGGER.info("report: {}", report);
                     }
