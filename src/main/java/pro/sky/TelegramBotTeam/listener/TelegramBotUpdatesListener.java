@@ -10,11 +10,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
+import pro.sky.TelegramBotTeam.model.Adoptiveparent;
+import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
+import pro.sky.TelegramBotTeam.service.AdoptionService;
+import pro.sky.TelegramBotTeam.service.ReportService;
 import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import static pro.sky.TelegramBotTeam.api.Code.*;
@@ -25,6 +30,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final KeyBoardButton keyBoardButton;
     private final UsersService usersService;
+    private final AdoptionService adoptionService;
+    private final ReportService reportService;
     private final TelegramBot telegramBot;
 
     String userContacts = null;
@@ -34,10 +41,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot,
                                       KeyBoardButton keyBoardButton,
-                                      UsersService usersService) {
+                                      UsersService usersService,
+                                      AdoptionService adoptionService,
+                                      ReportService reportService) {
         this.telegramBot = telegramBot;
         this.keyBoardButton = keyBoardButton;
         this.usersService = usersService;
+        this.adoptionService = adoptionService;
+        this.reportService = reportService;
     }
 
     @PostConstruct
@@ -155,6 +166,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             //reportText сохраняем в БД
             btnCommand = KeyBoardButton.DOGMAIN;
             message = "❗️Отчет принят\n";
+
+            Adoptiveparent adoption = adoptionService.getAdoption(userId);
+            if ((adoption != null) && (adoption.getStatus().equals(Adoptiveparent.AdoptionStatus.ACTIVE))) {
+                reportService.addReport(new Report(adoption, new Date(), null, reportText));
+            }
         }
         //Конец блока отправки отчета
 
