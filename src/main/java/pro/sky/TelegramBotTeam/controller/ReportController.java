@@ -27,13 +27,12 @@ public class ReportController {
         return "Web API is working";
     }
 
-    /**
-     * Возвращает список пользователей и связанных с ними отчетами
-     */
-    @GetMapping(path = "/users_report")
-    public List<Report> getUsersWithReport() {
-        log.debug("Method - getUsersWithReport was called");
-        return usersService.getUsersWitReport();
-    }
-
+//    /**
+//     * Возвращает список пользователей и связанных с ними отчетами
+//     */
+//    @GetMapping(path = "/users_report")
+//    public List<Report> getUsersWithReport() {
+//        log.debug("Method - getUsersWithReport was called");
+//        return usersService.getUsersWitReport();
+//    }
 }
