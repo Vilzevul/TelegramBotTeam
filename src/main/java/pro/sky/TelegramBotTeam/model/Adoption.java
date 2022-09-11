@@ -4,6 +4,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -11,6 +12,14 @@ import java.util.Objects;
 @Table(name = "adoptions")
 @DynamicInsert
 public class Adoption {
+    public Adoption(Adoption adoption) {
+
+    }
+
+    public Adoption() {
+
+    }
+
     public enum AdoptionStatus {
         NOT_ACTIVE,     //Испытательный период неактивен (запись для отслеживания статистики)
         ACTIVE,         //Испытательный период активен, от усыновителя ожидаются ежедневные отчеты

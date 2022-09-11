@@ -9,7 +9,9 @@ import pro.sky.TelegramBotTeam.repository.ReportRepository;
 import pro.sky.TelegramBotTeam.repository.UsersRepository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsersService {
@@ -32,6 +34,13 @@ public class UsersService {
                 .orElse(new Users(users.getId(), users.getName(), users.getPhone(),users.getRole()));
         return usersRepository.save(users);
     }
+
+    public List<Users> getUsersByRole(Users.UserRole userRole) {
+        return usersRepository.findAll().stream().
+                filter(v -> v.getRole() == Users.UserRole.ADOPTION).
+                collect(Collectors.toList());
+    }
+
 
     public void addUser(Users user) {
         if (!usersRepository.existsById(user.getId())) {

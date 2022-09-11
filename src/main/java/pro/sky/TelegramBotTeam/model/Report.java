@@ -1,6 +1,7 @@
 package pro.sky.TelegramBotTeam.model;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class Report {
     private Adoption adoption;
 
     @Column(name = "report_date")
-    private Date reportDate;
+    private LocalDate reportDate;
 
     @Column(name = "report_image")
     private byte[] reportImage;
@@ -26,11 +27,15 @@ public class Report {
     @Column(name = "report_message")
     private String reportMessage;
 
-    public Report(Adoption adoption, Date reportDate, byte[] reportImage, String reportMessage) {
+    public Report(Adoption adoption, LocalDate reportDate, byte[] reportImage, String reportMessage) {
         this.reportDate = reportDate;
         this.adoption = adoption;
         this.reportImage = reportImage;
         this.reportMessage = reportMessage;
+    }
+
+    public Report() {
+
     }
 
     public Long getId() {
@@ -49,11 +54,11 @@ public class Report {
         this.adoption = adoption;
     }
 
-    public Date getReportDate() {
+    public LocalDate getReportDate() {
         return this.reportDate;
     }
 
-    public void setReportDate(Date reportDate) {
+    public void setReportDate(LocalDate reportDate) {
         this.reportDate = reportDate;
     }
 

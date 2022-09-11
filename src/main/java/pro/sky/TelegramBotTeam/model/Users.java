@@ -12,7 +12,8 @@ import java.util.Objects;
 public class Users {
     public enum UserRole {
         USER,
-        VOLUNTEER
+        VOLUNTEER,
+        ADOPTION
     }
 
     @Id

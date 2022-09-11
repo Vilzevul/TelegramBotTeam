@@ -19,6 +19,9 @@ import pro.sky.TelegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -134,21 +137,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         String userName = user.firstName();
 
 
-
-
         switch (btnCommand) {
             //Запись в БД
             case KeyBoardButton.DOGMAIN,
                     KeyBoardButton.CATMAIN,
                     KeyBoardButton.CONTACTS,
                     KeyBoardButton.START -> {
-                Users users = new Users(userId, userName,userContacts, Users.UserRole.USER);
+                Users users = new Users(userId, userName, userContacts, Users.UserRole.USER);
                 usersService.createUsersAll(users);
             }
-
+            case KeyBoardButton.HELP -> {
+                addAdoptions();
+            }
             //Блок отправки отчета
             //Пользователь отправляет фото
             case KeyBoardButton.DOGSEND_MSG -> {
+
                 try {
                     if (userFileId != null) {
                         byte[] reportContent = getFileContent(telegramBot, userFileId);
@@ -157,12 +161,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
                         message += keyBoardButton.getMessage(btnCommand);
+                        if (reportContent != null) {
+                            Adoption adoption = adoptionService.getAdoption(userId);
+                            if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                                Report report = new Report(adoption, LocalDate.now(), reportContent, null);
+                                reportService.addReport(report);
+                                //                   Date lastReportDate = reportService.getLastReportDate(adoption.getId());
+                                LOGGER.info("report: {}", report);
+                            }
+                        }
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
-            case KeyBoardButton.DOGSEND_TXT -> {  }
+            case KeyBoardButton.DOGSEND_TXT -> {
+            }
             default -> {
                 //Пользователь отправляет текст
                 if (btnStatus.equals(KeyBoardButton.DOGSEND_TXT)) {
@@ -174,9 +188,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
-                        Date lastReportDate = reportService.getLastReportDate(adoption.getId());
-                        reportService.addReport(new Report(adoption, new Date(), null, reportText));
+                        Report report = new Report(adoption, LocalDate.now(), null, reportText);
+
+                        report = reportService.addReport(report);
+                        //                   Date lastReportDate = reportService.getLastReportDate(adoption.getId());
+                        LOGGER.info("report: {}", report);
                     }
+
+
                     //Конец блока отправки отчета
                 }
             }
@@ -211,5 +230,31 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    private void addAdoptions() {
+        List<Users> usersList = usersService.getUsersByRole(Users.UserRole.ADOPTION);
+        if (!usersList.isEmpty()) {
+            Users usersAdaptive = usersList.get(0);
+            usersAdaptive.setRole(Users.UserRole.USER);
+            usersAdaptive = usersService.createUsersAll(usersAdaptive);
+
+
+            Adoption adoption = new Adoption();
+            //           Users users = new Users(userId, userName,userContacts, Users.UserRole.USER);
+            LocalDate date = LocalDate.now();
+            LocalDate date30 = date.plusDays(30);
+
+//                adoption.setId(1l);
+            adoption.setParent(usersAdaptive);
+            adoption.setVolunteer(usersAdaptive);
+            adoption.setStartDate(java.sql.Date.valueOf(date));
+            adoption.setEndDate(java.sql.Date.valueOf(date30));
+//                adoption.setStatus(Adoption.AdoptionStatus.ACTIVE);
+            LOGGER.info("Users: {}", usersAdaptive);
+            LOGGER.info("adoption: {}", adoption);
+            adoptionService.createAdoption(adoption);
+        }
+
     }
 }
