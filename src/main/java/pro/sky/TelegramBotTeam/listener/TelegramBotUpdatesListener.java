@@ -169,6 +169,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             Adoption adoption = adoptionService.getAdoption(userId);
             if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                Date lastReportDate = reportService.getLastReportDate(adoption.getId());
                 reportService.addReport(new Report(adoption, new Date(), null, reportText));
             }
         }
