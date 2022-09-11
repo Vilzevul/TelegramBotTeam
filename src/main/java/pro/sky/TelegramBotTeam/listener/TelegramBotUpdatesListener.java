@@ -133,47 +133,55 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Long userId = user.id();
         String userName = user.firstName();
 
-        if (btnCommand.equals("DOGSEND")) {
-            LOGGER.info("Пользователь прислал отчет");
-        }
 
-        //Запись в БД
-        usersService.addUser(new Users(userId, userName));
 
-        if (btnCommand.equals(KeyBoardButton.CONTACTS)) {
-            usersService.updateUserPhone(userContacts, userId);
-        }
 
-        //Блок отправки отчета
-        //Пользователь отправляет фото
-        if (btnCommand.equals(KeyBoardButton.DOGSEND_MSG)) {
-            try {
-                if (userFileId != null) {
-                    byte[] reportContent = getFileContent(telegramBot, userFileId);
-                    //reportContent сохраняем в БД
-                    btnCommand = KeyBoardButton.DOGSEND_TXT;
-                    btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-                    message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
-                    message += keyBoardButton.getMessage(btnCommand);
+        switch (btnCommand) {
+            //Запись в БД
+            case KeyBoardButton.DOGMAIN,
+                    KeyBoardButton.CATMAIN,
+                    KeyBoardButton.CONTACTS,
+                    KeyBoardButton.START -> {
+                Users users = new Users(userId, userName,userContacts, Users.UserRole.USER);
+                usersService.createUsersAll(users);
+            }
+
+            //Блок отправки отчета
+            //Пользователь отправляет фото
+            case KeyBoardButton.DOGSEND_MSG -> {
+                try {
+                    if (userFileId != null) {
+                        byte[] reportContent = getFileContent(telegramBot, userFileId);
+                        //reportContent сохраняем в БД
+                        btnCommand = KeyBoardButton.DOGSEND_TXT;
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
+                        message += keyBoardButton.getMessage(btnCommand);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
-        }
-        //Пользователь отправляет текст
-        if (btnStatus.equals(KeyBoardButton.DOGSEND_TXT) && !btnCommand.equals(KeyBoardButton.DOGSEND_TXT)) {
-            String reportText = message;
-            //reportText сохраняем в БД
-            btnCommand = KeyBoardButton.DOGMAIN;
-            message = "❗️Отчет принят\n";
+            case KeyBoardButton.DOGSEND_TXT -> {  }
+            default -> {
+                //Пользователь отправляет текст
+                if (btnStatus.equals(KeyBoardButton.DOGSEND_TXT)) {
+                    String reportText = message;
+                    //reportText сохраняем в БД
+                    btnCommand = KeyBoardButton.DOGMAIN;
+                    btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                    message = "❗️Отчет принят\n";
 
-            Adoption adoption = adoptionService.getAdoption(userId);
-            if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
-                Date lastReportDate = reportService.getLastReportDate(adoption.getId());
-                reportService.addReport(new Report(adoption, new Date(), null, reportText));
+                    Adoption adoption = adoptionService.getAdoption(userId);
+                    if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                        Date lastReportDate = reportService.getLastReportDate(adoption.getId());
+                        reportService.addReport(new Report(adoption, new Date(), null, reportText));
+                    }
+                    //Конец блока отправки отчета
+                }
             }
-        }
-        //Конец блока отправки отчета
+        }// switch (btnCommand)
+
 
         if (message.equals("/start")) {
             telegramBot.execute(new SendMessage(userId, userName + ", привет!")

@@ -25,6 +25,14 @@ public class UsersService {
      * Сохранить нового пользователя, интересующегося приютом.
      * @param user новый пользователь.
      */
+
+    @Transactional
+    public Users createUsersAll(Users users) {
+        Users baseUsers = usersRepository.findById(users.getId())
+                .orElse(new Users(users.getId(), users.getName(), users.getPhone(),users.getRole()));
+        return usersRepository.save(users);
+    }
+
     public void addUser(Users user) {
         if (!usersRepository.existsById(user.getId())) {
             LOGGER.info("Добавлен новый пользователь: {}", user.getId());

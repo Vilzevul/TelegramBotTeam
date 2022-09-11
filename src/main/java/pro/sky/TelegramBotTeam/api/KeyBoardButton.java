@@ -51,7 +51,7 @@ public class KeyBoardButton {
     private final String CATSEND = "Прислать отчет для кошек";
     public final static String CATSEND_TXT = "Напишите текст отчета для кошек";
     public final static String CATSEND_MSG = "Отправьте фото отчета для кошек";
-    private final String START = "/start";
+    public final static String START = "/start";
     private final String ESCAPE = "Отмена";
     private final String FORVARD = "Дальше";
 
