@@ -3,7 +3,7 @@ package pro.sky.TelegramBotTeam.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.TelegramBotTeam.model.Adoptiveparent;
+import pro.sky.TelegramBotTeam.model.Adoption;
 import pro.sky.TelegramBotTeam.repository.AdoptionRepository;
 
 @Service
@@ -21,7 +21,7 @@ public class AdoptionService {
      * @param idParent id усыновителя.
      * @return информация по усыновлению. Может вернуть null, если такая запись отсутствует.
      */
-    public Adoptiveparent getAdoption(Long idParent) {
+    public Adoption getAdoption(Long idParent) {
         return adoptionRepository.findByIdParent(idParent).orElse(null);
     }
 }

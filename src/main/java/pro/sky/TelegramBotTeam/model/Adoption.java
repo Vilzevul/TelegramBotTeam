@@ -10,7 +10,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "adoptions")
 @DynamicInsert
-public class Adoptiveparent {
+public class Adoption {
     public enum AdoptionStatus {
         NOT_ACTIVE,     //Испытательный период неактивен (запись для отслеживания статистики)
         ACTIVE,         //Испытательный период активен, от усыновителя ожидаются ежедневные отчеты
@@ -94,7 +94,7 @@ public class Adoptiveparent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Adoptiveparent that)) return false;
+        if (!(o instanceof Adoption that)) return false;
         return id.equals(that.id);
     }
 

@@ -1,7 +1,5 @@
 package pro.sky.TelegramBotTeam.model;
 
-import pro.sky.TelegramBotTeam.service.ReportService;
-
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,7 +15,7 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "id_adoption")
-    private Adoptiveparent adoption;
+    private Adoption adoption;
 
     @Column(name = "report_date")
     private Date reportDate;
@@ -28,7 +26,7 @@ public class Report {
     @Column(name = "report_message")
     private String reportMessage;
 
-    public Report(Adoptiveparent adoption, Date reportDate, byte[] reportImage, String reportMessage) {
+    public Report(Adoption adoption, Date reportDate, byte[] reportImage, String reportMessage) {
         this.reportDate = reportDate;
         this.adoption = adoption;
         this.reportImage = reportImage;
@@ -43,11 +41,11 @@ public class Report {
         this.id = id;
     }
 
-    public Adoptiveparent getAdoption() {
+    public Adoption getAdoption() {
         return this.adoption;
     }
 
-    public void setAdoption(Adoptiveparent adoption) {
+    public void setAdoption(Adoption adoption) {
         this.adoption = adoption;
     }
 

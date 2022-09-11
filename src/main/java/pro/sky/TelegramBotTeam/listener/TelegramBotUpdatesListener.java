@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.TelegramBotTeam.api.KeyBoardButton;
-import pro.sky.TelegramBotTeam.model.Adoptiveparent;
+import pro.sky.TelegramBotTeam.model.Adoption;
 import pro.sky.TelegramBotTeam.model.Report;
 import pro.sky.TelegramBotTeam.model.Users;
 import pro.sky.TelegramBotTeam.service.AdoptionService;
@@ -167,8 +167,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             btnCommand = KeyBoardButton.DOGMAIN;
             message = "❗️Отчет принят\n";
 
-            Adoptiveparent adoption = adoptionService.getAdoption(userId);
-            if ((adoption != null) && (adoption.getStatus().equals(Adoptiveparent.AdoptionStatus.ACTIVE))) {
+            Adoption adoption = adoptionService.getAdoption(userId);
+            if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                 reportService.addReport(new Report(adoption, new Date(), null, reportText));
             }
         }
