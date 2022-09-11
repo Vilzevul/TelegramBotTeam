@@ -6,5 +6,4 @@ import pro.sky.TelegramBotTeam.model.Report;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
-
 }
