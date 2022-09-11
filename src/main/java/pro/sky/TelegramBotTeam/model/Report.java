@@ -1,59 +1,70 @@
 package pro.sky.TelegramBotTeam.model;
 
+import pro.sky.TelegramBotTeam.service.ReportService;
+
 import javax.persistence.*;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "report")
+@Table(name = "reports")
 public class Report {
     @Id
+    @Column(name = "id", columnDefinition = "bigserial")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "idadoptiveparent")
-    private Long idadoptiveparent;
+    @ManyToOne
+    @JoinColumn(name = "id_adoption")
+    private Adoptiveparent adoption;
 
     @Column(name = "report_date")
-    private java.sql.Date reportDate;
+    private Date reportDate;
 
     @Column(name = "report_image")
-    private byte[] report_image;
+    private byte[] reportImage;
 
     @Column(name = "report_message")
     private String reportMessage;
 
+    public Report(Adoptiveparent adoption, Date reportDate, byte[] reportImage, String reportMessage) {
+        this.reportDate = reportDate;
+        this.adoption = adoption;
+        this.reportImage = reportImage;
+        this.reportMessage = reportMessage;
+    }
 
-    public Long getIdreport() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setIdreport(Long idreport) {
-        this.id = idreport;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getIdadoptiveparent() {
-        return this.idadoptiveparent;
+    public Adoptiveparent getAdoption() {
+        return this.adoption;
     }
 
-    public void setIdadoptiveparent(Long idadoptiveparent) {
-        this.idadoptiveparent = idadoptiveparent;
+    public void setAdoption(Adoptiveparent adoption) {
+        this.adoption = adoption;
     }
 
-    public java.sql.Date getReportDate() {
+    public Date getReportDate() {
         return this.reportDate;
     }
 
-    public void setReportDate(java.sql.Date reportDate) {
+    public void setReportDate(Date reportDate) {
         this.reportDate = reportDate;
     }
 
-    public byte[] getReport_image() {
-        return report_image;
+    public byte[] getReportImage() {
+        return reportImage;
     }
 
-    public void setReportImage(byte[] report_image) {
-        this.report_image = report_image;
+    public void setReportImage(byte[] reportImage) {
+        this.reportImage = reportImage;
     }
 
     public String getReportMessage() {
@@ -68,23 +79,21 @@ public class Report {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Report report)) return false;
-        return id.equals(report.id) && idadoptiveparent.equals(report.idadoptiveparent) && reportDate.equals(report.reportDate) && Arrays.equals(report_image, report.report_image) && Objects.equals(reportMessage, report.reportMessage);
+        return id.equals(report.id);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, idadoptiveparent, reportDate, reportMessage);
-        result = 31 * result + Arrays.hashCode(report_image);
-        return result;
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Report{" +
                 "id=" + id +
-                ", idadoptiveparent=" + idadoptiveparent +
+                ", adoption=" + adoption +
                 ", reportDate=" + reportDate +
-                ", report_image=" + Arrays.toString(report_image) +
+                ", reportImage=" + Arrays.toString(reportImage) +
                 ", reportMessage='" + reportMessage + '\'' +
                 '}';
     }

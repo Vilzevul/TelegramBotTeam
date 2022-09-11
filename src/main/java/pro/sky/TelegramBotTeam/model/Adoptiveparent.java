@@ -1,64 +1,93 @@
 package pro.sky.TelegramBotTeam.model;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "adoptiveparent")
+@Table(name = "adoptions")
+@DynamicInsert
 public class Adoptiveparent {
-    @Id
-    @Column(name = "idadoptiveparent")
-    private Long idadoptiveparent;
+    public enum AdoptionStatus {
+        NOT_ACTIVE,     //Испытательный период неактивен (запись для отслеживания статистики)
+        ACTIVE,         //Испытательный период активен, от усыновителя ожидаются ежедневные отчеты
+        DECIDE,         //Испытательный период закончился, по пользователю ожидается решение волонтера
+        SUCCESS,        //Усыновитель не прошел испытательный период
+        FAILED          //Усыновитель не прошел испытательный период
+    }
 
-    @Column(name = "idvolunteer")
-    private Long idvolunteer;
+    @Id
+    @Column(name = "id", columnDefinition = "bigserial")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_parent")
+    private Users parent;
+
+    @ManyToOne
+    @JoinColumn(name = "id_volunteer")
+    private Users volunteer;
 
     @Column(name = "start_date")
-    private java.sql.Date startDate;
+    private Date startDate;
 
     @Column(name = "end_date")
-    private java.sql.Date endDate;
+    private Date endDate;
 
     @Column(name = "status")
-    private Long status;
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'ACTIVE'")
+    private AdoptionStatus status;
 
-    public Long getIdadoptiveparent() {
-        return this.idadoptiveparent;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setIdadoptiveparent(Long idadoptiveparent) {
-        this.idadoptiveparent = idadoptiveparent;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getIdvolunteer() {
-        return this.idvolunteer;
+    public Users getParent() {
+        return this.parent;
     }
 
-    public void setIdvolunteer(Long idvolunteer) {
-        this.idvolunteer = idvolunteer;
+    public void setParent(Users parent) {
+        this.parent = parent;
     }
 
-    public java.sql.Date getStartDate() {
+    public Users getVolunteer() {
+        return this.volunteer;
+    }
+
+    public void setVolunteer(Users volunteer) {
+        this.volunteer = volunteer;
+    }
+
+    public Date getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(java.sql.Date startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public java.sql.Date getEndDate() {
+    public Date getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(java.sql.Date endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    public Long getStatus() {
+    public AdoptionStatus getStatus() {
         return this.status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(AdoptionStatus status) {
         this.status = status;
     }
 
@@ -66,19 +95,20 @@ public class Adoptiveparent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Adoptiveparent that)) return false;
-        return idadoptiveparent.equals(that.idadoptiveparent) && idvolunteer.equals(that.idvolunteer) && startDate.equals(that.startDate) && endDate.equals(that.endDate) && status.equals(that.status);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idadoptiveparent, idvolunteer, startDate, endDate, status);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "Adoptiveparent{" +
-                "idadoptiveparent=" + idadoptiveparent +
-                ", idvolunteer=" + idvolunteer +
+        return "AdoptiveParent{" +
+                "id=" + id +
+                ", parent=" + parent +
+                ", volunteer=" + volunteer +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", status=" + status +

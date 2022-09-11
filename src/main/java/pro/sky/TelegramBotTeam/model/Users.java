@@ -1,49 +1,65 @@
 package pro.sky.TelegramBotTeam.model;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@DynamicInsert
 public class Users {
-    @Id
-    @Column(name = "iduser")//он же id chat
-    private Long idUser;
+    public enum UserRole {
+        USER,
+        VOLUNTEER
+    }
 
-    @Column(name = "nameuser")
-    private String nameuser;
+    @Id
+    @Column(name = "id")
+    //Он же id chat
+    private Long id;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "role")
-    private int role;
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'USER'")
+    private UserRole role;
 
-    public Users(Long idUser, String nameuser, String phone, int role) {
-        this.idUser = idUser;
-        this.nameuser = nameuser;
+    public Users(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Users(Long id, String name, String phone, UserRole role) {
+        this.id = id;
+        this.name = name;
         this.phone = phone;
         this.role = role;
     }
 
     public Users() {
-
     }
 
-    public Long getIduser() {
-        return this.idUser;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setIduser(Long iduser) {
-        this.idUser = idUser;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getNameuser() {
-        return this.nameuser;
+    public String getName() {
+        return this.name;
     }
 
-    public void setNameuser(String nameuser) {
-        this.nameuser = nameuser;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhone() {
@@ -54,11 +70,11 @@ public class Users {
         this.phone = phone;
     }
 
-    public int getRole() {
+    public UserRole getRole() {
         return this.role;
     }
 
-    public void setRole(int role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
@@ -66,19 +82,19 @@ public class Users {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Users users)) return false;
-        return role == users.role && idUser.equals(users.idUser) && nameuser.equals(users.nameuser) && Objects.equals(phone, users.phone);
+        return id.equals(users.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idUser, nameuser, phone, role);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Users{" +
-                "idUser=" + idUser +
-                ", nameuser='" + nameuser + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", role=" + role +
                 '}';
