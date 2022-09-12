@@ -151,22 +151,27 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             case KeyBoardButton.DOGSEND_MSG -> {
 
                 try {
-                    if (userFileId != null) {
+                    Adoption adoption = adoptionService.getAdoption(userId);
+                    if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                        if (userFileId != null) {//есть какойто файл
                         byte[] reportContent = getFileContent(telegramBot, userFileId);
                         //reportContent сохраняем в БД
-                        btnCommand = KeyBoardButton.DOGSEND_TXT;
-                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-                        message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
-                        message += keyBoardButton.getMessage(btnCommand);
-                        if (reportContent != null) {
-                            Adoption adoption = adoptionService.getAdoption(userId);
-                            if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                        if (reportContent != null) {//есть фото отчета
+ //                           Adoption adoption = adoptionService.getAdoption(userId);
+ //                           if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                                 Report report = new Report(adoption, LocalDate.now(), reportContent, null);
-                                report= reportService.createReport(report);
-                                //                   Date lastReportDate = reportService.getLastReportDate(adoption.getId());
-                                LOGGER.info("report: {}", report);
-                            }
-                        }
+                                report = reportService.createReport(report);
+                                btnCommand = KeyBoardButton.DOGSEND_TXT;
+                                btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+
+                                message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
+                                message += keyBoardButton.getMessage(btnCommand);
+                                LOGGER.info("report: {}", report);}}
+                            } else {
+                                btnCommand = KeyBoardButton.DOGMAIN;
+                                btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                                message = "Вам не нужно присылать отчет\n";
+
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -178,21 +183,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 //Пользователь отправляет текст
                 if (btnStatus.equals(KeyBoardButton.DOGSEND_TXT)) {
                     String reportText = message;
-                    //reportText сохраняем в БД
-                    btnCommand = KeyBoardButton.DOGMAIN;
-                    btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-                    message = "❗️Отчет принят\n";
-
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                         Report report = new Report(adoption, LocalDate.now(), null, reportText);
 
-                   //     report = reportService.addReport(report);
-                       report= reportService.createReport(report);
-                        //                   Date lastReportDate = reportService.getLastReportDate(adoption.getId());
+                        report = reportService.createReport(report);
                         LOGGER.info("report: {}", report);
-                    }
 
+                        btnCommand = KeyBoardButton.DOGMAIN;
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        message = "❗️Отчет принят\n";
+
+                    } else {
+                        btnCommand = KeyBoardButton.DOGMAIN;
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        message = "Вам не нужно присылать отчет";
+
+                    }
 
                     //Конец блока отправки отчета
                 }
