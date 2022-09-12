@@ -1,4 +1,6 @@
---Создание таблицы user "Пользователи"
+-- liquibase formatted sql
+
+-- changeSet alexadler:1
 CREATE TABLE users
 (
     id        bigint       PRIMARY KEY,
@@ -7,7 +9,6 @@ CREATE TABLE users
     role      varchar(32)  NOT NULL DEFAULT 'USER'
 );
 
---Создание таблицы adoptions "Усыновления"
 CREATE TABLE adoptions
 (
     id           bigserial    PRIMARY KEY,
@@ -18,7 +19,6 @@ CREATE TABLE adoptions
     status       varchar(32)  NOT NULL DEFAULT 'ACTIVE'
 );
 
---Создание таблицы report "Отчет"
 CREATE TABLE reports
 (
     id              bigserial PRIMARY KEY,
