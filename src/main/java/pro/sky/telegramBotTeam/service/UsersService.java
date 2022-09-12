@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.repository.UsersRepository;
 import pro.sky.telegramBotTeam.model.Users;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,16 +20,38 @@ public class UsersService {
     }
 
     /**
-     * Сохранить/обновить данные пользователя, интересующегося приютом.
-     * @param user пользователь.
+     * Возвращает пользователя по указанному ID.
+     *
+     * @param id ID (id chat) пользователя.
+     * @return пользователь. Может вернуть null, если такой пользователь отсутствует.
      */
-    @Transactional
-    public Users createUsers(Users user) {
-        return usersRepository.save(user);
+    public Users getUser(Long id) {
+        return usersRepository.findById(id).orElse(null);
     }
 
     /**
-     * Получить список пользователей с указанной ролью.
+     * Сохранить/обновить данные пользователя, интересующегося приютом.
+     * @param user пользователь.
+     */
+    public Users createUser(Users user) {
+        Users userBD = getUser(user.getId());
+        if (userBD == null) {
+            LOGGER.info("Добавлен новый пользователь");
+            return usersRepository.save(user);
+        } else {
+            LOGGER.info("Пользователь обновлен");
+            if (user.getPhone() != null) {
+                userBD.setPhone(user.getPhone());
+            }
+            if (user.getRole() != null) {
+                userBD.setRole(user.getRole());
+            }
+            return usersRepository.save(userBD);
+        }
+    }
+
+    /**
+     * Получить список пользователей указанной роли.
      * @param userRole роль пользователя.
      * @return список пользователей.
      */

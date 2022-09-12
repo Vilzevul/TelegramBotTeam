@@ -139,8 +139,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     KeyBoardButton.CATMAIN,
                     KeyBoardButton.CONTACTS,
                     KeyBoardButton.START -> {
-                Users users = new Users(userId, userName, userContacts, Users.UserRole.USER);
-                usersService.createUsers(users);
+                Users users = new Users(userId, userName, userContacts);
+                usersService.createUser(users);
             }
             case KeyBoardButton.HELP -> {
                 addAdoptions();
@@ -232,7 +232,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (!usersList.isEmpty()) {
             Users usersAdaptive = usersList.get(0);
             usersAdaptive.setRole(Users.UserRole.USER);
-            usersAdaptive = usersService.createUsers(usersAdaptive);
+            usersAdaptive = usersService.createUser(usersAdaptive);
 
             Adoption adoption = new Adoption();
             LocalDate date = LocalDate.now();
