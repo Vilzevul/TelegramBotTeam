@@ -1,15 +1,12 @@
-package pro.sky.TelegramBotTeam.service;
+package pro.sky.telegramBotTeam.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.TelegramBotTeam.model.Report;
-import pro.sky.TelegramBotTeam.model.Users;
-import pro.sky.TelegramBotTeam.repository.ReportRepository;
-import pro.sky.TelegramBotTeam.repository.UsersRepository;
+import pro.sky.telegramBotTeam.model.Users;
+import pro.sky.telegramBotTeam.repository.UsersRepository;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

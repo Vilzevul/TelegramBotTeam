@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam.service;
+package pro.sky.telegramBotTeam.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

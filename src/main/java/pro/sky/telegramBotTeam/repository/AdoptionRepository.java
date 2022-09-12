@@ -1,9 +1,9 @@
-package pro.sky.TelegramBotTeam.repository;
+package pro.sky.telegramBotTeam.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import pro.sky.TelegramBotTeam.model.Adoption;
+import pro.sky.telegramBotTeam.model.Adoption;
 
 import java.util.Collection;
 import java.util.Optional;

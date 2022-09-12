@@ -1,17 +1,10 @@
-package pro.sky.TelegramBotTeam.service;
+package pro.sky.telegramBotTeam.service;
 
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.TelegramBotTeam.model.Adoption;
-import pro.sky.TelegramBotTeam.model.Users;
-import pro.sky.TelegramBotTeam.repository.AdoptionRepository;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import pro.sky.telegramBotTeam.model.Adoption;
+import pro.sky.telegramBotTeam.repository.AdoptionRepository;
 
 @Service
 public class AdoptionService {

@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam.api;
+package pro.sky.telegramBotTeam.api;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.File;

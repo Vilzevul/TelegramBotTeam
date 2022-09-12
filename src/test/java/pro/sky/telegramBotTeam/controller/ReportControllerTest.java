@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam.controller;
+package pro.sky.telegramBotTeam.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import pro.sky.TelegramBotTeam.repository.ReportRepository;
+import pro.sky.telegramBotTeam.repository.ReportRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ReportControllerTest {

@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam.listener;
+package pro.sky.telegramBotTeam.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.*;
@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import pro.sky.TelegramBotTeam.model.Users;
-import pro.sky.TelegramBotTeam.repository.UsersRepository;
-import pro.sky.TelegramBotTeam.service.UsersService;
+import pro.sky.telegramBotTeam.model.Users;
+import pro.sky.telegramBotTeam.repository.UsersRepository;
+import pro.sky.telegramBotTeam.service.UsersService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

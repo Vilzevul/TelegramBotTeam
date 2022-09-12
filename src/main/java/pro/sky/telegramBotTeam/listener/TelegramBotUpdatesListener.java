@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam.listener;
+package pro.sky.telegramBotTeam.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -9,23 +9,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import pro.sky.TelegramBotTeam.api.KeyBoardButton;
-import pro.sky.TelegramBotTeam.model.Adoption;
-import pro.sky.TelegramBotTeam.model.Report;
-import pro.sky.TelegramBotTeam.model.Users;
-import pro.sky.TelegramBotTeam.service.AdoptionService;
-import pro.sky.TelegramBotTeam.service.ReportService;
-import pro.sky.TelegramBotTeam.service.UsersService;
+import pro.sky.telegramBotTeam.api.KeyBoardButton;
+import pro.sky.telegramBotTeam.model.Adoption;
+import pro.sky.telegramBotTeam.model.Report;
+import pro.sky.telegramBotTeam.model.Users;
+import pro.sky.telegramBotTeam.service.AdoptionService;
+import pro.sky.telegramBotTeam.service.ReportService;
+import pro.sky.telegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 
-import static pro.sky.TelegramBotTeam.api.Code.*;
+import static pro.sky.telegramBotTeam.api.Code.*;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {

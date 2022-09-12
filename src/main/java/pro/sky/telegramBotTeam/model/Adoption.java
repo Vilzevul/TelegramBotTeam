@@ -1,10 +1,9 @@
-package pro.sky.TelegramBotTeam.model;
+package pro.sky.telegramBotTeam.model;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package pro.sky.TelegramBotTeam.api;
+package pro.sky.telegramBotTeam.api;
 
 import com.pengrad.telegrambot.model.request.*;
 import org.slf4j.Logger;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import static pro.sky.TelegramBotTeam.api.Code.readFile;
+import static pro.sky.telegramBotTeam.api.Code.readFile;
 
 @Component
 public class KeyBoardButton {
