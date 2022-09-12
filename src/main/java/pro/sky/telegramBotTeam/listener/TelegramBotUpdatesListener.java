@@ -157,8 +157,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         byte[] reportContent = getFileContent(telegramBot, userFileId);
                         //reportContent сохраняем в БД
                         if (reportContent != null) {//есть фото отчета
- //                           Adoption adoption = adoptionService.getAdoption(userId);
- //                           if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                                 Report report = new Report(adoption, LocalDate.now(), reportContent, null);
                                 report = reportService.createReport(report);
                                 btnCommand = KeyBoardButton.DOGSEND_TXT;
