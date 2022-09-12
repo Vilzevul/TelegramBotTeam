@@ -26,11 +26,14 @@ public class AdoptionService {
         return adoptionRepository.findByIdParent(idParent).orElse(null);
     }
 
+    /**
+     * Сохранить/обновить данные записи усыновления.
+     * @param adoption запись усыновления.
+     */
     public Adoption createAdoption(Adoption adoption) {
-        if(getAdoption(adoption.getParent().getId()) == null) adoptionRepository.save(adoption);
+        if (getAdoption(adoption.getParent().getId()) == null) {
+            adoptionRepository.save(adoption);
+        }
         return adoption;
-
     }
-
-
 }

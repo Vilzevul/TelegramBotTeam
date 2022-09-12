@@ -22,45 +22,33 @@ public class ReportService {
     }
 
     /**
-     * Добавить отчет.
+     * Возвращает отчет указанной даты.
      *
-     * @param report отчет.
+     * @param date дата отчета.
+     * @return отчет. Может вернуть null, если такой отчет отсутствует.
      */
-    public Report addReport(Report report) {
-        reportRepository.findByReportDateSql(LocalDate.now()).
-                orElse(new Report(report.getAdoption(), report.getReportDate(), report.getReportImage(), report.getReportMessage()));
-        return reportRepository.save(report);
-    }
-public Report  getReport(LocalDate date) {
-    return reportRepository.findByReportDateSql(date).orElse(null);
-}
-
-public Report createReport(Report report){
-        Report reportDate = getReport(LocalDate.now());
-        if (reportDate == null)
-        {return reportRepository.save(report);}
-        else {
-            if(report.getReportMessage() != null)  reportDate.setReportMessage(report.getReportMessage());
-           if(report.getReportImage() != null) reportDate.setReportImage(report.getReportImage());
-
-            return reportRepository.save(reportDate);
-        }
-}
-
-    public List<Report> getReportByDate(LocalDate date) {
-        return reportRepository.findAll().stream().
-                filter(v -> v.getReportDate().equals(date)).
-                collect(Collectors.toList());
-
+    public Report getReport(LocalDate date) {
+        return reportRepository.findByReportDateSql(date).orElse(null);
     }
 
     /**
-     * Получить дату последнего отчета.
-     *
-     * @param idAdoption id записи об усыновлении.
-     * @return дата последнего отчета. Может вернуть null, если такая запись отсутствует.
+     * Сохранить/обновить данные отчета.
+     * @param report отчет.
      */
-    public Date getLastReportDate(Long idAdoption) {
-        return reportRepository.findMaxReportDateByIdAdoption(idAdoption).orElse(null);
+    public Report createReport(Report report){
+        Report reportDate = getReport(LocalDate.now());
+        if (reportDate == null) {
+            LOGGER.info("Добавлен новый отчет");
+            return reportRepository.save(report);
+        } else {
+            LOGGER.info("Отчет обновлен");
+            if(report.getReportMessage() != null) {
+                reportDate.setReportMessage(report.getReportMessage());
+            }
+            if(report.getReportImage() != null) {
+                reportDate.setReportImage(report.getReportImage());
+            }
+            return reportRepository.save(reportDate);
+        }
     }
 }

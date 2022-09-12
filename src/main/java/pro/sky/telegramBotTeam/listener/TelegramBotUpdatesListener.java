@@ -133,7 +133,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Long userId = user.id();
         String userName = user.firstName();
 
-
         switch (btnCommand) {
             //Запись в БД
             case KeyBoardButton.DOGMAIN,
@@ -141,7 +140,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     KeyBoardButton.CONTACTS,
                     KeyBoardButton.START -> {
                 Users users = new Users(userId, userName, userContacts, Users.UserRole.USER);
-                usersService.createUsersAll(users);
+                usersService.createUsers(users);
             }
             case KeyBoardButton.HELP -> {
                 addAdoptions();
@@ -149,29 +148,27 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             //Блок отправки отчета
             //Пользователь отправляет фото
             case KeyBoardButton.DOGSEND_MSG -> {
-
                 try {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
-                        if (userFileId != null) {//есть какойто файл
-                        byte[] reportContent = getFileContent(telegramBot, userFileId);
-                        //reportContent сохраняем в БД
-                        if (reportContent != null) {//есть фото отчета
- //                           Adoption adoption = adoptionService.getAdoption(userId);
- //                           if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                        if (userFileId != null)
+                        {
+                            byte[] reportContent = getFileContent(telegramBot, userFileId);
+                            //reportContent сохраняем в БД
+                            if (reportContent != null) {
                                 Report report = new Report(adoption, LocalDate.now(), reportContent, null);
                                 report = reportService.createReport(report);
                                 btnCommand = KeyBoardButton.DOGSEND_TXT;
                                 btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-
-                                message = (reportContent != null) ? "❗️Файл принят\n" : "❌  Это не фото отчета\n";
+                                message = "❗️Файл принят\n";
                                 message += keyBoardButton.getMessage(btnCommand);
-                                LOGGER.info("report: {}", report);}}
-                            } else {
-                                btnCommand = KeyBoardButton.DOGMAIN;
-                                btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
-                                message = "Вам не нужно присылать отчет\n";
-
+                                LOGGER.info("report: {}", report);
+                            }
+                        }
+                    } else {
+                        btnCommand = KeyBoardButton.DOGMAIN;
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        message = "Вам не нужно присылать отчет\n";
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -186,26 +183,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                         Report report = new Report(adoption, LocalDate.now(), null, reportText);
-
                         report = reportService.createReport(report);
-                        LOGGER.info("report: {}", report);
-
                         btnCommand = KeyBoardButton.DOGMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
-
+                        LOGGER.info("report: {}", report);
                     } else {
                         btnCommand = KeyBoardButton.DOGMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "Вам не нужно присылать отчет";
-
                     }
-
-                    //Конец блока отправки отчета
                 }
             }
-        }// switch (btnCommand)
-
+        }
 
         if (message.equals("/start")) {
             telegramBot.execute(new SendMessage(userId, userName + ", привет!")
@@ -242,24 +232,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (!usersList.isEmpty()) {
             Users usersAdaptive = usersList.get(0);
             usersAdaptive.setRole(Users.UserRole.USER);
-            usersAdaptive = usersService.createUsersAll(usersAdaptive);
-
+            usersAdaptive = usersService.createUsers(usersAdaptive);
 
             Adoption adoption = new Adoption();
-            //           Users users = new Users(userId, userName,userContacts, Users.UserRole.USER);
             LocalDate date = LocalDate.now();
             LocalDate date30 = date.plusDays(30);
 
-//                adoption.setId(1l);
             adoption.setParent(usersAdaptive);
             adoption.setVolunteer(usersAdaptive);
             adoption.setStartDate(java.sql.Date.valueOf(date));
             adoption.setEndDate(java.sql.Date.valueOf(date30));
-//                adoption.setStatus(Adoption.AdoptionStatus.ACTIVE);
             LOGGER.info("Users: {}", usersAdaptive);
             LOGGER.info("adoption: {}", adoption);
             adoptionService.createAdoption(adoption);
         }
-
     }
 }

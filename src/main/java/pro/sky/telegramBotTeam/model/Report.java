@@ -34,7 +34,6 @@ public class Report {
     }
 
     public Report() {
-
     }
 
     public Long getId() {

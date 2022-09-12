@@ -21,41 +21,22 @@ public class UsersService {
     }
 
     /**
-     * Сохранить нового пользователя, интересующегося приютом.
-     * @param user новый пользователь.
+     * Сохранить/обновить данные пользователя, интересующегося приютом.
+     * @param user пользователь.
      */
-
     @Transactional
-    public Users createUsersAll(Users users) {
-        Users baseUsers = usersRepository.findById(users.getId())
-                .orElse(new Users(users.getId(), users.getName(), users.getPhone(),users.getRole()));
-        return usersRepository.save(users);
+    public Users createUsers(Users user) {
+        return usersRepository.save(user);
     }
 
+    /**
+     * Получить список пользователей с указанной ролью.
+     * @param userRole роль пользователя.
+     * @return список пользователей.
+     */
     public List<Users> getUsersByRole(Users.UserRole userRole) {
         return usersRepository.findAll().stream().
                 filter(v -> v.getRole() == Users.UserRole.ADOPTION).
                 collect(Collectors.toList());
-    }
-
-
-    public void addUser(Users user) {
-        if (!usersRepository.existsById(user.getId())) {
-            LOGGER.info("Добавлен новый пользователь: {}", user.getId());
-            usersRepository.save(user);
-        }
-    }
-
-    /**
-     * Обновить телефон пользователя.
-     * @param phone телефон пользователя.
-     * @id id пользователя.
-     */
-    @Transactional
-    public void updateUserPhone(String phone, Long id) {
-        LOGGER.info("Пользователь {} указал контакты: {}", id, phone);
-        if (usersRepository.existsById(id)) {
-            usersRepository.setUserPhoneById(phone, id);
-        }
     }
 }
