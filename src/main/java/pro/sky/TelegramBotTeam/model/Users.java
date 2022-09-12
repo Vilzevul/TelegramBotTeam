@@ -17,17 +17,13 @@ public class Users {
     }
 
     @Id
-    @Column(name = "id")
     //Он же id chat
     private Long id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "phone")
     private String phone;
 
-    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'USER'")
     private UserRole role;

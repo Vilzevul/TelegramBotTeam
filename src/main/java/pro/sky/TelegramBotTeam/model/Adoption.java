@@ -29,7 +29,7 @@ public class Adoption {
     }
 
     @Id
-    @Column(name = "id", columnDefinition = "bigserial")
+    @Column(columnDefinition = "bigserial")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -47,7 +47,6 @@ public class Adoption {
     @Column(name = "end_date")
     private Date endDate;
 
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'ACTIVE'")
     private AdoptionStatus status;

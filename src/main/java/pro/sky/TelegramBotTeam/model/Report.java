@@ -10,7 +10,7 @@ import java.util.Objects;
 @Table(name = "reports")
 public class Report {
     @Id
-    @Column(name = "id", columnDefinition = "bigserial")
+    @Column(columnDefinition = "bigserial")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
