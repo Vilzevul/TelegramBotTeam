@@ -34,11 +34,11 @@ public class KeyBoardButton {
     private final String DOGTRANSPORT = "Список рекомендаций по транспортировке собаки";
     private final String CATTRANSPORT = "Список рекомендаций по транспортировке животного";
     private final String DOGHOMEPUPPY = "Список рекомендаций по обустройству дома для щенка";
-    private final String CATHOMEPUPPY = "Список рекомендаций по обустройству дома для котенка";
+    private final String CATHOMEKITTY = "Список рекомендаций по обустройству дома для котенка";
     private final String DOGHOMEDOG = "Список рекомендаций по обустройству дома для взр. собаки";
-    private final String CATHOMEDOG = "Список рекомендаций по обустройству дома для взр. животного";
+    private final String CATHOMEADULTCAT = "Список рекомендаций по обустройству дома для взр. животного";
     private final String DOGHOMEDOGLIMITED = "Список реком. по обустройству дома для собаки с огран. возможностями";
-    private final String CATHOMEDOGLIMITED = "Список реком. по обустройству дома для животного с огран. возможностями";
+    private final String CATHOMECATLIMITED = "Список реком. по обустройству дома для животного с огран. возможностями";
     private final String DOGADVICECYNOLOGIST = "Советы кинолога по первичному общению с собакой";
     private final String DOGRECOMMENDATION = "Рекомендации кинолога для дальнейшего обращения к ним";
     private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
@@ -127,9 +127,9 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATZN).callbackData("CATZN"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATDOCUMENTS).callbackData("CATDOCUMENTS"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTRANSPORT).callbackData("CATTRANSPORT"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEPUPPY).callbackData("CATHOMEPUPPY"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEDOG).callbackData("CATHOMEDOG"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEDOGLIMITED).callbackData("CATHOMEDOGLIMITED"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEKITTY).callbackData("CATHOMEKITTY"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEADULTCAT).callbackData("CATHOMEADULTCAT"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMECATLIMITED).callbackData("CATHOMECATLIMITED"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData("CONTACTS"));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
@@ -299,16 +299,16 @@ public class KeyBoardButton {
             return CATTRANSPORT;
         }
 
-        if (command.equals(CATHOMEPUPPY)) {
-            return CATHOMEPUPPY;
+        if (command.equals(CATHOMEKITTY)) {
+            return CATHOMEKITTY;
         }
 
-        if (command.equals(CATHOMEDOG)) {
-            return CATHOMEDOG;
+        if (command.equals(CATHOMEADULTCAT)) {
+            return CATHOMEADULTCAT;
         }
 
-        if (command.equals(CATHOMEDOGLIMITED)) {
-            return CATHOMEDOGLIMITED;
+        if (command.equals(CATHOMECATLIMITED)) {
+            return CATHOMECATLIMITED;
         }
 
         if (command.equals(CATREFUSAL)) {
@@ -421,13 +421,38 @@ public class KeyBoardButton {
         if (command.equals("DOGREFUSAL")) {
             return "<b>" + DOGREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
         }
-        if (command.equals("CATREFUSAL")) {
-            return "<b>" + CATREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
-        }
+
 
         if (command.equals("DOGCONTACT")) {
             return "<b>" + CONTACTS + "</b> \n " + "Спасибо за предоставленные контакты. Будем на связи!";
             // "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
+        }
+
+        if (command.equals("CATZN")) {
+            return "<b>" + CATZN + "</b> \n " + readFile("documents/CATZN.txt");
+        }
+
+        if (command.equals("CATDOCUMENTS")) {
+            return "<b>" + CATDOCUMENTS + "</b> \n " + readFile("documents/CATDOCUMENTS.txt");
+        }
+
+        if (command.equals("CATTRANSPORT")) {
+            return "<b>" + CATTRANSPORT + "</b> \n " + readFile("documents/CATTRANSPORT.txt");
+        }
+        if (command.equals("CATHOMEKITTY")) {
+            return "<b>" + CATHOMEKITTY + "</b> \n " + readFile("documents/CATHOMEKITTY.txt");
+        }
+
+        if (command.equals("CATHOMEADULTCAT")) {
+            return "<b>" + CATHOMEADULTCAT + "</b> \n " + readFile("documents/CATHOMEADULTCAT.txt");
+        }
+
+        if (command.equals("CATHOMECATLIMITED")) {
+            return "<b>" + CATHOMECATLIMITED + "</b> \n " + readFile("documents/CATHOMECATLIMITED.txt");
+        }
+
+        if (command.equals("CATREFUSAL")) {
+            return "<b>" + CATREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
         }
 
         return command;
