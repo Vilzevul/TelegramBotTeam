@@ -11,14 +11,6 @@ import java.util.Objects;
 @Table(name = "adoptions")
 @DynamicInsert
 public class Adoption {
-    public Adoption(Adoption adoption) {
-
-    }
-
-    public Adoption() {
-
-    }
-
     public enum AdoptionStatus {
         NOT_ACTIVE,     //Испытательный период неактивен (запись для отслеживания статистики)
         ACTIVE,         //Испытательный период активен, от усыновителя ожидаются ежедневные отчеты
@@ -49,6 +41,9 @@ public class Adoption {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'ACTIVE'")
     private AdoptionStatus status;
+
+    public Adoption() {
+    }
 
     public Long getId() {
         return this.id;

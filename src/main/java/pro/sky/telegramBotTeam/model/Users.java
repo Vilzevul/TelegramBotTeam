@@ -33,11 +33,11 @@ public class Users {
         this.name = name;
     }
 
-    public Users(Long id, String name, String phone, UserRole role) {
+    public Users(Long id, String name, String phone) {
+        //Установится роль по умолчанию
         this.id = id;
         this.name = name;
         this.phone = phone;
-        this.role = role;
     }
 
     public Users() {

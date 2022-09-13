@@ -56,7 +56,7 @@ class TelegramBotUpdatesListenerTest {
 
     @Test
     void makeProcess() {
-        Users users = new Users(1L, "L", null, Users.UserRole.USER);
+        Users users = new Users(1L, "L", null);
         Assertions.assertThat(users).isNotNull();
         when(usersRepository.save(any(Users.class))).thenReturn(users);
     }

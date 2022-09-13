@@ -137,10 +137,9 @@ public class KeyBoardButton {
 
         if (command.equals(DOGSEND_MSG)) {
             inlineKeyboard.addRow(
-                    new InlineKeyboardButton[]{
-                            new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN),
-                            new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)
-                    });
+                    new InlineKeyboardButton(ESCAPE).callbackData(DOGMAIN),
+                    new InlineKeyboardButton(FORVARD).callbackData(DOGSEND_TXT)
+            );
         }
 
         if (command.equals(DOGSEND_TXT)) {
@@ -149,18 +148,15 @@ public class KeyBoardButton {
 
         if (command.equals(CATSEND_MSG)) {
             inlineKeyboard.addRow(
-                    new InlineKeyboardButton[]{
-                            new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN),
-                            new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT)
-                    });
+                    new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN),
+                    new InlineKeyboardButton(FORVARD).callbackData(CATSEND_TXT));
         }
 
         if (command.equals(CATSEND_TXT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(ESCAPE).callbackData(CATMAIN));
         }
-//Конец - Кнопки отправки отчета
 
-//Кнопка "Назад"
+        //Кнопка "Назад"
         switch (command) {
             case "DOGZN":
             case "DOGDOCUMENTS":
@@ -174,16 +170,16 @@ public class KeyBoardButton {
             case "DOGVOLONTER":
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
         }
+
         switch (command) {
             case DOGRULES:
             case DOGTAKE:
             case DOGABOUT:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGMAIN));
         }
+
         return inlineKeyboard;
     }
-//конец - Кнопка "Назад"
-
 
     /**
      * Функция возвращает имя нажатой кнопки соответствующей команде пользователя.
@@ -264,10 +260,6 @@ public class KeyBoardButton {
             return DOGREFUSAL;
         }
 
-/*        if (command.equals(DOGCONTACT)) {
-            return CONTACTS;
-        }*/
-
         if (command.equals(DOGSEND)) {
             return DOGSEND;
         }
@@ -295,6 +287,7 @@ public class KeyBoardButton {
         if (command.equals(CATTAKE)) {
             return CATTAKE;
         }
+
         if (command.equals(CATZN)) {
             return CATZN;
         }
@@ -317,9 +310,11 @@ public class KeyBoardButton {
         if (command.equals(CATHOMEDOGLIMITED)) {
             return CATHOMEDOGLIMITED;
         }
+
         if (command.equals(CATREFUSAL)) {
             return CATREFUSAL;
         }
+
         return status;
     }
 

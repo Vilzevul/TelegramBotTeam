@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.repository.UsersRepository;
 import pro.sky.telegramBotTeam.model.Users;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,41 +20,44 @@ public class UsersService {
     }
 
     /**
-     * Сохранить нового пользователя, интересующегося приютом.
-     * @param user новый пользователь.
+     * Возвращает пользователя по указанному ID.
+     *
+     * @param id ID (id chat) пользователя.
+     * @return пользователь. Может вернуть null, если такой пользователь отсутствует.
      */
-
-    @Transactional
-    public Users createUsersAll(Users users) {
-        Users baseUsers = usersRepository.findById(users.getId())
-                .orElse(new Users(users.getId(), users.getName(), users.getPhone(),users.getRole()));
-        return usersRepository.save(users);
+    public Users getUser(Long id) {
+        return usersRepository.findById(id).orElse(null);
     }
 
-    public List<Users> getUsersByRole(Users.UserRole userRole) {
-        return usersRepository.findAll().stream().
-                filter(v -> v.getRole() == Users.UserRole.ADOPTION).
-                collect(Collectors.toList());
-    }
-
-
-    public void addUser(Users user) {
-        if (!usersRepository.existsById(user.getId())) {
-            LOGGER.info("Добавлен новый пользователь: {}", user.getId());
-            usersRepository.save(user);
+    /**
+     * Сохранить/обновить данные пользователя, интересующегося приютом.
+     * @param user пользователь.
+     */
+    public Users createUser(Users user) {
+        Users userBD = getUser(user.getId());
+        if (userBD == null) {
+            LOGGER.info("Добавлен новый пользователь");
+            return usersRepository.save(user);
+        } else {
+            LOGGER.info("Пользователь обновлен");
+            if (user.getPhone() != null) {
+                userBD.setPhone(user.getPhone());
+            }
+            if (user.getRole() != null) {
+                userBD.setRole(user.getRole());
+            }
+            return usersRepository.save(userBD);
         }
     }
 
     /**
-     * Обновить телефон пользователя.
-     * @param phone телефон пользователя.
-     * @id id пользователя.
+     * Получить список пользователей указанной роли.
+     * @param userRole роль пользователя.
+     * @return список пользователей.
      */
-    @Transactional
-    public void updateUserPhone(String phone, Long id) {
-        LOGGER.info("Пользователь {} указал контакты: {}", id, phone);
-        if (usersRepository.existsById(id)) {
-            usersRepository.setUserPhoneById(phone, id);
-        }
+    public List<Users> getUsersByRole(Users.UserRole userRole) {
+        return usersRepository.findAll().stream().
+                filter(v -> v.getRole() == Users.UserRole.ADOPTION).
+                collect(Collectors.toList());
     }
 }

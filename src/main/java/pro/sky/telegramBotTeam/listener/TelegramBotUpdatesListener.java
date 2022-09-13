@@ -140,8 +140,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     KeyBoardButton.CATMAIN,
                     KeyBoardButton.CONTACTS,
                     KeyBoardButton.START -> {
-                Users users = new Users(userId, userName, userContacts, Users.UserRole.USER);
-                usersService.createUsersAll(users);
+                Users users = new Users(userId, userName, userContacts);
+                usersService.createUser(users);
             }
             case KeyBoardButton.HELP -> {
                 addAdoptions();
@@ -153,10 +153,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 try {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
-                        if (userFileId != null) {//есть какойто файл
-                        byte[] reportContent = getFileContent(telegramBot, userFileId);
-                        //reportContent сохраняем в БД
-                        if (reportContent != null) {//есть фото отчета
+                        if (userFileId != null)
+                        {
+                            byte[] reportContent = getFileContent(telegramBot, userFileId);
+                            //reportContent сохраняем в БД
+                            if (reportContent != null) {
                                 Report report = new Report(adoption, LocalDate.now(), reportContent, null);
                                 report = reportService.createReport(report);
                                 btnCommand = KeyBoardButton.DOGSEND_TXT;
@@ -184,26 +185,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                         Report report = new Report(adoption, LocalDate.now(), null, reportText);
-
                         report = reportService.createReport(report);
-                        LOGGER.info("report: {}", report);
-
                         btnCommand = KeyBoardButton.DOGMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
-
+                        LOGGER.info("report: {}", report);
                     } else {
                         btnCommand = KeyBoardButton.DOGMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "Вам не нужно присылать отчет";
-
                     }
-
-                    //Конец блока отправки отчета
                 }
             }
-        }// switch (btnCommand)
-
+        }
 
         if (message.equals("/start")) {
             telegramBot.execute(new SendMessage(userId, userName + ", привет!")
@@ -240,20 +234,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (!usersList.isEmpty()) {
             Users usersAdaptive = usersList.get(0);
             usersAdaptive.setRole(Users.UserRole.USER);
-            usersAdaptive = usersService.createUsersAll(usersAdaptive);
-
+            usersAdaptive = usersService.createUser(usersAdaptive);
 
             Adoption adoption = new Adoption();
-            //           Users users = new Users(userId, userName,userContacts, Users.UserRole.USER);
             LocalDate date = LocalDate.now();
             LocalDate date30 = date.plusDays(30);
 
-//                adoption.setId(1l);
             adoption.setParent(usersAdaptive);
             adoption.setVolunteer(usersAdaptive);
             adoption.setStartDate(java.sql.Date.valueOf(date));
             adoption.setEndDate(java.sql.Date.valueOf(date30));
-//                adoption.setStatus(Adoption.AdoptionStatus.ACTIVE);
             LOGGER.info("Users: {}", usersAdaptive);
             LOGGER.info("adoption: {}", adoption);
             adoptionService.createAdoption(adoption);
