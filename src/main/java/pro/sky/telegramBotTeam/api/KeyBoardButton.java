@@ -103,7 +103,7 @@ public class KeyBoardButton {
         }
 
         if (command.equals(CATMAIN)) {
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData("CATABOUT"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData(CATABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATRULES).callbackData("CATRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTAKE).callbackData(CATTAKE));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData("CATSEND"));
@@ -314,6 +314,12 @@ public class KeyBoardButton {
         if (command.equals(CATREFUSAL)) {
             return CATREFUSAL;
         }
+        if (command.equals(DOGABOUT)) {
+            return DOGABOUT;
+        }
+        if (command.equals(CATABOUT)) {
+            return CATABOUT;
+        }
 
         return status;
     }
@@ -348,12 +354,12 @@ public class KeyBoardButton {
                     "\nОставьте сообщение для работников приюта" + "\n";
         }
 
-        if (command.equals("DOGABOUT")) {
-            return "<b>" + DOGABOUT + "</b> \n " + "Приют находится по адресу ..." + "Время работы с 7-00   до  19-00" + "\nЗдесь будет список документов" + "\n" + "<i>" + "скачать - /file1_dog" + "</i>" + "\n" + "<i>" + "скачать - /file2_dog" + "</i>";
+        if (command.equals(DOGABOUT)) {
+            return "<b>" + DOGABOUT + "</b> \n " + readFile("documents/DOGABOUT.txt");
         }
 
-        if (command.equals("CATABOUT")) {
-            return "<b>" + CATABOUT + "</b> \n " + "Приют находится по адресу ..." + "Время работы с 7-00   до  19-00" + "\nЗдесь будет список документов" + "\n" + "<i>" + "скачать - /file1_cat" + "</i>" + "\n" + "<i>" + "скачать - /file2_cat" + "</i>";
+        if (command.equals(CATABOUT)) {
+            return "<b>" + CATABOUT + "</b> \n " + readFile("documents/CATABOUT.txt");
         }
 
         if (command.equals(DOGRULES)) {
