@@ -30,13 +30,15 @@ public class ReportService {
     public Report getReport(LocalDate date) {
         return reportRepository.findByReportDateSql(date).orElse(null);
     }
-
+public Report getReportDateAdopt(LocalDate reportDate, Long adoption_id ){
+        return reportRepository.findByReportDateAndAdoption_Id(reportDate,adoption_id).orElse(null);
+}
     /**
      * Сохранить/обновить данные отчета.
      * @param report отчет.
      */
     public Report createReport(Report report){
-        Report reportDate = getReport(LocalDate.now());
+        Report reportDate = getReportDateAdopt(LocalDate.now(),report.getAdoption().getId());
         if (reportDate == null) {
             LOGGER.info("Добавлен новый отчет");
             return reportRepository.save(report);
