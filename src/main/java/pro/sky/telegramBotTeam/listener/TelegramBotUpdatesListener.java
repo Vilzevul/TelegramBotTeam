@@ -136,9 +136,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         switch (btnCommand) {
             //Запись в БД
             case KeyBoardButton.DOGMAIN,
-                    KeyBoardButton.CATMAIN,
-                    KeyBoardButton.CONTACTS,
-                    KeyBoardButton.START -> {
+                    KeyBoardButton.CATMAIN -> {
                 Users users = new Users(userId, userName, userContacts);
                 usersService.createUser(users);
             }
@@ -151,8 +149,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 try {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
-                        if (userFileId != null)
-                        {
+                        if (userFileId != null) {
                             byte[] reportContent = getFileContent(telegramBot, userFileId);
                             //reportContent сохраняем в БД
                             if (reportContent != null) {
@@ -194,21 +191,42 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         message = "Вам не нужно присылать отчет";
                     }
                 }
+
+
+            }//default
+        }//case
+
+        switch (btnCommand) {
+            case KeyBoardButton.START -> {
+                Users users = new Users(userId, userName, userContacts);
+                usersService.createUser(users);
+                telegramBot.execute(new SendMessage(userId, userName + ", привет!")
+                        .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                        .parseMode(ParseMode.HTML));
             }
-        }
+ //main keyBoard
+            case KeyBoardButton.CONTACTS,
+                    KeyBoardButton.ESCAPE -> {
+                message = keyBoardButton.getMessage(btnCommand);
+                telegramBot.execute(new SendMessage(userId, message)
+                        .replyMarkup(keyBoardButton.getMainKeyboardMarkup()));
 
-        if (message.equals("/start")) {
-            telegramBot.execute(new SendMessage(userId, userName + ", привет!")
-                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
-                    .parseMode(ParseMode.HTML));
-        } else {
-            telegramBot.execute(new SendMessage(userId, message)
-                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
-                    .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
-                    .parseMode(ParseMode.HTML)
-            );
-        }
+            }
 
+            case KeyBoardButton.INLINECONTACTS -> {
+                telegramBot.execute(new SendMessage(userId, KeyBoardButton.CONTACTS)
+                        .replyMarkup(keyBoardButton.getContactKeyboardMarkup())
+                );
+            }
+            default -> {
+                telegramBot.execute(new SendMessage(userId, message)
+                        .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                        .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                        .parseMode(ParseMode.HTML)
+                );
+            }//default
+
+        }//case
         LOGGER.info("end makeProcess - команда: {} статус: {} текст: {}", btnCommand, btnStatus, message);
         LOGGER.info("end makeProcess - file id: {} ", userFileId);
     }

@@ -13,6 +13,7 @@ public class KeyBoardButton {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
 
     public final static String CONTACTS = "Оставить контакты";
+    public final static String INLINECONTACTS = "Оставить свои контакты";
     public final static String DOCUMENT = "DOCUMENT";
     public final static String ERROR = "ERROR";
     public final static String BACK = "Назад";
@@ -52,7 +53,7 @@ public class KeyBoardButton {
     public final static String CATSEND_TXT = "Напишите текст отчета для кошек";
     public final static String CATSEND_MSG = "Отправьте фото отчета для кошек";
     public final static String START = "/start";
-    private final String ESCAPE = "Отмена";
+    public static final String ESCAPE = "Отмена";
     private final String FORVARD = "Дальше";
 
     public final String STATE_HELP = "HELP";
@@ -75,9 +76,22 @@ public class KeyBoardButton {
                 .resizeKeyboard(true)       // optional
                 .selective(true);           // optional
 
-        keyboard.addRow(new KeyboardButton(CONTACTS).requestContact(true));
+//        keyboard.addRow(new KeyboardButton(CONTACTS).requestContact(true));
 
         return keyboard;
+    }
+
+    public Keyboard getContactKeyboardMarkup() {
+        ReplyKeyboardMarkup keyboardContact = new ReplyKeyboardMarkup(
+                new KeyboardButton[]{
+                  new KeyboardButton(CONTACTS).requestContact(true),
+                  new KeyboardButton(ESCAPE)
+
+                       })
+                         .oneTimeKeyboard(true)     // optional
+                        .resizeKeyboard(true)       // optional
+                        .selective(true);           // optional
+        return keyboardContact;
     }
 
     /**
@@ -119,7 +133,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGADVICECYNOLOGIST).callbackData("DOGADVICECYNOLOGIST"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRECOMMENDATION).callbackData("DOGRECOMMENDATION"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData("CONTACTS"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTS));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
         }
 
@@ -131,7 +145,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEDOG).callbackData("CATHOMEDOG"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEDOGLIMITED).callbackData("CATHOMEDOGLIMITED"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData("CONTACTS"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTS));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
         }
 
