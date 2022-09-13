@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.api.KeyBoardButton;
 import pro.sky.telegramBotTeam.model.Adoption;
@@ -19,7 +20,11 @@ import pro.sky.telegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 import static pro.sky.telegramBotTeam.api.Code.*;
@@ -246,5 +251,86 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             LOGGER.info("adoption: {}", adoption);
             adoptionService.createAdoption(adoption);
         }
+    }
+
+    /**
+     * Конвертировать Date в LocalDate.
+     * @param date дата типа Date.
+     * @return дата типа LocalDate. Если date = null, возвращает null.
+     */
+    private LocalDate convertDateToLocalDate(Date date) {
+        return (date == null) ? null : Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * Ежедневно в 00:00 проходится по всем усыновителям и рассылает
+     * сообщения участникам в соответствии с текущим статусом усыновления.
+     */
+    @Scheduled(cron = "@daily")
+    public void notifyParticipantsOfAdoption() {
+        adoptionService.getAllAdoptions().forEach(adoption -> {
+            final Long volunteerId = adoption.getVolunteer().getId();
+            final Long parentId = adoption.getParent().getId();
+            final String parentName = adoption.getParent().getName();
+
+            switch (adoption.getStatus()) {
+                case SUCCESS -> {
+                    telegramBot.execute(new SendMessage(parentId,
+                            "Поздравляем, " + parentName + "! Вы прошли испытательный период")
+                            .parseMode(ParseMode.HTML));
+                    adoptionService.updateAdoptionStatus(adoption.getId(), Adoption.AdoptionStatus.NOT_ACTIVE);
+                    reportService.deleteReports(adoption.getId());
+                }
+
+                case FAILED -> {
+                    telegramBot.execute(new SendMessage(parentId,
+                            "Сожалеем, " + parentName + "! Вы не прошли испытательный период")
+                            .parseMode(ParseMode.HTML));
+                    adoptionService.updateAdoptionStatus(adoption.getId(), Adoption.AdoptionStatus.NOT_ACTIVE);
+                    reportService.deleteReports(adoption.getId());
+                }
+
+                case DECIDE -> {
+                    telegramBot.execute(new SendMessage(volunteerId,
+                            "Испытательный период для усыновителя [" + parentId + "] закончился. " +
+                            "Требуется Ваше решение о дальнейшей судьбе питомца")
+                            .parseMode(ParseMode.HTML));
+                }
+
+                case ACTIVE -> {
+                    final LocalDate currentDate = LocalDate.now();
+                    final LocalDate adoptionStartDate = convertDateToLocalDate(adoption.getStartDate());
+                    final LocalDate adoptionEndDate = convertDateToLocalDate(adoption.getEndDate());
+
+                    if (currentDate.isAfter(adoptionEndDate)) {
+                        telegramBot.execute(new SendMessage(parentId,
+                                "Ваш испытательный период закончился, ожидается решение волонтера")
+                                .parseMode(ParseMode.HTML));
+                        adoptionService.updateAdoptionStatus(adoption.getId(), Adoption.AdoptionStatus.DECIDE);
+                    } else {
+                        //Если пользователь в текущие сутки уже слал отчет - не беспокоим его.
+                        //Иначе шлем стандартную напоминалку
+                        Report todayReport = reportService.getReport(adoption.getId(), currentDate);
+                        if (todayReport == null) {
+                            telegramBot.execute(new SendMessage(parentId,
+                                    "Пожалуйста, не забудьте прислать отчет о самочувствии питомца")
+                                    .parseMode(ParseMode.HTML));
+
+                            //Если отчетов нет уже более 2 дней - даем знать об этой ситуации волонтерам
+                            LocalDate lastReportDate = convertDateToLocalDate(reportService.getLastReportDate(adoption.getId()));
+                            final boolean notifyVolunteer = (lastReportDate == null) ?
+                                    currentDate.minusDays(2).isAfter(adoptionStartDate) :
+                                    (ChronoUnit.DAYS.between(lastReportDate, currentDate) >= 2);
+
+                            if (notifyVolunteer) {
+                                telegramBot.execute(new SendMessage(volunteerId,
+                                        "Усыновитель [" + parentId + "] уже более двух дней не присылает отчет о питомце")
+                                        .parseMode(ParseMode.HTML));
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 }

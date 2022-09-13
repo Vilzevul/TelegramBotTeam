@@ -6,10 +6,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Report;
 import pro.sky.telegramBotTeam.repository.ReportRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -19,6 +18,16 @@ public class ReportService {
 
     public ReportService(ReportRepository reportRepository) {
         this.reportRepository = reportRepository;
+    }
+
+    /**
+     * Возвращает дату последнего отчета.
+     *
+     * @param idAdoption id записи об усыновлении.
+     * @return дата последнего отчета. Может вернуть null, если такая запись отсутствует.
+     */
+    public Date getLastReportDate(Long idAdoption) {
+        return reportRepository.findLastReportDateByIdAdoption(idAdoption).orElse(null);
     }
 
     /**
@@ -51,5 +60,15 @@ public class ReportService {
             }
             return reportRepository.save(reportDate);
         }
+    }
+
+    /**
+     * Удалить все отчеты, связанные с указанной записью об усыновлении.
+     * @param idAdoption id записи об усыновлении.
+     */
+    @Transactional
+    public void deleteReports(Long idAdoption) {
+        int count = reportRepository.deleteReportsByIdAdoption(idAdoption);
+        LOGGER.info("{} отчетов удалено для записи об усыновлении {}", count, idAdoption);
     }
 }
