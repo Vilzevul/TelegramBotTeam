@@ -57,7 +57,7 @@ public class UsersService {
      */
     public List<Users> getUsersByRole(Users.UserRole userRole) {
         return usersRepository.findAll().stream().
-                filter(v -> v.getRole() == Users.UserRole.ADOPTION).
+                filter(v -> v.getRole() == userRole).//было Users.UserRole.ADOPTION
                 collect(Collectors.toList());
     }
 }

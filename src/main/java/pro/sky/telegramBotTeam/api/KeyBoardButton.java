@@ -1,10 +1,13 @@
 package pro.sky.telegramBotTeam.api;
 
+import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import java.awt.*;
 
 import static pro.sky.telegramBotTeam.api.Code.readFile;
 
@@ -23,7 +26,7 @@ public class KeyBoardButton {
     public final static String DOGSEND_MSG = "Отправьте фото отчета";
 
     public final static String HELP = "Помощь";
-    public final String SERVICE = "Оставить сообщение";
+    public final static String SERVICE = "Оставить сообщение";
     public final static String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
@@ -35,11 +38,11 @@ public class KeyBoardButton {
     private final String DOGTRANSPORT = "Список рекомендаций по транспортировке собаки";
     private final String CATTRANSPORT = "Список рекомендаций по транспортировке животного";
     private final String DOGHOMEPUPPY = "Список рекомендаций по обустройству дома для щенка";
-    private final String CATHOMEPUPPY = "Список рекомендаций по обустройству дома для котенка";
+    private final String CATHOMEKITTY = "Список рекомендаций по обустройству дома для котенка";
     private final String DOGHOMEDOG = "Список рекомендаций по обустройству дома для взр. собаки";
-    private final String CATHOMEDOG = "Список рекомендаций по обустройству дома для взр. животного";
+    private final String CATHOMEADULTCAT = "Список рекомендаций по обустройству дома для взр. животного";
     private final String DOGHOMEDOGLIMITED = "Список реком. по обустройству дома для собаки с огран. возможностями";
-    private final String CATHOMEDOGLIMITED = "Список реком. по обустройству дома для животного с огран. возможностями";
+    private final String CATHOMECATLIMITED = "Список реком. по обустройству дома для животного с огран. возможностями";
     private final String DOGADVICECYNOLOGIST = "Советы кинолога по первичному общению с собакой";
     private final String DOGRECOMMENDATION = "Рекомендации кинолога для дальнейшего обращения к ним";
     private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
@@ -117,7 +120,7 @@ public class KeyBoardButton {
         }
 
         if (command.equals(CATMAIN)) {
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData("CATABOUT"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData(CATABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATRULES).callbackData("CATRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTAKE).callbackData(CATTAKE));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData("CATSEND"));
@@ -141,9 +144,9 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATZN).callbackData("CATZN"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATDOCUMENTS).callbackData("CATDOCUMENTS"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTRANSPORT).callbackData("CATTRANSPORT"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEPUPPY).callbackData("CATHOMEPUPPY"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEDOG).callbackData("CATHOMEDOG"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEDOGLIMITED).callbackData("CATHOMEDOGLIMITED"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEKITTY).callbackData("CATHOMEKITTY"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMEADULTCAT).callbackData("CATHOMEADULTCAT"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMECATLIMITED).callbackData("CATHOMECATLIMITED"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTS));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
@@ -220,7 +223,7 @@ public class KeyBoardButton {
         }
 
         if (command.equals(HELP)) {
-            return STATE_HELP;
+            return HELP;
         }
 
         if (command.equals(START)) {
@@ -313,20 +316,26 @@ public class KeyBoardButton {
             return CATTRANSPORT;
         }
 
-        if (command.equals(CATHOMEPUPPY)) {
-            return CATHOMEPUPPY;
+        if (command.equals(CATHOMEKITTY)) {
+            return CATHOMEKITTY;
         }
 
-        if (command.equals(CATHOMEDOG)) {
-            return CATHOMEDOG;
+        if (command.equals(CATHOMEADULTCAT)) {
+            return CATHOMEADULTCAT;
         }
 
-        if (command.equals(CATHOMEDOGLIMITED)) {
-            return CATHOMEDOGLIMITED;
+        if (command.equals(CATHOMECATLIMITED)) {
+            return CATHOMECATLIMITED;
         }
 
         if (command.equals(CATREFUSAL)) {
             return CATREFUSAL;
+        }
+        if (command.equals(DOGABOUT)) {
+            return DOGABOUT;
+        }
+        if (command.equals(CATABOUT)) {
+            return CATABOUT;
         }
 
         return status;
@@ -351,10 +360,11 @@ public class KeyBoardButton {
         }
 
         if (command.equals(HELP)) {
-            return "<b>" + HELP + "</b> \n " +
+          return "<b>" + HELP + "</b> \n " + readFile("documents/HELP.txt");
+           /* return "<b>" + HELP + "</b> \n " +
                     "\n/start - старт бота" + "\n" +
                     "\n/list - список животных" + "\n" +
-                    "\n/... - и т.д. ";
+                    "\n/... - и т.д. ";*/
         }
 
         if (command.equals(SERVICE)) {
@@ -362,12 +372,12 @@ public class KeyBoardButton {
                     "\nОставьте сообщение для работников приюта" + "\n";
         }
 
-        if (command.equals("DOGABOUT")) {
-            return "<b>" + DOGABOUT + "</b> \n " + "Приют находится по адресу ..." + "Время работы с 7-00   до  19-00" + "\nЗдесь будет список документов" + "\n" + "<i>" + "скачать - /file1_dog" + "</i>" + "\n" + "<i>" + "скачать - /file2_dog" + "</i>";
+        if (command.equals(DOGABOUT)) {
+            return "<b>" + DOGABOUT + "</b> \n " + readFile("documents/DOGABOUT.txt");
         }
 
-        if (command.equals("CATABOUT")) {
-            return "<b>" + CATABOUT + "</b> \n " + "Приют находится по адресу ..." + "Время работы с 7-00   до  19-00" + "\nЗдесь будет список документов" + "\n" + "<i>" + "скачать - /file1_cat" + "</i>" + "\n" + "<i>" + "скачать - /file2_cat" + "</i>";
+        if (command.equals(CATABOUT)) {
+            return "<b>" + CATABOUT + "</b> \n " + readFile("documents/CATABOUT.txt");
         }
 
         if (command.equals(DOGRULES)) {
@@ -435,13 +445,38 @@ public class KeyBoardButton {
         if (command.equals("DOGREFUSAL")) {
             return "<b>" + DOGREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
         }
-        if (command.equals("CATREFUSAL")) {
-            return "<b>" + CATREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
-        }
+
 
         if (command.equals("DOGCONTACT")) {
             return "<b>" + CONTACTS + "</b> \n " + "Спасибо за предоставленные контакты. Будем на связи!";
             // "<i>" + "\nВведите ваш номер телефона для связи в формате <u>+7999999999</u>:" + "\n" + "</i>";
+        }
+
+        if (command.equals("CATZN")) {
+            return "<b>" + CATZN + "</b> \n " + readFile("documents/CATZN.txt");
+        }
+
+        if (command.equals("CATDOCUMENTS")) {
+            return "<b>" + CATDOCUMENTS + "</b> \n " + readFile("documents/CATDOCUMENTS.txt");
+        }
+
+        if (command.equals("CATTRANSPORT")) {
+            return "<b>" + CATTRANSPORT + "</b> \n " + readFile("documents/CATTRANSPORT.txt");
+        }
+        if (command.equals("CATHOMEKITTY")) {
+            return "<b>" + CATHOMEKITTY + "</b> \n " + readFile("documents/CATHOMEKITTY.txt");
+        }
+
+        if (command.equals("CATHOMEADULTCAT")) {
+            return "<b>" + CATHOMEADULTCAT + "</b> \n " + readFile("documents/CATHOMEADULTCAT.txt");
+        }
+
+        if (command.equals("CATHOMECATLIMITED")) {
+            return "<b>" + CATHOMECATLIMITED + "</b> \n " + readFile("documents/CATHOMECATLIMITED.txt");
+        }
+
+        if (command.equals("CATREFUSAL")) {
+            return "<b>" + CATREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
         }
 
         return command;

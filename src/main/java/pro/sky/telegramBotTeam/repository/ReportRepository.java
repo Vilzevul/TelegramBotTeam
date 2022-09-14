@@ -1,9 +1,9 @@
 package pro.sky.telegramBotTeam.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Report;
 
 import java.time.LocalDate;
@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
-    /**
-     * @deprecated use {@link #findByReportDateAndAdoption_Id(LocalDate, Long)}
-     */
-    @Query(value = "SELECT * FROM reports WHERE report_date = :date LIMIT 1", nativeQuery = true)
-    Optional <Report> findByReportDateSql(LocalDate date);
+    @Query(value = "SELECT * FROM reports WHERE id_adoption = :idAdoption AND report_date = :date LIMIT 1", nativeQuery = true)
+    Optional<Report> findByIdAdoptionAndReportDate(Long idAdoption, LocalDate date);
 
+    @Query(value = "SELECT MAX(report_date) from reports WHERE id_adoption = :idAdoption", nativeQuery = true)
+    Optional<Date> findLastReportDateByIdAdoption(Long idAdoption);
 
-    @Query(value = "SELECT * FROM reports WHERE report_date = :reportDate AND id_adoption = :adoption_id LIMIT 1", nativeQuery = true)
-    Optional <Report> findByReportDateAndAdoption_Id(LocalDate reportDate, Long adoption_id);
+    @Modifying
+    @Query(value = "DELETE FROM reports WHERE id_adoption = :idAdoption", nativeQuery = true)
+    int deleteReportsByIdAdoption(Long idAdoption);
 }

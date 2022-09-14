@@ -6,10 +6,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Report;
 import pro.sky.telegramBotTeam.repository.ReportRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -22,23 +21,32 @@ public class ReportService {
     }
 
     /**
-     * Возвращает отчет указанной даты.
+     * Возвращает дату последнего отчета.
+     *
+     * @param idAdoption id записи об усыновлении.
+     * @return дата последнего отчета. Может вернуть null, если такая запись отсутствует.
+     */
+    public Date getLastReportDate(Long idAdoption) {
+        return reportRepository.findLastReportDateByIdAdoption(idAdoption).orElse(null);
+    }
+
+    /**
+     * Возвращает отчет указанной даты для указанной записи по усыновлению.
      *
      * @param date дата отчета.
+     * @param idAdoption id записи об усыновлении.
      * @return отчет. Может вернуть null, если такой отчет отсутствует.
      */
-    public Report getReport(LocalDate date) {
-        return reportRepository.findByReportDateSql(date).orElse(null);
+    public Report getReport(Long idAdoption, LocalDate date) {
+        return reportRepository.findByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
     }
-public Report getReportDateAdopt(LocalDate reportDate, Long adoption_id ){
-        return reportRepository.findByReportDateAndAdoption_Id(reportDate,adoption_id).orElse(null);
-}
+
     /**
      * Сохранить/обновить данные отчета.
      * @param report отчет.
      */
     public Report createReport(Report report){
-        Report reportDate = getReportDateAdopt(LocalDate.now(),report.getAdoption().getId());
+        Report reportDate = getReport(report.getAdoption().getId(), LocalDate.now());
         if (reportDate == null) {
             LOGGER.info("Добавлен новый отчет");
             return reportRepository.save(report);
@@ -52,5 +60,15 @@ public Report getReportDateAdopt(LocalDate reportDate, Long adoption_id ){
             }
             return reportRepository.save(reportDate);
         }
+    }
+
+    /**
+     * Удалить все отчеты, связанные с указанной записью об усыновлении.
+     * @param idAdoption id записи об усыновлении.
+     */
+    @Transactional
+    public void deleteReports(Long idAdoption) {
+        int count = reportRepository.deleteReportsByIdAdoption(idAdoption);
+        LOGGER.info("{} отчетов удалено для записи об усыновлении {}", count, idAdoption);
     }
 }
