@@ -24,13 +24,16 @@ public class KeyBoardButton {
     public final static String DOGSEND = "Прислать отчет";
     public final static String DOGSEND_TXT = "Напишите текст отчета";
     public final static String DOGSEND_MSG = "Отправьте фото отчета";
+    public final static String CATSEND = "Прислать отчет для кошек";
+    public final static String CATSEND_TXT = "Напишите текст отчета для кошек";
+    public final static String CATSEND_MSG = "Отправьте фото отчета для кошек";
 
     public final static String HELP = "Помощь";
     public final static String SERVICE = "Оставить сообщение";
     public final static String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
-    private final String DOGTAKE = "Как взять собаку из приюта";
+    public final static String DOGTAKE = "Как взять собаку из приюта";
     private final String DOGZN = "Правила знакомства с собакой";
     private final String CATZN = "Правила знакомства с кошкой";
     private final String DOGDOCUMENTS = "Список документов, чтобы взять собаку";
@@ -52,11 +55,9 @@ public class KeyBoardButton {
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
     private final String CATTAKE = "Как взять кошку из приюта";
-    private final String CATSEND = "Прислать отчет для кошек";
-    public final static String CATSEND_TXT = "Напишите текст отчета для кошек";
-    public final static String CATSEND_MSG = "Отправьте фото отчета для кошек";
     public final static String START = "/start";
     public static final String ESCAPE = "Отмена";
+    public static final String ESCAPECONTACT = "Отмена";
     private final String FORVARD = "Дальше";
 
     public final String STATE_HELP = "HELP";
@@ -87,13 +88,13 @@ public class KeyBoardButton {
     public Keyboard getContactKeyboardMarkup() {
         ReplyKeyboardMarkup keyboardContact = new ReplyKeyboardMarkup(
                 new KeyboardButton[]{
-                  new KeyboardButton(CONTACTS).requestContact(true),
-                  new KeyboardButton(ESCAPE)
+                        new KeyboardButton(CONTACTS).requestContact(true),
+                        new KeyboardButton(ESCAPECONTACT)
 
-                       })
-                         .oneTimeKeyboard(true)     // optional
-                        .resizeKeyboard(true)       // optional
-                        .selective(true);           // optional
+                })
+                .oneTimeKeyboard(true)     // optional
+                .resizeKeyboard(true)       // optional
+                .selective(true);           // optional
         return keyboardContact;
     }
 
@@ -123,10 +124,10 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData(CATABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATRULES).callbackData("CATRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTAKE).callbackData(CATTAKE));
-            inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData("CATSEND"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData(CATSEND_MSG));
         }
 
-        if (command.equals(DOGTAKE)) {
+        if (command.equals(DOGTAKE) || command.equals(ESCAPECONTACT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGZN).callbackData("DOGZN"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGDOCUMENTS).callbackData("DOGDOCUMENTS"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTRANSPORT).callbackData("DOGTRANSPORT"));
@@ -187,12 +188,32 @@ public class KeyBoardButton {
             case "DOGVOLONTER":
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
         }
+        switch (command) {
+            case "CATZN":
+            case "CATDOCUMENTS":
+            case "CATTRANSPORT":
+            case "CATHOMEKITTY":
+            case "CATHOMEADULTCAT":
+            case "CATHOMECATLIMITED":
+            case "CATREFUSAL":
+            case INLINECONTACTS:
+            case "VOLONTER":
+                inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(CATTAKE));
+        }
 
         switch (command) {
             case DOGRULES:
             case DOGTAKE:
             case DOGABOUT:
+            case ESCAPECONTACT:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGMAIN));
+        }
+        switch (command) {
+            case CATABOUT:
+            case CATTAKE:
+            case "CATRULES":
+            case ESCAPECONTACT:
+                inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(CATMAIN));
         }
 
         return inlineKeyboard;
@@ -360,7 +381,7 @@ public class KeyBoardButton {
         }
 
         if (command.equals(HELP)) {
-          return "<b>" + HELP + "</b> \n " + readFile("documents/HELP.txt");
+            return "<b>" + HELP + "</b> \n " + readFile("documents/HELP.txt");
            /* return "<b>" + HELP + "</b> \n " +
                     "\n/start - старт бота" + "\n" +
                     "\n/list - список животных" + "\n" +
