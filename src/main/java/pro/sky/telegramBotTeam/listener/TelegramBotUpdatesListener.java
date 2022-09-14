@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static pro.sky.telegramBotTeam.api.Code.*;
 
@@ -147,17 +148,37 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Users users = new Users(userId, userName, userContacts);
                 usersService.createUser(users);
             }
-            case KeyBoardButton.HELP -> {
-                addAdoptions();
+            case KeyBoardButton.SERVICE -> {
+                String messageService = (btnMessage != null) ? btnMessage : btnCommand;
+
+                List<Users> VolunteersList = usersService.getUsersByRole(Users.UserRole.VOLUNTEER);
+                Random random = new Random();
+
+                if (!VolunteersList.isEmpty()) {
+                    if (VolunteersList.size() == 1) {
+                        Long ID = VolunteersList.get(0).getId();
+                        LOGGER.info("сообщение: {}", messageService);
+                        telegramBot.execute(new SendMessage(ID,
+                                "Сообщение: " + messageService)
+                                .parseMode(ParseMode.HTML));
+                    } /*else {
+                        Long randomVolunteer = Long.valueOf((random.nextInt(VolunteersList.size())));
+                        LOGGER.info("сообщение: {}", messageService, randomVolunteer);
+
+                        telegramBot.execute(new SendMessage(randomVolunteer,
+                                "Сообщение: " + messageService)
+                                .parseMode(ParseMode.HTML));
+                    }*/
+                }
             }
+
             //Блок отправки отчета
             //Пользователь отправляет фото
             case KeyBoardButton.DOGSEND_MSG -> {
                 try {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
-                        if (userFileId != null)
-                        {
+                        if (userFileId != null) {
                             byte[] reportContent = getFileContent(telegramBot, userFileId);
                             //reportContent сохраняем в БД
                             if (reportContent != null) {
@@ -255,6 +276,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Конвертировать Date в LocalDate.
+     *
      * @param date дата типа Date.
      * @return дата типа LocalDate. Если date = null, возвращает null.
      */
@@ -293,7 +315,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 case DECIDE -> {
                     telegramBot.execute(new SendMessage(volunteerId,
                             "Испытательный период для усыновителя [" + parentId + "] закончился. " +
-                            "Требуется Ваше решение о дальнейшей судьбе питомца")
+                                    "Требуется Ваше решение о дальнейшей судьбе питомца")
                             .parseMode(ParseMode.HTML));
                 }
 

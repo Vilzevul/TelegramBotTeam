@@ -22,7 +22,7 @@ public class KeyBoardButton {
     public final static String DOGSEND_MSG = "Отправьте фото отчета";
 
     public final static String HELP = "Помощь";
-    public final String SERVICE = "Оставить сообщение";
+    public final static String SERVICE = "Оставить сообщение";
     public final static String DOGMAIN = "Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
