@@ -1,10 +1,13 @@
 package pro.sky.telegramBotTeam.api;
 
+import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import java.awt.*;
 
 import static pro.sky.telegramBotTeam.api.Code.readFile;
 
@@ -206,7 +209,7 @@ public class KeyBoardButton {
         }
 
         if (command.equals(HELP)) {
-            return STATE_HELP;
+            return HELP;
         }
 
         if (command.equals(START)) {
@@ -343,10 +346,11 @@ public class KeyBoardButton {
         }
 
         if (command.equals(HELP)) {
-            return "<b>" + HELP + "</b> \n " +
+          return "<b>" + HELP + "</b> \n " + readFile("documents/HELP.txt");
+           /* return "<b>" + HELP + "</b> \n " +
                     "\n/start - старт бота" + "\n" +
                     "\n/list - список животных" + "\n" +
-                    "\n/... - и т.д. ";
+                    "\n/... - и т.д. ";*/
         }
 
         if (command.equals(SERVICE)) {
