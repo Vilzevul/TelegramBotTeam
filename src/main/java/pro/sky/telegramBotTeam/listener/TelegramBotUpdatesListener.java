@@ -387,10 +387,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
-     * Ежедневно в 00:00 проходится по всем усыновителям и рассылает
+     * Ежедневно в 21:00 проходится по всем усыновителям и рассылает
      * сообщения участникам в соответствии с текущим статусом усыновления.
      */
-    @Scheduled(cron = "@daily")
+    @Scheduled(cron = "0 0 21 * * *")
     public void notifyParticipantsOfAdoption() {
         adoptionService.getAllAdoptions().forEach(adoption -> {
             final Long volunteerId = adoption.getVolunteer().getId();
@@ -432,16 +432,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                 .parseMode(ParseMode.HTML));
                         adoptionService.updateAdoptionStatus(adoption.getId(), Adoption.AdoptionStatus.DECIDE);
                     } else {
-                        //Если пользователь в текущие сутки уже слал отчет - не беспокоим его.
+                        //Если пользователь в текущие сутки уже слал отчет (и его отчет заполнен) - не беспокоим его.
                         //Иначе шлем стандартную напоминалку
-                        Report todayReport = reportService.getReport(adoption.getId(), currentDate);
+                        Report todayReport = reportService.getCompletedReport(adoption.getId(), currentDate);
                         if (todayReport == null) {
                             telegramBot.execute(new SendMessage(parentId,
-                                    "Пожалуйста, не забудьте прислать отчет о самочувствии питомца")
+                                    "Пожалуйста, не забудьте заполнить и прислать отчет о самочувствии питомца")
                                     .parseMode(ParseMode.HTML));
 
-                            //Если отчетов нет уже более 2 дней - даем знать об этой ситуации волонтерам
-                            LocalDate lastReportDate = convertDateToLocalDate(reportService.getLastReportDate(adoption.getId()));
+                            //Если заполненных отчетов нет уже более 2 дней - даем знать об этой ситуации волонтерам
+                            LocalDate lastReportDate = convertDateToLocalDate(reportService.getLastCompletedReportDate(adoption.getId()));
                             final boolean notifyVolunteer = (lastReportDate == null) ?
                                     currentDate.minusDays(2).isAfter(adoptionStartDate) :
                                     (ChronoUnit.DAYS.between(lastReportDate, currentDate) >= 2);

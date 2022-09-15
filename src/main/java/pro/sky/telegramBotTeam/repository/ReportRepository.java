@@ -15,8 +15,13 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query(value = "SELECT * FROM reports WHERE id_adoption = :idAdoption AND report_date = :date LIMIT 1", nativeQuery = true)
     Optional<Report> findByIdAdoptionAndReportDate(Long idAdoption, LocalDate date);
 
-    @Query(value = "SELECT MAX(report_date) from reports WHERE id_adoption = :idAdoption", nativeQuery = true)
-    Optional<Date> findLastReportDateByIdAdoption(Long idAdoption);
+    @Query(value = "SELECT * FROM reports WHERE id_adoption = :idAdoption AND report_date = :date AND " +
+            "report_image IS NOT NULL AND report_message IS NOT NULL LIMIT 1", nativeQuery = true)
+    Optional<Report> findCompletedByIdAdoptionAndReportDate(Long idAdoption, LocalDate date);
+
+    @Query(value = "SELECT MAX(report_date) from reports WHERE id_adoption = :idAdoption AND " +
+            "report_image IS NOT NULL AND report_message IS NOT NULL", nativeQuery = true)
+    Optional<Date> findLastCompletedReportDateByIdAdoption(Long idAdoption);
 
     @Modifying
     @Query(value = "DELETE FROM reports WHERE id_adoption = :idAdoption", nativeQuery = true)

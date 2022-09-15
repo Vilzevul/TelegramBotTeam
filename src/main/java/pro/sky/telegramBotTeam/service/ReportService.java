@@ -21,13 +21,13 @@ public class ReportService {
     }
 
     /**
-     * Возвращает дату последнего отчета.
+     * Возвращает дату последнего заполненного отчета.
      *
      * @param idAdoption id записи об усыновлении.
-     * @return дата последнего отчета. Может вернуть null, если такая запись отсутствует.
+     * @return дата последнего заполненного отчета. Может вернуть null, если такая запись отсутствует.
      */
-    public Date getLastReportDate(Long idAdoption) {
-        return reportRepository.findLastReportDateByIdAdoption(idAdoption).orElse(null);
+    public Date getLastCompletedReportDate(Long idAdoption) {
+        return reportRepository.findLastCompletedReportDateByIdAdoption(idAdoption).orElse(null);
     }
 
     /**
@@ -39,6 +39,19 @@ public class ReportService {
      */
     public Report getReport(Long idAdoption, LocalDate date) {
         return reportRepository.findByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
+    }
+
+    /**
+     * Возвращает отчет указанной даты для указанной записи по усыновлению.
+     * При этом ведется поиск полного отчета, т.е. в нем должны быть заполнены
+     * оба поля: изображение и сообщение.
+     *
+     * @param date дата отчета.
+     * @param idAdoption id записи об усыновлении.
+     * @return полный отчет. Может вернуть null, если такой отчет отсутствует.
+     */
+    public Report getCompletedReport(Long idAdoption, LocalDate date) {
+        return reportRepository.findCompletedByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
     }
 
     /**
