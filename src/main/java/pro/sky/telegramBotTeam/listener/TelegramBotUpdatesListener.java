@@ -153,20 +153,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Random random = new Random();
 
                 if (!VolunteersList.isEmpty()) {
+                    Integer randomVolunteer = (random.nextInt(VolunteersList.size()));
+
                     if (VolunteersList.size() == 1) {
                         Long ID = VolunteersList.get(0).getId();
-                        LOGGER.info("сообщение: {}", messageService);
+                        LOGGER.info("ID волонтера: " + ID);
                         telegramBot.execute(new SendMessage(ID,
+                                "Ваше сообщение отправленно: " + messageService)
+                                .parseMode(ParseMode.HTML));
+                    } else if (VolunteersList.size() > 1) {
+                        LOGGER.info("Сообщение: ", messageService, randomVolunteer);
+                        telegramBot.execute(new SendMessage(VolunteersList.get(randomVolunteer).getId(),
                                 "Сообщение: " + messageService)
                                 .parseMode(ParseMode.HTML));
-                    } /*else {
-                        Long randomVolunteer = Long.valueOf((random.nextInt(VolunteersList.size())));
-                        LOGGER.info("сообщение: {}", messageService, randomVolunteer);
-
-                        telegramBot.execute(new SendMessage(randomVolunteer,
-                                "Сообщение: " + messageService)
-                                .parseMode(ParseMode.HTML));
-                    }*/
+                    }
+                } else if (VolunteersList.isEmpty()) {
+                    message = "Свободных волонтеров нет. Попробуйте связаться позже";
+                    telegramBot.execute(new SendMessage(userId, message)
+                            .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                            .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                            .parseMode(ParseMode.HTML));
                 }
             }
 
