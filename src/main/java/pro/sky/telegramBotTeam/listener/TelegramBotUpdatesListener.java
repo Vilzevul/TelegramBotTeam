@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
+import liquibase.pro.packaged.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -130,7 +131,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             throw new NullPointerException("User is null");
         }
 
-        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+        //       btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
         String btnMessage = keyBoardButton.getMessage(btnCommand);
         String message = (btnMessage != null) ? btnMessage : btnCommand;
 
@@ -145,6 +146,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     KeyBoardButton.CATMAIN -> {
                 Users users = new Users(userId, userName, userContacts);
                 usersService.createUser(users);
+                if (btnStatus.equals(KeyBoardButton.SEND_END) ||
+                        btnStatus.equals(KeyBoardButton.DOGSEND_TXT) ||
+                        btnStatus.equals(KeyBoardButton.CATSEND_TXT)) {
+                    checkReport(user);
+                    btnStatus = KeyBoardButton.DOGMAIN;
+                    message = keyBoardButton.getMessage(btnCommand);
+                }
+
             }
             case KeyBoardButton.SERVICE -> {
                 String messageService = (btnMessage != null) ? btnMessage : btnCommand;
@@ -174,6 +183,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             //Пользователь отправляет фото
             case KeyBoardButton.DOGSEND_MSG,
                     KeyBoardButton.CATSEND_MSG -> {
+                btnStatus = KeyBoardButton.SEND_END;
                 try {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
@@ -212,6 +222,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
             case KeyBoardButton.DOGSEND_TXT,
                     KeyBoardButton.CATSEND_TXT -> {
+                btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
             }
             default -> {
                 //Пользователь отправляет текст
@@ -222,8 +233,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         Report report = new Report(adoption, LocalDate.now(), null, reportText);
                         report = reportService.createReport(report);
                         btnCommand = KeyBoardButton.DOGMAIN;
-                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        //   btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
+                        checkReport(user);
                         LOGGER.info("report: {}", report);
                     } else {
                         btnCommand = KeyBoardButton.DOGMAIN;
@@ -236,8 +248,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                         btnCommand = KeyBoardButton.CATMAIN;
-                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        //                      btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
+                        checkReport(user);
                     } else {
                         btnCommand = KeyBoardButton.CATMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
@@ -250,6 +263,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }//case
 
         switch (btnCommand) {
+
             case KeyBoardButton.START -> {
                 Users users = new Users(userId, userName, userContacts);
                 usersService.createUser(users);
@@ -259,11 +273,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
             //main keyBoard
             case KeyBoardButton.CONTACTS,
-                    KeyBoardButton.ESCAPE -> {
-                message = keyBoardButton.getMessage(btnCommand);
+                    KeyBoardButton.ESCAPECONTACTDOG,
+                    KeyBoardButton.ESCAPECONTACTCAT -> {
+                message = keyBoardButton.getMessage(KeyBoardButton.ESCAPE);
                 telegramBot.execute(new SendMessage(userId, message)
                         .replyMarkup(keyBoardButton.getMainKeyboardMarkup()));
-                btnCommand = btnStatus;
+
                 message = keyBoardButton.getMessage(btnCommand);
                 if (btnCommand == KeyBoardButton.CONTACTS) message = "Продолжить работу с программой";
                 telegramBot.execute(new SendMessage(userId, message)
@@ -273,9 +288,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             }
 
-            case KeyBoardButton.INLINECONTACTS -> {
+            case KeyBoardButton.INLINECONTACTSDOG -> {
                 telegramBot.execute(new SendMessage(userId, KeyBoardButton.CONTACTS)
-                        .replyMarkup(keyBoardButton.getContactKeyboardMarkup())
+                        .replyMarkup(keyBoardButton.getContactKeyboardDog())
+                );
+            }
+            case KeyBoardButton.INLINECONTACTSCAT -> {
+                telegramBot.execute(new SendMessage(userId, KeyBoardButton.CONTACTS)
+                        .replyMarkup(keyBoardButton.getContactKeyboardCat())
                 );
             }
             default -> {
@@ -334,6 +354,29 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     private LocalDate convertDateToLocalDate(Date date) {
         return (date == null) ? null : Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * Проверка отчета на наличие всех полей
+     * @param user
+     * @return
+     */
+    public String checkReport(User user) {
+        final String TEXT = "Вы не прислали текст отчета";
+        final String IMAGE = "Вы не прислали фото отчета";
+ String message = null;
+
+        Adoption adoption = adoptionService.getAdoption(user.id());
+        if (adoption == null) return null;
+
+        if (!adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE)) return null;
+
+        Report report = reportService.getReport(adoption.getId(), LocalDate.now());
+        if (report.getReportImage() == null) message = IMAGE;
+        if (report.getReportMessage() == null) message = TEXT;
+        if(!(message ==null)) telegramBot.execute(new SendMessage(user.id(), message)
+                .parseMode(ParseMode.HTML));
+        return message;
     }
 
     /**
