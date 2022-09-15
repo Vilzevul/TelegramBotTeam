@@ -378,6 +378,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (!adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE)) return null;
 
         Report report = reportService.getReport(adoption.getId(), LocalDate.now());
+        if(report == null) return null;
         if (report.getReportImage() == null) message = IMAGE;
         if (report.getReportMessage() == null) message = TEXT;
         if(!(message ==null)) telegramBot.execute(new SendMessage(user.id(), message)
