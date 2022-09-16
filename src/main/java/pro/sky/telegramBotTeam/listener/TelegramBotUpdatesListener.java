@@ -157,12 +157,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (btnStatus.equals(KeyBoardButton.SEND_END) ||
                         btnStatus.equals(KeyBoardButton.DOGSEND_TXT) ||
                         btnStatus.equals(KeyBoardButton.CATSEND_TXT)) {
-                    checkReport(user);
+                    checkReport(member);
                     btnStatus = KeyBoardButton.DOGMAIN;
                     message = keyBoardButton.getMessage(btnCommand);
                 }
-
             }
+
             case KeyBoardButton.SERVICE -> {
                 String messageService = (btnMessage != null) ? btnMessage : btnCommand;
 
