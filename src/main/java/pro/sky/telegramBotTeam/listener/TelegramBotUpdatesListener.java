@@ -241,9 +241,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         Report report = new Report(adoption, LocalDate.now(), null, reportText);
                         report = reportService.createReport(report);
                         btnCommand = KeyBoardButton.DOGMAIN;
-                        //   btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
                         checkReport(user);
+
                         LOGGER.info("report: {}", report);
                     } else {
                         btnCommand = KeyBoardButton.DOGMAIN;
@@ -256,9 +257,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     Adoption adoption = adoptionService.getAdoption(userId);
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
                         btnCommand = KeyBoardButton.CATMAIN;
-                        //                      btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
+                        btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
                         checkReport(user);
+
                     } else {
                         btnCommand = KeyBoardButton.CATMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);

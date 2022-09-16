@@ -252,6 +252,12 @@ public class KeyBoardButton {
             LOGGER.error("Status is null");
             throw new NullPointerException("Status is null");
         }
+        if (command.equals(CATMAIN)) {
+            return CATMAIN;
+        }
+        if (command.equals(DOGMAIN)) {
+            return DOGMAIN;
+        }
 
         if (command.equals(ESCAPECONTACTDOG)) {
             return DOGTAKE;
