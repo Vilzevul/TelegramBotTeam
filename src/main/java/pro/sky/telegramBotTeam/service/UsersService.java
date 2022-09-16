@@ -30,7 +30,8 @@ public class UsersService {
     }
 
     /**
-     * Сохранить/обновить данные пользователя, интересующегося приютом.
+     * Сохранить/обновить данные пользователя.
+     *
      * @param user пользователь.
      */
     public Users createUser(Users user) {
@@ -43,21 +44,7 @@ public class UsersService {
             if (user.getPhone() != null) {
                 userBD.setPhone(user.getPhone());
             }
-            if (user.getRole() != null) {
-                userBD.setRole(user.getRole());
-            }
             return usersRepository.save(userBD);
         }
-    }
-
-    /**
-     * Получить список пользователей указанной роли.
-     * @param userRole роль пользователя.
-     * @return список пользователей.
-     */
-    public List<Users> getUsersByRole(Users.UserRole userRole) {
-        return usersRepository.findAll().stream().
-                filter(v -> v.getRole() == userRole).//было Users.UserRole.ADOPTION
-                collect(Collectors.toList());
     }
 }

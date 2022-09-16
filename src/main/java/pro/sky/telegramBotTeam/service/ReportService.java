@@ -56,6 +56,7 @@ public class ReportService {
 
     /**
      * Сохранить/обновить данные отчета.
+     *
      * @param report отчет.
      */
     public Report createReport(Report report){
@@ -77,6 +78,7 @@ public class ReportService {
 
     /**
      * Удалить все отчеты, связанные с указанной записью об усыновлении.
+     *
      * @param idAdoption id записи об усыновлении.
      */
     @Transactional
