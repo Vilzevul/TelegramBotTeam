@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendDocument;
 import com.pengrad.telegrambot.request.SendMessage;
 import liquibase.pro.packaged.S;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import pro.sky.telegramBotTeam.service.ReportService;
 import pro.sky.telegramBotTeam.service.UsersService;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -269,6 +271,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }//case
 
         switch (btnCommand) {
+            case "/getdog" -> {
+                File file = new File("documents/getdog.doc");
+                telegramBot.execute(new SendDocument(userId,file ));
+
+            }
 
             case KeyBoardButton.START -> {
                 Users users = new Users(userId, userName, userContacts);
