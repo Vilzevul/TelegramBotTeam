@@ -64,6 +64,13 @@ UPDATE members
 SET id_shelter = (SELECT id FROM shelters WHERE name = 'DOGS')
 WHERE id_shelter IS NULL;
 
+-- добавить ограничения NOT NULL для таблицы members
+ALTER TABLE members
+ALTER COLUMN id_user SET NOT NULL;
+
+ALTER TABLE members
+ALTER COLUMN id_shelter SET NOT NULL;
+
 -- удалить роль из таблицы users, теперь она определена в таблице members
 ALTER TABLE users
 DROP COLUMN IF EXISTS role;
@@ -99,3 +106,14 @@ SET id_volunteer = (SELECT m.id FROM members m, adoptions_keys_temp t WHERE a.id
 
 -- удалить временную таблицу
 DROP TABLE adoptions_keys_temp;
+
+-- добавить ограничения NOT NULL для таблицы adoptions
+ALTER TABLE adoptions
+ALTER COLUMN id_parent SET NOT NULL;
+
+ALTER TABLE adoptions
+ALTER COLUMN id_volunteer SET NOT NULL;
+
+-- добавить ограничение NOT NULL для таблицы
+ALTER TABLE reports
+ALTER COLUMN id_adoption SET NOT NULL;
