@@ -31,7 +31,7 @@ public class AdoptionService {
     /**
      * Возвращает информацию по усыновлению для указанного усыновителя.
      *
-     * @param idParent id усыновителя.
+     * @param idParent id усыновителя (ссылка на Member).
      * @return информация по усыновлению. Может вернуть null, если такая запись отсутствует.
      */
     public Adoption getAdoption(Long idParent) {
@@ -40,6 +40,7 @@ public class AdoptionService {
 
     /**
      * Сохранить/обновить данные записи усыновления.
+     *
      * @param adoption запись усыновления.
      */
     public Adoption createAdoption(Adoption adoption) {
@@ -49,6 +50,12 @@ public class AdoptionService {
         return adoption;
     }
 
+    /**
+     * Обновить текущий статус для записи усыновления.
+     *
+     * @param id ID записи усыновления.
+     * @param status новый статус.
+     */
     @Transactional
     public void updateAdoptionStatus(Long id, Adoption.AdoptionStatus status) {
         adoptionRepository.updateAdoptionStatus(id, status.toString());

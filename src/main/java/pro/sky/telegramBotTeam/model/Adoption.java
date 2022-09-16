@@ -15,7 +15,7 @@ public class Adoption {
         NOT_ACTIVE,     //Испытательный период неактивен (запись для отслеживания статистики)
         ACTIVE,         //Испытательный период активен, от усыновителя ожидаются ежедневные отчеты
         DECIDE,         //Испытательный период закончился, по пользователю ожидается решение волонтера
-        SUCCESS,        //Усыновитель не прошел испытательный период
+        SUCCESS,        //Усыновитель прошел испытательный период
         FAILED          //Усыновитель не прошел испытательный период
     }
 
@@ -26,11 +26,11 @@ public class Adoption {
 
     @ManyToOne
     @JoinColumn(name = "id_parent")
-    private Users parent;
+    private Member parent;
 
     @ManyToOne
     @JoinColumn(name = "id_volunteer")
-    private Users volunteer;
+    private Member volunteer;
 
     @Column(name = "start_date")
     private Date startDate;
@@ -53,19 +53,19 @@ public class Adoption {
         this.id = id;
     }
 
-    public Users getParent() {
+    public Member getParent() {
         return this.parent;
     }
 
-    public void setParent(Users parent) {
+    public void setParent(Member parent) {
         this.parent = parent;
     }
 
-    public Users getVolunteer() {
+    public Member getVolunteer() {
         return this.volunteer;
     }
 
-    public void setVolunteer(Users volunteer) {
+    public void setVolunteer(Member volunteer) {
         this.volunteer = volunteer;
     }
 
