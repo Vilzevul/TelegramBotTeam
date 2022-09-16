@@ -2,7 +2,6 @@
 
 -- changeSet alexadler:1
 
--- создать таблицу "Пользователи"
 CREATE TABLE users
 (
     id        bigint       PRIMARY KEY,
@@ -11,7 +10,6 @@ CREATE TABLE users
     role      varchar(32)  NOT NULL DEFAULT 'USER'
 );
 
--- создать таблицу "Усыновления"
 CREATE TABLE adoptions
 (
     id           bigserial    PRIMARY KEY,
@@ -22,7 +20,6 @@ CREATE TABLE adoptions
     status       varchar(32)  NOT NULL DEFAULT 'ACTIVE'
 );
 
--- создать таблицу "Отчеты"
 CREATE TABLE reports
 (
     id              bigserial PRIMARY KEY,
