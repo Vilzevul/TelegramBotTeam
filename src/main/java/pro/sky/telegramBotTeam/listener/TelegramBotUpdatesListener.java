@@ -162,6 +162,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     btnStatus = KeyBoardButton.DOGMAIN;
                     message = keyBoardButton.getMessage(btnCommand);
                 }
+                btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
             }
 
             case KeyBoardButton.MESSAGEFORDOGVOLONTER,
@@ -195,6 +196,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                     }
 
                                     case KeyBoardButton.CATSEND_MSG -> {
+                                        Report report = new Report(adoption, LocalDate.now(), reportContent, null);
+                                        report = reportService.createReport(report);
                                         btnCommand = KeyBoardButton.CATSEND_TXT;
                                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                                         message = "❗️Файл принят\n";
@@ -204,7 +207,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             }
                         }
                     } else {
-                        btnCommand = KeyBoardButton.DOGMAIN;
+                        btnCommand = KeyBoardButton.CATMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "Вам не нужно присылать отчет\n";
                     }
@@ -247,6 +250,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     Member member = memberService.getMember(userId, shelter.getId());
                     Adoption adoption = (member == null) ? null : adoptionService.getAdoption(member.getId());
                     if ((adoption != null) && (adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE))) {
+                        Report report = new Report(adoption, LocalDate.now(), null, reportText);
+                        report = reportService.createReport(report);
                         btnCommand = KeyBoardButton.CATMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
@@ -318,7 +323,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     String messageService = (btnMessage != null) ? btnMessage : btnCommand;
                     Shelter shelter = shelterService.getShelter(Shelter.ShelterType.DOGS);
                     message = getMessageForVolunteer(message, userId, messageService, shelter);
-                    btnStatus = btnCommand = KeyBoardButton.DOGTAKE;
+                    btnStatus = btnCommand = KeyBoardButton.DOGMAIN;
                     if(message==null) message="Сообщение отправлено";else message = btnCommand;
                     telegramBot.execute(new SendMessage(userId, message)
                             .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
@@ -330,16 +335,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     String messageService = (btnMessage != null) ? btnMessage : btnCommand;
                     Shelter shelter = shelterService.getShelter(Shelter.ShelterType.CATS);
                     message = getMessageForVolunteer(message, userId, messageService, shelter);
-                    btnStatus = btnCommand = KeyBoardButton.CATTAKE;
+                    btnStatus = btnCommand = KeyBoardButton.CATMAIN;
                     if(message==null) message="Сообщение отправлено";else message = btnCommand;
                     telegramBot.execute(new SendMessage(userId, message)
                             .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                             .parseMode(ParseMode.HTML));
                 }
-
             }
-
-
         }
 
         LOGGER.info("end makeProcess - команда: {}  текст: {}", btnCommand, message);
