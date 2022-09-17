@@ -53,10 +53,13 @@ public class KeyBoardButton {
     private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
     private final String CATREFUSAL = "Список причин отказа в заборе животного из приюта";
     private final String VOLONTER = "Связаться с волонтером";
+
+    public static final String MESSAGEFORDOGVOLONTER = "Оставить сообщение приюту для собак";
     public static final String CATMAIN = "Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
     private final String CATTAKE = "Как взять кошку из приюта";
+    public static final String MESSAGEFORCATVOLONTER = "Оставить сообщение приюту для кошек";
     public final static String START = "/start";
     public static final String ESCAPE = "Отмена";
     public static final String ESCAPECONTACTDOG = "Отмена контакта";
@@ -100,6 +103,7 @@ public class KeyBoardButton {
                 .selective(true);           // optional
         return keyboardContact;
     }
+
     public Keyboard getContactKeyboardCat() {
         ReplyKeyboardMarkup keyboardContact = new ReplyKeyboardMarkup(
                 new KeyboardButton[]{
@@ -154,9 +158,10 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSDOG));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORDOGVOLONTER).callbackData("MESSAGEFORDOGVOLONTER"));
         }
 
-        if (command.equals(CATTAKE)|| command.equals(ESCAPECONTACTCAT))  {
+        if (command.equals(CATTAKE) || command.equals(ESCAPECONTACTCAT)) {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATZN).callbackData("CATZN"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATDOCUMENTS).callbackData("CATDOCUMENTS"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTRANSPORT).callbackData("CATTRANSPORT"));
@@ -166,6 +171,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSCAT));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORCATVOLONTER).callbackData("MESSAGEFORCATVOLONTER"));
         }
 
         if (command.equals(DOGSEND_MSG)) {
@@ -201,6 +207,7 @@ public class KeyBoardButton {
             case "DOGREFUSAL":
             case "DOGCONTACT":
             case "DOGVOLONTER":
+            case "MESSAGEFORDOGVOLONTER":
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
         }
         switch (command) {
@@ -212,6 +219,7 @@ public class KeyBoardButton {
             case "CATHOMECATLIMITED":
             case "CATREFUSAL":
             case "VOLONTER":
+            case "MESSAGEFORCATVOLONTER":
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(CATTAKE));
         }
 
@@ -336,6 +344,10 @@ public class KeyBoardButton {
             return DOGSEND_TXT;
         }
 
+        if (command.equals(MESSAGEFORDOGVOLONTER)) {
+            return MESSAGEFORDOGVOLONTER;
+        }
+
         if (command.equals(CATSEND)) {
             return SEND_END;
         }
@@ -385,6 +397,10 @@ public class KeyBoardButton {
             return CATABOUT;
         }
 
+        if (command.equals(MESSAGEFORCATVOLONTER)) {
+            return MESSAGEFORCATVOLONTER;
+        }
+
         return status;
     }
 
@@ -422,6 +438,15 @@ public class KeyBoardButton {
 
         if (command.equals(SERVICE)) {
             return "<b>" + SERVICE + "</b> \n " +
+                    "\nОставьте сообщение для работников приюта" + "\n";
+        }
+
+        if (command.equals(MESSAGEFORDOGVOLONTER)) {
+            return "<b>" + MESSAGEFORDOGVOLONTER + "</b> \n " +
+                    "\nОставьте сообщение для работников приюта" + "\n";
+        }
+        if (command.equals(MESSAGEFORCATVOLONTER)) {
+            return "<b>" + MESSAGEFORCATVOLONTER + "</b> \n " +
                     "\nОставьте сообщение для работников приюта" + "\n";
         }
 

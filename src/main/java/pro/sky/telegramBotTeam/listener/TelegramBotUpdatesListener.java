@@ -25,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static pro.sky.telegramBotTeam.api.Code.*;
 
@@ -163,34 +164,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
             }
 
-            case KeyBoardButton.SERVICE -> {
+            case KeyBoardButton.MESSAGEFORDOGVOLONTER -> {
                 String messageService = (btnMessage != null) ? btnMessage : btnCommand;
+                Shelter shelter = shelterService.getShelter(Shelter.ShelterType.DOGS);
 
-                List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER);
+                message = getMessageForVolunteer(message, userId, messageService, shelter);
+            }
 
-                if (volunteersList.isEmpty()) {
-                    message = "Свободных волонтеров нет. Попробуйте связаться позже";
-                    telegramBot.execute(new SendMessage(userId, message)
-                            .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
-                            .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
-                            .parseMode(ParseMode.HTML));
-                } else {
-                    if (volunteersList.size() == 1) {
-                        Long idChart = volunteersList.get(0).getUser().getId();
-                        LOGGER.info("ID волонтера: " + idChart);
-                        telegramBot.execute(new SendMessage(idChart,
-                                "Ваше сообщение отправленно: " + messageService)
-                                .parseMode(ParseMode.HTML));
-                    } else {
-                        Random random = new Random();
-                        int randomVolunteer = (random.nextInt(volunteersList.size()));
+            case KeyBoardButton.MESSAGEFORCATVOLONTER -> {
+                String messageService = (btnMessage != null) ? btnMessage : btnCommand;
+                Shelter shelter = shelterService.getShelter(Shelter.ShelterType.CATS);
 
-                        LOGGER.info("Сообщение: {}, волонтер: {}", messageService, randomVolunteer);
-                        telegramBot.execute(new SendMessage(volunteersList.get(randomVolunteer).getUser().getId(),
-                                "Сообщение: " + messageService)
-                                .parseMode(ParseMode.HTML));
-                    }
-                }
+                message = getMessageForVolunteer(message, userId, messageService, shelter);
             }
 
             //Блок отправки отчета
@@ -336,6 +321,36 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         LOGGER.info("end makeProcess - команда: {} статус: {} текст: {}", btnCommand, btnStatus, message);
         LOGGER.info("end makeProcess - file id: {} ", userFileId);
+    }
+
+    private String getMessageForVolunteer(String message, Long userId, String messageService, Shelter shelter) {
+        List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER).stream()
+                .filter(member -> member.getShelter() == shelter).toList();
+
+        if (volunteersList.isEmpty()) {
+            message = "Свободных волонтеров нет. Попробуйте связаться позже";
+            telegramBot.execute(new SendMessage(userId, message)
+                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                    .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                    .parseMode(ParseMode.HTML));
+        } else {
+            if (volunteersList.size() == 1) {
+                Long idChart = volunteersList.get(0).getUser().getId();
+                LOGGER.info("ID волонтера: " + idChart);
+                telegramBot.execute(new SendMessage(idChart,
+                        "Оставьте сообщение для работников приюта: " + messageService)
+                        .parseMode(ParseMode.HTML));
+            } else {
+                Random random = new Random();
+                int randomVolunteer = (random.nextInt(volunteersList.size()));
+
+                LOGGER.info("Сообщение: {}, волонтер: {}", messageService, randomVolunteer);
+                telegramBot.execute(new SendMessage(volunteersList.get(randomVolunteer).getUser().getId(),
+                        "Сообщение: " + messageService)
+                        .parseMode(ParseMode.HTML));
+            }
+        }
+        return message;
     }
 
     @Override
