@@ -161,7 +161,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSDOG));
 
-            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORDOGVOLONTER).callbackData("MESSAGEFORDOGVOLONTER"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORDOGVOLONTER).callbackData(MESSAGEFORDOGVOLONTER));
         }
 
         if (command.equals(CATTAKE) || command.equals(ESCAPECONTACTCAT)) {
@@ -174,7 +174,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSCAT));
 
-            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORCATVOLONTER).callbackData("MESSAGEFORCATVOLONTER"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORCATVOLONTER).callbackData(MESSAGEFORCATVOLONTER));
         }
 
         if (command.equals(DOGSEND_MSG)) {
