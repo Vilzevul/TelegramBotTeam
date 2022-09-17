@@ -164,18 +164,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
             }
 
-            case KeyBoardButton.MESSAGEFORDOGVOLONTER -> {
-                String messageService = (btnMessage != null) ? btnMessage : btnCommand;
-                Shelter shelter = shelterService.getShelter(Shelter.ShelterType.DOGS);
-
-                message = getMessageForVolunteer(message, userId, messageService, shelter);
-            }
-
-            case KeyBoardButton.MESSAGEFORCATVOLONTER -> {
-                String messageService = (btnMessage != null) ? btnMessage : btnCommand;
-                Shelter shelter = shelterService.getShelter(Shelter.ShelterType.CATS);
-
-                message = getMessageForVolunteer(message, userId, messageService, shelter);
+            case KeyBoardButton.MESSAGEFORDOGVOLONTER,
+                    KeyBoardButton.MESSAGEFORCATVOLONTER -> {
+                btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
             }
 
             //Блок отправки отчета
@@ -223,7 +214,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
 
             case KeyBoardButton.DOGSEND_TXT,
-                    KeyBoardButton.CATSEND_TXT -> {
+                    KeyBoardButton.CATSEND_TXT,
+                    KeyBoardButton.DOGTAKE,
+                    KeyBoardButton.CATTAKE -> {
                 btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
             }
 
@@ -270,7 +263,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         switch (btnCommand) {
             case "/getdog" -> {
                 File file = new File("documents/getdog.doc");
-                telegramBot.execute(new SendDocument(userId,file ));
+                telegramBot.execute(new SendDocument(userId, file));
             }
 
             case KeyBoardButton.START -> {
@@ -309,7 +302,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         .replyMarkup(keyBoardButton.getContactKeyboardCat())
                 );
             }
-
             default -> {
                 telegramBot.execute(new SendMessage(userId, message)
                         .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
@@ -318,21 +310,52 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 );
             }
         }
+        LOGGER.info("midle - команда: {}  текст: {}", btnCommand, message);
+        LOGGER.info("midle  - статус: {} ", btnStatus);
+        switch (btnStatus) {
+            case KeyBoardButton.MESSAGEFORDOGVOLONTER -> {
+                if (!btnCommand.equals(KeyBoardButton.MESSAGEFORDOGVOLONTER)) {
+                    String messageService = (btnMessage != null) ? btnMessage : btnCommand;
+                    Shelter shelter = shelterService.getShelter(Shelter.ShelterType.DOGS);
+                    message = getMessageForVolunteer(message, userId, messageService, shelter);
+                    btnStatus = btnCommand = KeyBoardButton.DOGTAKE;
+                    if(message==null) message="Сообщение отправлено";else message = btnCommand;
+                    telegramBot.execute(new SendMessage(userId, message)
+                            .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                            .parseMode(ParseMode.HTML));
+                }
+            }
+            case KeyBoardButton.MESSAGEFORCATVOLONTER -> {
+                if (!btnCommand.equals(KeyBoardButton.MESSAGEFORCATVOLONTER)) {
+                    String messageService = (btnMessage != null) ? btnMessage : btnCommand;
+                    Shelter shelter = shelterService.getShelter(Shelter.ShelterType.CATS);
+                    message = getMessageForVolunteer(message, userId, messageService, shelter);
+                    btnStatus = btnCommand = KeyBoardButton.CATTAKE;
+                    if(message==null) message="Сообщение отправлено";else message = btnCommand;
+                    telegramBot.execute(new SendMessage(userId, message)
+                            .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                            .parseMode(ParseMode.HTML));
+                }
 
-        LOGGER.info("end makeProcess - команда: {} статус: {} текст: {}", btnCommand, btnStatus, message);
-        LOGGER.info("end makeProcess - file id: {} ", userFileId);
+            }
+
+
+        }
+
+        LOGGER.info("end makeProcess - команда: {}  текст: {}", btnCommand, message);
+        LOGGER.info("end makeProcess - статус: {} ", btnStatus);
+
     }
 
     private String getMessageForVolunteer(String message, Long userId, String messageService, Shelter shelter) {
-        List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER).stream()
-                .filter(member -> member.getShelter() == shelter).toList();
+        List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER)
+                .stream().filter(member -> member.getShelter().getId() == shelter.getId()).toList();
 
         if (volunteersList.isEmpty()) {
             message = "Свободных волонтеров нет. Попробуйте связаться позже";
             telegramBot.execute(new SendMessage(userId, message)
-                    .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
-                    .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                     .parseMode(ParseMode.HTML));
+
         } else {
             if (volunteersList.size() == 1) {
                 Long idChart = volunteersList.get(0).getUser().getId();
@@ -340,6 +363,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 telegramBot.execute(new SendMessage(idChart,
                         "Оставьте сообщение для работников приюта: " + messageService)
                         .parseMode(ParseMode.HTML));
+                message=null;
             } else {
                 Random random = new Random();
                 int randomVolunteer = (random.nextInt(volunteersList.size()));
@@ -348,6 +372,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 telegramBot.execute(new SendMessage(volunteersList.get(randomVolunteer).getUser().getId(),
                         "Сообщение: " + messageService)
                         .parseMode(ParseMode.HTML));
+                message=null;
             }
         }
         return message;
@@ -426,7 +451,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             message = TEXT;
         }
 
-        if (message !=null) {
+        if (message != null) {
             telegramBot.execute(new SendMessage(member.getUser().getId(), message)
                     .parseMode(ParseMode.HTML));
         }

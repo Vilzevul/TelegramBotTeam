@@ -54,12 +54,12 @@ public class KeyBoardButton {
     private final String CATREFUSAL = "Список причин отказа в заборе животного из приюта";
     private final String VOLONTER = "Связаться с волонтером";
 
-    public static final String MESSAGEFORDOGVOLONTER = "Оставить сообщение приюту для собак";
+    public static final String MESSAGEFORDOGVOLONTER = "Сообщение приюту для собак";
     public static final String CATMAIN = "Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
-    private final String CATTAKE = "Как взять кошку из приюта";
-    public static final String MESSAGEFORCATVOLONTER = "Оставить сообщение приюту для кошек";
+    public final static String CATTAKE = "Как взять кошку из приюта";
+    public static final String MESSAGEFORCATVOLONTER = "Сообщение приюту для кошек";
     public final static String START = "/start";
     public static final String ESCAPE = "Отмена";
     public static final String ESCAPECONTACTDOG = "Отмена контакта";
@@ -158,7 +158,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSDOG));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORDOGVOLONTER).callbackData("MESSAGEFORDOGVOLONTER"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORDOGVOLONTER).callbackData(MESSAGEFORDOGVOLONTER));
         }
 
         if (command.equals(CATTAKE) || command.equals(ESCAPECONTACTCAT)) {
@@ -171,7 +171,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSCAT));
             inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData("VOLONTER"));
-            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORCATVOLONTER).callbackData("MESSAGEFORCATVOLONTER"));
+            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORCATVOLONTER).callbackData(MESSAGEFORCATVOLONTER));
         }
 
         if (command.equals(DOGSEND_MSG)) {
@@ -207,7 +207,7 @@ public class KeyBoardButton {
             case "DOGREFUSAL":
             case "DOGCONTACT":
             case "DOGVOLONTER":
-            case "MESSAGEFORDOGVOLONTER":
+            case MESSAGEFORDOGVOLONTER:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
         }
         switch (command) {
@@ -219,7 +219,7 @@ public class KeyBoardButton {
             case "CATHOMECATLIMITED":
             case "CATREFUSAL":
             case "VOLONTER":
-            case "MESSAGEFORCATVOLONTER":
+            case MESSAGEFORCATVOLONTER:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(CATTAKE));
         }
 
@@ -442,12 +442,10 @@ public class KeyBoardButton {
         }
 
         if (command.equals(MESSAGEFORDOGVOLONTER)) {
-            return "<b>" + MESSAGEFORDOGVOLONTER + "</b> \n " +
-                    "\nОставьте сообщение для работников приюта" + "\n";
+            return "<b>" + "\nОставьте сообщение для работников приюта\n" + "</b>  ";
         }
         if (command.equals(MESSAGEFORCATVOLONTER)) {
-            return "<b>" + MESSAGEFORCATVOLONTER + "</b> \n " +
-                    "\nОставьте сообщение для работников приюта" + "\n";
+            return "<b>" + "\nОставьте сообщение для работников приюта\n" + "</b>  ";
         }
 
         if (command.equals(DOGABOUT)) {
