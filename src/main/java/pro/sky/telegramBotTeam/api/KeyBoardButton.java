@@ -79,43 +79,40 @@ public class KeyBoardButton {
      * @return созданный объект клавиатуры.
      */
     public Keyboard getMainKeyboardMarkup() {
-        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(
+        return new ReplyKeyboardMarkup(
                 new String[]{DOGMAIN, CATMAIN},
-              //  new String[]{SERVICE, HELP})
                 new String[]{HELP})
                 .oneTimeKeyboard(false)     // optional
                 .resizeKeyboard(true)       // optional
                 .selective(true);           // optional
-
-//        keyboard.addRow(new KeyboardButton(CONTACTS).requestContact(true));
-
-        return keyboard;
     }
 
+    /**
+     * Создание клавиатуры для отправки контактов пользователя (меню Собаки).
+     *
+     * @return созданный объект клавиатуры.
+     */
     public Keyboard getContactKeyboardDog() {
-        ReplyKeyboardMarkup keyboardContact = new ReplyKeyboardMarkup(
-                new KeyboardButton[]{
-                        new KeyboardButton(CONTACTS).requestContact(true),
-                        new KeyboardButton(ESCAPECONTACTDOG)
-
-                })
-                .oneTimeKeyboard(true)     // optional
+        return new ReplyKeyboardMarkup(
+                new KeyboardButton(CONTACTS).requestContact(true),
+                new KeyboardButton(ESCAPECONTACTDOG))
+                .oneTimeKeyboard(true)      // optional
                 .resizeKeyboard(true)       // optional
                 .selective(true);           // optional
-        return keyboardContact;
     }
 
+    /**
+     * Создание клавиатуры для отправки контактов пользователя (меню Кошки).
+     *
+     * @return созданный объект клавиатуры.
+     */
     public Keyboard getContactKeyboardCat() {
-        ReplyKeyboardMarkup keyboardContact = new ReplyKeyboardMarkup(
-                new KeyboardButton[]{
-                        new KeyboardButton(CONTACTS).requestContact(true),
-                        new KeyboardButton(ESCAPECONTACTCAT)
-
-                })
-                .oneTimeKeyboard(true)     // optional
+        return new ReplyKeyboardMarkup(
+                new KeyboardButton(CONTACTS).requestContact(true),
+                new KeyboardButton(ESCAPECONTACTCAT))
+                .oneTimeKeyboard(true)      // optional
                 .resizeKeyboard(true)       // optional
                 .selective(true);           // optional
-        return keyboardContact;
     }
 
     /**
@@ -160,8 +157,6 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRECOMMENDATION).callbackData("DOGRECOMMENDATION"));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGREFUSAL).callbackData("DOGREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSDOG));
-
- //           inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORDOGVOLONTER).callbackData(MESSAGEFORDOGVOLONTER));
         }
 
         if (command.equals(CATTAKE) || command.equals(ESCAPECONTACTCAT)) {
@@ -173,8 +168,6 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATHOMECATLIMITED).callbackData("CATHOMECATLIMITED"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATREFUSAL).callbackData("CATREFUSAL"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CONTACTS).callbackData(INLINECONTACTSCAT));
-
-//            inlineKeyboard.addRow(new InlineKeyboardButton(MESSAGEFORCATVOLONTER).callbackData(MESSAGEFORCATVOLONTER));
         }
 
         if (command.equals(DOGSEND_MSG)) {
@@ -209,10 +202,9 @@ public class KeyBoardButton {
             case "DOGRECOMMENDATION":
             case "DOGREFUSAL":
             case "DOGCONTACT":
-            //case "DOGVOLONTER":
-
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGTAKE));
         }
+
         switch (command) {
             case "CATZN":
             case "CATDOCUMENTS":
@@ -221,8 +213,6 @@ public class KeyBoardButton {
             case "CATHOMEADULTCAT":
             case "CATHOMECATLIMITED":
             case "CATREFUSAL":
-          //  case "VOLONTER":
-
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(CATTAKE));
         }
 
@@ -234,6 +224,7 @@ public class KeyBoardButton {
             case ESCAPECONTACTDOG:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGMAIN));
         }
+
         switch (command) {
             case CATABOUT:
             case CATTAKE:
@@ -247,7 +238,7 @@ public class KeyBoardButton {
     }
 
     /**
-     * Функция возвращает имя нажатой кнопки соответствующей команде пользователя.
+     * Возвращает имя нажатой кнопки соответствующей команде пользователя.
      *
      * @param command команда пользователя.
      * @param status  результат, который возвращается в случае отсутствия совпадений.
@@ -265,9 +256,11 @@ public class KeyBoardButton {
             LOGGER.error("Status is null");
             throw new NullPointerException("Status is null");
         }
+
         if (command.equals(CATMAIN)) {
             return CATMAIN;
         }
+
         if (command.equals(DOGMAIN)) {
             return DOGMAIN;
         }
@@ -275,9 +268,11 @@ public class KeyBoardButton {
         if (command.equals(ESCAPECONTACTDOG)) {
             return DOGTAKE;
         }
+
         if (command.equals(ESCAPECONTACTCAT)) {
             return CATTAKE;
         }
+
         if (command.equals(CONTACTS)) {
             return CONTACTS;
         }
@@ -288,14 +283,6 @@ public class KeyBoardButton {
 
         if (command.equals(START)) {
             return STATE_START;
-        }
-
-/*        if (command.equals(SERVICE)) {
-            return STATE_SERVICE;
-        }*/
-
-        if (command.equals(DOGMAIN)) {
-            return DOGMAIN;
         }
 
         if (command.equals(DOGTAKE)) {
@@ -309,6 +296,7 @@ public class KeyBoardButton {
         if (command.equals(DOGDOCUMENTS)) {
             return DOGDOCUMENTS;
         }
+
         if (command.equals(DOGTRANSPORT)) {
             return DOGTRANSPORT;
         }
@@ -376,6 +364,7 @@ public class KeyBoardButton {
         if (command.equals(CATDOCUMENTS)) {
             return CATDOCUMENTS;
         }
+
         if (command.equals(CATTRANSPORT)) {
             return CATTRANSPORT;
         }
@@ -395,9 +384,11 @@ public class KeyBoardButton {
         if (command.equals(CATREFUSAL)) {
             return CATREFUSAL;
         }
+
         if (command.equals(DOGABOUT)) {
             return DOGABOUT;
         }
+
         if (command.equals(CATABOUT)) {
             return CATABOUT;
         }
@@ -410,7 +401,7 @@ public class KeyBoardButton {
     }
 
     /**
-     * Функция возвращает текст сообщения для пользователя.
+     * Возвращает текст сообщения для пользователя.
      *
      * @param command команда пользователя.
      * @return текст сообщения для пользователя. Может быть null.
@@ -426,9 +417,11 @@ public class KeyBoardButton {
         if (command.equals(CONTACTS)) {
             return "Спасибо за предоставленные контакты. Будем на связи!";
         }
+
         if (command.equals(ESCAPECONTACTDOG)) {
             return DOGTAKE;
         }
+
         if (command.equals(ESCAPECONTACTCAT)) {
             return CATTAKE;
         }
@@ -437,14 +430,10 @@ public class KeyBoardButton {
             return "<b>" + HELP + "</b> \n " + readFile("documents/HELP.txt");
         }
 
-   /*     if (command.equals(SERVICE)) {
-            return "<b>" + SERVICE + "</b> \n " +
-                    "\nОставьте сообщение для работников приюта" + "\n";
-        }*/
-
         if (command.equals(MESSAGEFORDOGVOLONTER)) {
             return "<b>" + "\nОставьте сообщение для работников приюта\n" + "</b>  ";
         }
+
         if (command.equals(MESSAGEFORCATVOLONTER)) {
             return "<b>" + "\nОставьте сообщение для работников приюта\n" + "</b>  ";
         }
@@ -528,6 +517,7 @@ public class KeyBoardButton {
         if (command.equals("CATTRANSPORT")) {
             return "<b>" + CATTRANSPORT + "</b> \n " + readFile("documents/CATTRANSPORT.txt");
         }
+
         if (command.equals("CATHOMEKITTY")) {
             return "<b>" + CATHOMEKITTY + "</b> \n " + readFile("documents/CATHOMEKITTY.txt");
         }

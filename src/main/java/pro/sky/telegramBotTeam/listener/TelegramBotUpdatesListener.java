@@ -24,8 +24,8 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static pro.sky.telegramBotTeam.api.Code.*;
 
@@ -202,6 +202,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                                         message = "❗️Файл принят\n";
                                         message += keyBoardButton.getMessage(btnCommand);
+                                        LOGGER.info("report: {}", report);
                                     }
                                 }
                             }
@@ -244,6 +245,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         message = "Вам не нужно присылать отчет";
                     }
                 }
+
                 if (btnStatus.equals(KeyBoardButton.CATSEND_TXT)) {
                     String reportText = message;
                     Shelter shelter = shelterService.getShelter(Shelter.ShelterType.CATS);
@@ -256,6 +258,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
                         message = "❗️Отчет принят\n";
                         checkReport(member);
+                        LOGGER.info("report: {}", report);
                     } else {
                         btnCommand = KeyBoardButton.CATMAIN;
                         btnStatus = keyBoardButton.getState(btnCommand, btnStatus);
@@ -307,6 +310,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         .replyMarkup(keyBoardButton.getContactKeyboardCat())
                 );
             }
+
             default -> {
                 telegramBot.execute(new SendMessage(userId, message)
                         .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
@@ -315,28 +319,31 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 );
             }
         }
-        LOGGER.info("midle - команда: {}  текст: {}", btnCommand, message);
-        LOGGER.info("midle  - статус: {} ", btnStatus);
+
+        LOGGER.info("middle - команда: {}  текст: {}", btnCommand, message);
+        LOGGER.info("middle  - статус: {} ", btnStatus);
+
         switch (btnStatus) {
             case KeyBoardButton.MESSAGEFORDOGVOLONTER -> {
                 if (!btnCommand.equals(KeyBoardButton.MESSAGEFORDOGVOLONTER)) {
                     String messageService = (btnMessage != null) ? btnMessage : btnCommand;
                     Shelter shelter = shelterService.getShelter(Shelter.ShelterType.DOGS);
-                    message = getMessageForVolunteer(message, userId, messageService, shelter);
+                    message = getMessageForVolunteer(userId, messageService, shelter);
                     btnStatus = btnCommand = KeyBoardButton.DOGMAIN;
-                    if(message==null) message="Сообщение отправлено";else message = btnCommand;
+                    message = (message == null) ? "Сообщение отправлено" : btnCommand;
                     telegramBot.execute(new SendMessage(userId, message)
                             .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                             .parseMode(ParseMode.HTML));
                 }
             }
+
             case KeyBoardButton.MESSAGEFORCATVOLONTER -> {
                 if (!btnCommand.equals(KeyBoardButton.MESSAGEFORCATVOLONTER)) {
                     String messageService = (btnMessage != null) ? btnMessage : btnCommand;
                     Shelter shelter = shelterService.getShelter(Shelter.ShelterType.CATS);
-                    message = getMessageForVolunteer(message, userId, messageService, shelter);
+                    message = getMessageForVolunteer(userId, messageService, shelter);
                     btnStatus = btnCommand = KeyBoardButton.CATMAIN;
-                    if(message==null) message="Сообщение отправлено";else message = btnCommand;
+                    message = (message == null) ? "Сообщение отправлено" : btnCommand;
                     telegramBot.execute(new SendMessage(userId, message)
                             .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                             .parseMode(ParseMode.HTML));
@@ -346,37 +353,37 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         LOGGER.info("end makeProcess - команда: {}  текст: {}", btnCommand, message);
         LOGGER.info("end makeProcess - статус: {} ", btnStatus);
-
     }
 
-    private String getMessageForVolunteer(String message, Long userId, String messageService, Shelter shelter) {
+    /**
+     * Находит случайного волонтера указанного приюта и передает ему сообщение пользователя.
+     *
+     * @param idChartUser id chat пользователя.
+     * @param messageService сообщение пользователя.
+     * @param shelter приют, к которому обращается пользователь.
+     * @return null, если сообщение успешно передано волонтеру, в ином случае - сообщение-предупреждение для пользователя.
+     */
+    private String getMessageForVolunteer(Long idChartUser, String messageService, Shelter shelter) {
+        String message = null;
+
         List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER)
-                .stream().filter(member -> member.getShelter().getId() == shelter.getId()).toList();
+                .stream().filter(member -> Objects.equals(member.getShelter().getId(), shelter.getId())).toList();
 
         if (volunteersList.isEmpty()) {
             message = "Свободных волонтеров нет. Попробуйте связаться позже";
-            telegramBot.execute(new SendMessage(userId, message)
+            telegramBot.execute(new SendMessage(idChartUser, message)
                     .parseMode(ParseMode.HTML));
-
         } else {
-            if (volunteersList.size() == 1) {
-                Long idChart = volunteersList.get(0).getUser().getId();
-                LOGGER.info("ID волонтера: " + idChart);
-                telegramBot.execute(new SendMessage(idChart,
-                        "Оставьте сообщение для работников приюта: " + messageService)
-                        .parseMode(ParseMode.HTML));
-                message=null;
-            } else {
-                Random random = new Random();
-                int randomVolunteer = (random.nextInt(volunteersList.size()));
-
-                LOGGER.info("Сообщение: {}, волонтер: {}", messageService, randomVolunteer);
-                telegramBot.execute(new SendMessage(volunteersList.get(randomVolunteer).getUser().getId(),
-                        "Сообщение: " + messageService)
-                        .parseMode(ParseMode.HTML));
-                message=null;
-            }
+            Random random = new Random();
+            Long idChartVolunteer = (volunteersList.size() == 1) ?
+                    volunteersList.get(0).getUser().getId() :
+                    volunteersList.get(random.nextInt(volunteersList.size())).getUser().getId();
+            telegramBot.execute(new SendMessage(idChartVolunteer,
+                    "Сообщение от пользователя [" + idChartUser + "]: " + messageService)
+                    .parseMode(ParseMode.HTML));
+            LOGGER.info("Сообщение: {}, волонтер: {}", messageService, idChartVolunteer);
         }
+
         return message;
     }
 
@@ -394,6 +401,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
+    /**
+     * Только для debug: переводит пользователей с ролью Adoption в усыновители.
+     */
     private void addAdoptions() {
         List<Member> membersList = memberService.getMembersByRole(Member.MemberRole.ADOPTION);
         if (!membersList.isEmpty()) {
@@ -427,23 +437,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Проверка отчета на наличие всех полей.
+     * Отправляет предупреждение пользователю, если какое-то из полей незаполнено.
      *
      * @param member участник приюта.
-     * @return предупреждение в случае отсутствия одного из поля. Может вернуть null.
      */
-    public String checkReport(Member member) {
+    public void checkReport(Member member) {
         final String TEXT = "Вы не прислали текст отчета";
         final String IMAGE = "Вы не прислали фото отчета";
         String message = null;
 
         Adoption adoption = adoptionService.getAdoption(member.getId());
         if ((adoption == null) || !adoption.getStatus().equals(Adoption.AdoptionStatus.ACTIVE)) {
-            return null;
+            return;
         }
 
         Report report = reportService.getReport(adoption.getId(), LocalDate.now());
         if (report == null) {
-            return null;
+            return;
         }
 
         if (report.getReportImage() == null) {
@@ -457,8 +467,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             telegramBot.execute(new SendMessage(member.getUser().getId(), message)
                     .parseMode(ParseMode.HTML));
         }
-
-        return message;
     }
 
     /**
