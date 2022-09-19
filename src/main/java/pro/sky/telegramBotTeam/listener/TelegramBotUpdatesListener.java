@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 import pro.sky.telegramBotTeam.api.KeyBoardButton;
 import pro.sky.telegramBotTeam.model.*;
 import pro.sky.telegramBotTeam.service.*;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -270,8 +272,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         switch (btnCommand) {
             case "/getdog" -> {
-                File file = new File("documents/getdog.doc");
-                telegramBot.execute(new SendDocument(userId, file));
+                File file = new File("documents/getdog1.doc");
+                if (file.exists()) telegramBot.execute(new SendDocument(userId, file));
+                else telegramBot.execute(new SendMessage(userId,
+                        "file  " + file.getName() + " not found!"));
             }
 
             case KeyBoardButton.START -> {
@@ -358,9 +362,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     /**
      * Находит случайного волонтера указанного приюта и передает ему сообщение пользователя.
      *
-     * @param idChartUser id chat пользователя.
+     * @param idChartUser    id chat пользователя.
      * @param messageService сообщение пользователя.
-     * @param shelter приют, к которому обращается пользователь.
+     * @param shelter        приют, к которому обращается пользователь.
      * @return null, если сообщение успешно передано волонтеру, в ином случае - сообщение-предупреждение для пользователя.
      */
     private String getMessageForVolunteer(Long idChartUser, String messageService, Shelter shelter) {

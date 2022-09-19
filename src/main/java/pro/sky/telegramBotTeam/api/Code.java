@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import org.springframework.lang.NonNull;
+import org.webjars.NotFoundException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -83,16 +84,15 @@ public class Code {
      */
     public static String readFile(String file) {
         Path path = Paths.get(file);
+        String contents = contents = "file  " + path.getFileName() + " not found! ";
         if (Files.exists(path)) {
-            String contents = null;
             try {
                 contents = Files.readString(path, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-                //Handle exception
-            }
+            } catch ( IOException ex) {            }
+
             return contents;
         }
-        return "null";
+        return contents;
     }
 }
 
