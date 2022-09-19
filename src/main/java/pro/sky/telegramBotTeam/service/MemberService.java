@@ -60,4 +60,9 @@ public class MemberService {
             return memberRepository.save(memberBD);
         }
     }
+
+ /*   public Member editMember(idChat bigint) {
+        logger.info("Изменение роли пользователя");
+        return memberRepository.save(idChat);
+    }*/
 }

@@ -312,7 +312,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
 
             default -> {
-                telegramBot.execute(new SendMessage(userId, message)
+              /*  telegramBot.execute(new SendMessage(userId, message)
+                        .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
+                        .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
+                        .parseMode(ParseMode.HTML)
+                );*/
+                telegramBot.execute(new SendMessage(userId, "Сообщение не распознано")
                         .replyMarkup(keyBoardButton.getMainKeyboardMarkup())
                         .replyMarkup(keyBoardButton.getInlineKeyboard(btnCommand))
                         .parseMode(ParseMode.HTML)
