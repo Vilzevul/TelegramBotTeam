@@ -35,7 +35,7 @@ public class AdoptionService {
      * @return информация по усыновлению. Может вернуть null, если такая запись отсутствует.
      */
     public Adoption getAdoption(Long idParent) {
-        return adoptionRepository.findByIdParent(idParent).orElse(null);
+        return adoptionRepository.findFirstByParent_Id(idParent).orElse(null);
     }
 
     /**

@@ -27,7 +27,7 @@ public class MemberService {
      * @return участник приюта. Может вернуть null, если такой отсутствует.
      */
     public Member getMember(Long idUser, Long idShelter) {
-        return memberRepository.findByIdUserAndIdShelter(idUser, idShelter).orElse(null);
+        return memberRepository.findFirstByUser_IdAndShelter_Id(idUser, idShelter).orElse(null);
     }
 
     /**

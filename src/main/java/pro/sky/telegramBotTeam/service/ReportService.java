@@ -38,7 +38,7 @@ public class ReportService {
      * @return отчет. Может вернуть null, если такой отчет отсутствует.
      */
     public Report getReport(Long idAdoption, LocalDate date) {
-        return reportRepository.findByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
+        return reportRepository.findFirstByAdoption_IdAndReportDate(idAdoption, date).orElse(null);
     }
 
     /**
