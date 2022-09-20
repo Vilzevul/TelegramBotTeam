@@ -11,32 +11,39 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import pro.sky.telegramBotTeam.repository.ReportRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ReportControllerTest {
+class TelegramBotControllerTest {
     @LocalServerPort
     private int port;
-
     @Autowired
-    private ReportController keepingpetsController;
+    private TelegramBotController telegramBotController;
 
     @MockBean
     private ReportRepository reportRepository;
-
     @Autowired
     private TestRestTemplate restTemplate;
 
     private static final ObjectMapper om = new ObjectMapper();
-    //ObjectMapper - это класс в пакете jackson-databind,
-    //который предоставляет функцию чтения и записи JSON, может легко преобразовывать объекты и JSON.
 
     @Test
     void contextLoads() throws Exception {
-        Assertions.assertThat(keepingpetsController).isNotNull();
+        Assertions.assertThat(telegramBotController).isNotNull();
     }
-
     @Test
-    void getUsersWithReport() throws Exception {
+    void reportByIdAndDate() throws Exception {
         Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/users_report", String.class))
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/reportByIdAndDate", String.class))
+                .isNotNull();
+    }
+    @Test
+    void getCompletedReport() throws Exception {
+        Assertions
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/completedReport", String.class))
+                .isNotNull();
+    }
+    @Test
+    void getAllReport() throws Exception {
+        Assertions
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/getAllReports", String.class))
                 .isNotNull();
     }
 }
