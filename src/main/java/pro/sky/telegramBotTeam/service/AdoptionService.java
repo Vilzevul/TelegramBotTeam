@@ -59,10 +59,15 @@ public class AdoptionService {
      * @param status новый статус.
      */
     @Transactional
-    public String updateAdoptionStatus(Long id, Adoption.AdoptionStatus status) {
+    public void updateAdoptionStatus(Long id, Adoption.AdoptionStatus status) {
         LOGGER.info("Запись усыновления {} изменила статус: {}", id, status);
         adoptionRepository.updateAdoptionStatus(id, status.toString());
-        return "Статус изменен на " + status;
+    }
+
+    public String updateAdoptionStatus_(Long id, Adoption.AdoptionStatus status, int idShelter) {
+        LOGGER.info("Запись усыновления {} изменить на статус: {} приют {}", id, status, idShelter);
+        adoptionRepository.updateAdoptionStatus_(id, status.toString(), idShelter);
+        return "Статус изменен на " + status + "в ИД чате" + id;
     }
 
     public Optional<Adoption> searchAdoptionStatus(Long id, int idShelter) {

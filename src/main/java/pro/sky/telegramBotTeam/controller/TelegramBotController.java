@@ -1,5 +1,8 @@
 package pro.sky.telegramBotTeam.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -77,13 +80,14 @@ public class TelegramBotController {
     /**
      * Обновляет статус усыновителя
      */
-    @GetMapping("/adoption/{id},{status}")
-    public String updateAdoptionStatus(@PathVariable Long id, @PathVariable Adoption.AdoptionStatus status) throws Exception {
-        return  adoptionService.updateAdoptionStatus(id, status);
+    @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта и изменение статуса")
+    @GetMapping("/adoption/update-status/{id}/{status}/{idShelter}")
+    public String updateAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id,@Parameter(description = "Выберите статус, на который нужно перезаписать") @PathVariable Adoption.AdoptionStatus status, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
+        return  adoptionService.updateAdoptionStatus_(id, status, idShelter);
     }
-
-    @GetMapping("/adoption/{id},{idShelter}")
-    public   Optional<Adoption> searchAdoptionStatus(@PathVariable Long id, @PathVariable int idShelter) throws Exception {
+@ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта")
+    @GetMapping("/adoption/search/{id}/{idShelter}")
+    public   Optional<Adoption> searchAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
         return  adoptionService.searchAdoptionStatus(id, idShelter);
     }
 }
