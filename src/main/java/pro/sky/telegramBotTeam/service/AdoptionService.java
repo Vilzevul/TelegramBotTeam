@@ -3,7 +3,7 @@ package pro.sky.telegramBotTeam.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.telegramBotTeam.exeption.TelegramBotNotFoundException;
+import pro.sky.telegramBotTeam.exception.TelegramBotNotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.repository.AdoptionRepository;
 

@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pro.sky.telegramBotTeam.exeption.TelegramBotNotFoundException;
+import pro.sky.telegramBotTeam.exception.TelegramBotNotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.model.Report;
@@ -18,26 +18,26 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/reports")
 @SuppressWarnings("unused")
 public class TelegramBotController {
-    private final UsersService usersService;
-    private final ReportService reportService;
-
-    private final AdoptionService adoptionService;
-
-    private final MemberService memberService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TelegramBotController.class);
 
     private final ShelterService shelterService;
+    private final UsersService usersService;
+    private final MemberService memberService;
+    private final ReportService reportService;
+    private final AdoptionService adoptionService;
 
-    private static final Logger log = LoggerFactory.getLogger(TelegramBotController.class);
-
-    public TelegramBotController(UsersService usersService, ReportService reportService, AdoptionService adoptionService, MemberService memberService, ShelterService shelterService) {
+    public TelegramBotController(ShelterService shelterService,
+                                 UsersService usersService,
+                                 MemberService memberService,
+                                 AdoptionService adoptionService,
+                                 ReportService reportService) {
+        this.shelterService = shelterService;
         this.usersService = usersService;
+        this.memberService = memberService;
         this.reportService = reportService;
         this.adoptionService = adoptionService;
-        this.memberService = memberService;
-        this.shelterService = shelterService;
     }
 
     @GetMapping
@@ -51,7 +51,7 @@ public class TelegramBotController {
     @GetMapping(path = "/users_report")
     public Report getUsersWithReport(@RequestParam(required = true) Long idAdoption, LocalDate date) {
         if (idAdoption > 0)
-            log.debug("Method - getUsersWithReport was called");
+            LOGGER.debug("Method - getUsersWithReport was called");
         return reportService.getReport(idAdoption, date);
     }
 
@@ -60,7 +60,7 @@ public class TelegramBotController {
 
 
         if (idAdoption > 0)
-            log.debug("Method - getUsersWithReport was called");
+            LOGGER.debug("Method - getUsersWithReport was called");
         return reportService.getReport(idAdoption, date);
     }
 
@@ -105,6 +105,7 @@ public class TelegramBotController {
                                                     @Parameter(description = "Роль пользователя") @RequestParam(required = true) Member.MemberRole memberRole) {
         int count = memberService.updateMemberRole(idUser, memberRole);
         if (count == 0) {
+            LOGGER.error("No users with the specified id were found in the members table");
             throw new TelegramBotNotFoundException("No users with the specified id were found in the members table");
         }
         return ResponseEntity.ok(count);
