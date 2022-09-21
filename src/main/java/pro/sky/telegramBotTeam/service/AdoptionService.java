@@ -7,6 +7,7 @@ import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.repository.AdoptionRepository;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -37,6 +38,9 @@ public class AdoptionService {
     public Adoption getAdoption(Long idParent) {
         return adoptionRepository.findFirstByParent_Id(idParent).orElse(null);
     }
+    public Adoption getAdoptionOnStatus(Long idParent,Adoption.AdoptionStatus status) {
+        return adoptionRepository.findFirstByParent_IdAndStatus(idParent,status.toString()).orElse(null);
+    }
 
     /**
      * Сохранить/обновить данные записи усыновления.
@@ -44,10 +48,15 @@ public class AdoptionService {
      * @param adoption запись усыновления.
      */
     public Adoption createAdoption(Adoption adoption) {
-        if (getAdoption(adoption.getParent().getId()) == null) {
+
             adoptionRepository.save(adoption);
-        }
+
         return adoption;
+    }
+
+    //delete
+    public Adoption findAdoptionOrCreate(Long id) throws IOException {
+        return adoptionRepository.findFirstByParent_Id(id).orElse(new Adoption());
     }
 
     /**
