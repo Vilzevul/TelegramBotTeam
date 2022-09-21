@@ -1,12 +1,15 @@
 package pro.sky.telegramBotTeam.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.telegramBotTeam.exeption.TelegramBotNotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
+import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.model.Report;
 import pro.sky.telegramBotTeam.service.*;
 
@@ -75,6 +78,36 @@ public class TelegramBotController {
     @GetMapping("/adoption/{id}")
     public Adoption getAdoptionInfo(@PathVariable Long id) throws Exception {
         return adoptionService.getAdoption(id);
+    }
+
+    /**
+     * Получает список участников приюта указанной роли.
+     */
+    @Operation(summary = "Получить список участников приюта указанной роли")
+    @GetMapping ("/member/get-by-role")
+    public ResponseEntity<List<Member>> getMembersByRole(@Parameter(description = "Роль участников") @RequestParam(required = true) Member.MemberRole memberRole,
+                                                         @Parameter(description = "ID приюта") @RequestParam(required = true) Long idShelter) {
+        return ResponseEntity.ok(memberService.getMembersByRole(memberRole, idShelter));
+    }
+
+    /**
+     * Обновляет роль пользователя.
+     */
+    @Operation(
+            summary = "Обновить роль пользователя с указанным ID. Возвращает количество обновленных записей",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Роль успешно обновлена"),
+                    @ApiResponse(responseCode = "404", description = "Пользователь с указанным ID не является участником приюта")
+            }
+    )
+    @PutMapping("/member/update-role")
+    public ResponseEntity<Integer> updateMemberRole(@Parameter(description = "ID пользователя") @RequestParam(required = true) Long idUser,
+                                                    @Parameter(description = "Роль пользователя") @RequestParam(required = true) Member.MemberRole memberRole) {
+        int count = memberService.updateMemberRole(idUser, memberRole);
+        if (count == 0) {
+            throw new TelegramBotNotFoundException("No users with the specified id were found in the members table");
+        }
+        return ResponseEntity.ok(count);
     }
 
     /**

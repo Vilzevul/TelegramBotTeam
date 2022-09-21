@@ -12,8 +12,7 @@ import java.util.Objects;
 public class Member {
     public enum MemberRole {
         USER,
-        VOLUNTEER,
-        ADOPTION
+        VOLUNTEER
     }
 
     @Id

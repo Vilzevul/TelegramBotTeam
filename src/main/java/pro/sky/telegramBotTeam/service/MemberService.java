@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.repository.MemberRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,13 @@ public class MemberService {
     /**
      * Получить список участников приюта указанной роли.
      *
+     * @param idShelter ID приюта.
      * @param memberRole роль участника.
      * @return список участников.
      */
-    public List<Member> getMembersByRole(Member.MemberRole memberRole) {
+    public List<Member> getMembersByRole(Member.MemberRole memberRole, Long idShelter) {
         return memberRepository.findAll().stream().
-                filter(v -> v.getRole() == memberRole).
+                filter(m -> m.getRole() == memberRole && m.getShelter().getId().equals(idShelter)).
                         collect(Collectors.toList());
     }
 
@@ -61,8 +63,17 @@ public class MemberService {
         }
     }
 
- /*   public Member editMember(idChat bigint) {
-        logger.info("Изменение роли пользователя");
-        return memberRepository.save(idChat);
-    }*/
+    /**
+     * Обновить роль участника приюта.
+     *
+     * @param idUser ID пользователя.
+     * @param memberRole новая роль участника.
+     * @return количество обновленных записей.
+     */
+    @Transactional
+    public int updateMemberRole(Long idUser, Member.MemberRole memberRole) {
+        int count = memberRepository.updateMemberRole(idUser, memberRole.toString());
+        LOGGER.info("Count of updated members: {}", count);
+        return count;
+    }
 }
