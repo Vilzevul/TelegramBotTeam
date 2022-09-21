@@ -16,14 +16,14 @@ public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
     @Modifying
     @Query(value = "UPDATE adoptions SET status = :status WHERE id = :id", nativeQuery = true)
     void updateAdoptionStatus(Long id, String status);
-
+    @Modifying
     @Query(value = "UPDATE adoptions SET status = :status " +
             "WHERE id = (SELECT a.id " +
             "FROM adoptions a " +
             "inner join members m on m.id=a.id_parent " +
             "where m.id_user=:id and a.status <>'DECIDE'" +
             " and m.id_shelter=:idShelter)", nativeQuery = true)
-    String updateAdoptionStatus_(Long id, String status, int idShelter);
+    void updateAdoptionStatus_(Long id, String status, int idShelter);
 
     @Query(value = "SELECT a.* " +
             "FROM adoptions a " +

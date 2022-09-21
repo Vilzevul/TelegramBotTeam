@@ -74,7 +74,7 @@ public class TelegramBotController {
      */
     @GetMapping("/adoption/{id}")
     public Adoption getAdoptionInfo(@PathVariable Long id) throws Exception {
-      return  adoptionService.getAdoption(id);
+        return adoptionService.getAdoption(id);
     }
 
     /**
@@ -82,12 +82,16 @@ public class TelegramBotController {
      */
     @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта и изменение статуса")
     @GetMapping("/adoption/update-status/{id}/{status}/{idShelter}")
-    public String updateAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id,@Parameter(description = "Выберите статус, на который нужно перезаписать") @PathVariable Adoption.AdoptionStatus status, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
-        return  adoptionService.updateAdoptionStatus_(id, status, idShelter);
+    public void updateAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "Выберите статус, на который нужно перезаписать") @PathVariable Adoption.AdoptionStatus status, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
+         adoptionService.updateAdoptionStatus_(id, status, idShelter);
     }
-@ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта")
+
+    /**
+     * Поиск данных по ИД чата и по ИД приюта
+     */
+    @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта")
     @GetMapping("/adoption/search/{id}/{idShelter}")
-    public   Optional<Adoption> searchAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
-        return  adoptionService.searchAdoptionStatus(id, idShelter);
+    public Optional<Adoption> searchAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
+        return adoptionService.searchAdoptionStatus(id, idShelter);
     }
 }

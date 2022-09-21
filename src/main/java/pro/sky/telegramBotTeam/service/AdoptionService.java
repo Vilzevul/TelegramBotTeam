@@ -64,10 +64,10 @@ public class AdoptionService {
         adoptionRepository.updateAdoptionStatus(id, status.toString());
     }
 
-    public String updateAdoptionStatus_(Long id, Adoption.AdoptionStatus status, int idShelter) {
+    @Transactional
+    public void updateAdoptionStatus_(Long id, Adoption.AdoptionStatus status, int idShelter) {
         LOGGER.info("Запись усыновления {} изменить на статус: {} приют {}", id, status, idShelter);
         adoptionRepository.updateAdoptionStatus_(id, status.toString(), idShelter);
-        return "Статус изменен на " + status + "в ИД чате" + id;
     }
 
     public Optional<Adoption> searchAdoptionStatus(Long id, int idShelter) {
