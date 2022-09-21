@@ -2,7 +2,10 @@ package pro.sky.telegramBotTeam.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.telegramBotTeam.exception.NotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Report;
 import pro.sky.telegramBotTeam.service.*;
@@ -33,7 +36,7 @@ public class TelegramBotController {
         this.memberService = memberService;
         this.shelterService = shelterService;
     }
-
+    int statusCode = HttpStatus.NOT_FOUND.value();
     @GetMapping
     public String testAPI() {
         return "Web API is working";
@@ -92,6 +95,16 @@ public class TelegramBotController {
         }
     }
 
+    @GetMapping(path = "/getAllReportsBy_Status")
+    public ResponseEntity<?> findReportByAdoption_Status(String status)  throws NotFoundException {
+        try {
+            return new ResponseEntity<>(reportService.findReportByAdoption_Status(status), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(statusCode,
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
     /**
      * Возвращает список таблицы adoptions
      */
@@ -111,7 +124,7 @@ public class TelegramBotController {
     /**
      * Обновляет статус усыновителя
      */
-    @GetMapping("/adoption/{id},{status}")
+    @PutMapping("/adoption/{id},{status}")
     public String updateAdoptionStatus(@PathVariable Long id, @PathVariable Adoption.AdoptionStatus status) throws Exception {
         return  adoptionService.updateAdoptionStatus(id, status);
     }

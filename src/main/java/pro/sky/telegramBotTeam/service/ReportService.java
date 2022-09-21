@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Report;
+import pro.sky.telegramBotTeam.model.Shelter;
 import pro.sky.telegramBotTeam.repository.ReportRepository;
 import pro.sky.telegramBotTeam.repository.ShelterRepository;
 
@@ -11,15 +12,18 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
-
     private final ReportRepository reportRepository;
 
-    public ReportService(ReportRepository reportRepository) {
+    private final ShelterRepository shelterRepository;
+
+    public ReportService(ReportRepository reportRepository, ShelterRepository shelterRepository) {
         this.reportRepository = reportRepository;
+        this.shelterRepository = shelterRepository;
     }
 
     /**
@@ -93,5 +97,8 @@ public class ReportService {
     public void deleteReports(Long idAdoption) {
         int count = reportRepository.deleteReportsByIdAdoption(idAdoption);
         LOGGER.info("{} отчетов удалено для записи об усыновлении {}", count, idAdoption);
+    }
+    public Report findReportByAdoption_Status(String status) {
+        return reportRepository.findReportByAdoption_Status(status).orElse(null);
     }
 }
