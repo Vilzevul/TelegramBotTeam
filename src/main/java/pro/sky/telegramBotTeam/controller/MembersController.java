@@ -11,7 +11,7 @@ import pro.sky.telegramBotTeam.service.UsersService;
 public class MembersController {
     private final UsersService usersService;
 
-    private static final Logger log = LoggerFactory.getLogger(ReportController.class);
+
 
     public MembersController(UsersService usersService) {
         this.usersService = usersService;

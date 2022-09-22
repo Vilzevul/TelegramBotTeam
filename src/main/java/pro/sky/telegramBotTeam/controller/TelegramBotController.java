@@ -13,6 +13,8 @@ import pro.sky.telegramBotTeam.service.*;
 import javax.transaction.NotSupportedException;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/reports")
@@ -61,27 +63,38 @@ public class TelegramBotController {
         return reportService.getReport(idAdoption, date);
     }
 
+    /**
+     * Добавляет пользователя в усыновители
+     * @throws Exception возвращает если нет пользователя в базе и если ползователь уже усыновитель
+     */
     @PutMapping(path = "/add_adoption")
-    public ResponseEntity<Adoption> uploadAdoption(@RequestParam Long idUser, Long idShelter) throws Exception {
+    public ResponseEntity<Adoption> uploadAdoption(@RequestParam Long idUser, Long idShelter, @RequestParam(required = false) Long idVol) throws Exception {
         LocalDate date = LocalDate.now();
         LocalDate date30 = date.plusDays(30);
+        Member memberU = memberService.getMemberUser(idUser, idShelter, Member.MemberRole.USER);
+        Member memberV = memberService.getMemberByIdUser(idVol);
 
-        Member member = memberService.getMember(idUser, idShelter);
-        if (member != null) {
-            Adoption adoption = adoptionService.getAdoptionOnStatus(member.getId(),Adoption.AdoptionStatus.ACTIVE);
-            if(adoption == null) {
-                adoption = new Adoption();
-                adoption.setParent(member);
-                adoption.setVolunteer(member);
-                adoption.setStartDate(java.sql.Date.valueOf(date));
-                adoption.setEndDate(java.sql.Date.valueOf(date30));
+        if(memberV==null) {
+         memberV = memberU;
+        List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER)
+                .stream().filter(member -> Objects.equals(member.getShelter().getId(), idShelter)).toList();
+        if (!volunteersList.isEmpty()) {
+            memberV = volunteersList.get(0);
+        } else {
+            volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER);
+            if (!volunteersList.isEmpty()) memberV = volunteersList.get(0);
+        }}
 
+        if (memberU != null) {
+            Adoption adoption = adoptionService.getAdoptionOnStatus(memberU.getId(), Adoption.AdoptionStatus.ACTIVE);
+            if (adoption == null) {
+                adoption = new Adoption(memberU, memberV, java.sql.Date.valueOf(date), java.sql.Date.valueOf(date30));
                 adoptionService.createAdoption(adoption);
-
                 return ResponseEntity.ok(adoption);
-
             } else throw new NotSupportedException("Этот пользователь уже является усыновителем");
-        }//if(member!=null)
-        return ResponseEntity.notFound().build();
+        } else throw new NotSupportedException("Нет совпадений в таблице members для "
+                + idUser.toString() + " " + idShelter.toString() + " USERS");
+        //if(member!=null)
+        //  return ResponseEntity.notFound().build();
     }
 }//class TelegramBotController

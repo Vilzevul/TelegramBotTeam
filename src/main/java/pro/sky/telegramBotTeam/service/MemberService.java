@@ -22,12 +22,20 @@ public class MemberService {
     /**
      * Возвращает участника заданного приюта по указанному ID пользователя.
      *
-     * @param idUser ID пользователя.
+     * @param idUser    ID пользователя.
      * @param idShelter ID приюта.
      * @return участник приюта. Может вернуть null, если такой отсутствует.
      */
     public Member getMember(Long idUser, Long idShelter) {
         return memberRepository.findFirstByUser_IdAndShelter_Id(idUser, idShelter).orElse(null);
+    }
+
+    public Member getMemberByIdUser(Long idUser) {
+        return memberRepository.findFirstByUser_Id(idUser).orElse(null);
+    }
+
+    public Member getMemberUser(Long idUser, Long idShelter, Member.MemberRole memberRole) {
+        return memberRepository.findFirstUser(idUser, idShelter, memberRole.toString()).orElse(null);
     }
 
     /**
@@ -39,7 +47,7 @@ public class MemberService {
     public List<Member> getMembersByRole(Member.MemberRole memberRole) {
         return memberRepository.findAll().stream().
                 filter(v -> v.getRole() == memberRole).
-                        collect(Collectors.toList());
+                collect(Collectors.toList());
     }
 
     /**
