@@ -371,8 +371,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private String getMessageForVolunteer(Long idChartUser, String messageService, Shelter shelter) {
         String message = null;
 
-        List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER)
-                .stream().filter(member -> Objects.equals(member.getShelter().getId(), shelter.getId())).toList();
+        List<Member> volunteersList = memberService.getMembersByRole(Member.MemberRole.VOLUNTEER, shelter.getId());
 
         if (volunteersList.isEmpty()) {
             message = "Свободных волонтеров нет. Попробуйте связаться позже";
@@ -404,30 +403,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
-    }
-
-    /**
-     * Только для debug: переводит пользователей с ролью Adoption в усыновители.
-     */
-    private void addAdoptions() {
-        List<Member> membersList = memberService.getMembersByRole(Member.MemberRole.ADOPTION);
-        if (!membersList.isEmpty()) {
-            Member memberAdaptive = membersList.get(0);
-            memberAdaptive.setRole(Member.MemberRole.USER);
-            memberAdaptive = memberService.createMember(memberAdaptive);
-
-            Adoption adoption = new Adoption();
-            LocalDate date = LocalDate.now();
-            LocalDate date30 = date.plusDays(30);
-
-            adoption.setParent(memberAdaptive);
-            adoption.setVolunteer(memberAdaptive);
-            adoption.setStartDate(java.sql.Date.valueOf(date));
-            adoption.setEndDate(java.sql.Date.valueOf(date30));
-            LOGGER.info("member: {}", memberAdaptive);
-            LOGGER.info("adoption: {}", adoption);
-            adoptionService.createAdoption(adoption);
-        }
     }
 
     /**
