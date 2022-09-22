@@ -53,6 +53,14 @@ public class MemberService {
     }
 
     /**
+     * Получить список пользователей указанной роли.
+     */
+    public List<Member> getMembersByRole(Member.MemberRole memberRole) {
+        return memberRepository.findAll().stream().
+                filter(v -> v.getRole() == memberRole).
+                collect(Collectors.toList());
+    }
+    /**
      * Сохранить/обновить данные участника приюта.
      *
      * @param member участник приюта.

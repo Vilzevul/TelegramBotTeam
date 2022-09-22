@@ -12,22 +12,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.telegramBotTeam.exception.ParamException;
 import pro.sky.telegramBotTeam.exception.NotFoundException;
 import pro.sky.telegramBotTeam.exception.TelegramBotNotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
 import org.springframework.web.multipart.MultipartFile;
-import org.webjars.NotFoundException;
+
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.model.Report;
 import pro.sky.telegramBotTeam.service.*;
 
+import javax.security.auth.login.AccountNotFoundException;
 import javax.transaction.NotSupportedException;
 import java.io.IOException;
 import java.nio.channels.AlreadyConnectedException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -232,8 +235,8 @@ public class TelegramBotController {
                 adoption = new Adoption(memberU, memberV, java.sql.Date.valueOf(date), java.sql.Date.valueOf(date30));
                 adoptionService.createAdoption(adoption);
                 return ResponseEntity.ok(adoption);
-            } else throw new NotFoundException("Этот пользователь уже является усыновителем");
-        } else throw new NotFoundException("Нет совпадений в таблице members для "
+            } else throw new AccountNotFoundException("Этот пользователь уже является усыновителем");
+        } else throw new AccountNotFoundException("Нет совпадений в таблице members для "
                 + idUser.toString() + " " + idShelter.toString() + " USERS");
     }
 }//class TelegramBotController
