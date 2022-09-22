@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.telegramBotTeam.exception.NotFoundException;
 import pro.sky.telegramBotTeam.exception.TelegramBotNotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
@@ -40,28 +42,81 @@ public class TelegramBotController {
         this.adoptionService = adoptionService;
     }
 
+    int statusCode = HttpStatus.NOT_FOUND.value();
     @GetMapping
     public String testAPI() {
         return "Web API is working";
     }
 
     /**
-     * Возвращает список пользователей и связанных с ними отчетами
+     * ResponseEntity, ? любой Java объект.
+     * Возвращает отчет по ID и времени отправки отчета
+     * @param idAdoption id записи об усыновлении.
+     * @param date       дата отчета.
+     * @return отчет.
+     * @throws NotFoundException если соответствие не найдено
      */
-    @GetMapping(path = "/users_report")
-    public Report getUsersWithReport(@RequestParam(required = true) Long idAdoption, LocalDate date) {
-        if (idAdoption > 0)
-            LOGGER.debug("Method - getUsersWithReport was called");
-        return reportService.getReport(idAdoption, date);
+    @GetMapping(path = "/reportByIdAndDate")
+    public ResponseEntity<?> getUsersWithReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
+        try {
+            Report getReport = reportService.getReport(idAdoption, date);
+            return new ResponseEntity<>(getReport, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(statusCode,
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping(path = "/update_reportById")
-    public Report updateUsersWithReport(@RequestParam(required = true) Long idAdoption, LocalDate date) {
+    /**
+     * Возвращает полные отчеты пользователя по ID и времени отправки отчета
+     *
+     * @param idAdoption id записи об усыновлении.
+     * @param date       дата отчета.
+     * @return полный отчет.
+     * @throws NotFoundException если соответствие не найдено
+     */
+    @GetMapping(path = "/completedReport")
+    public ResponseEntity<?> getCompletedReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
+        try {
+            Report getReport = reportService.getCompletedReport(idAdoption, date);
+            return new ResponseEntity<>(getReport, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(statusCode,
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 
+    /**
+     * Возвращает список всех имеющихся в базе отчетов
+     *
+     * @return отчеты имеющиеся в БД.
+     * @throws NotFoundException если отчеты в БД отсутствуют
+     */
+    @GetMapping(path = "/getAllReports")
+    public ResponseEntity<?> getAllReport() throws NotFoundException {
+        try {
+            List<Report> getReport = reportService.getAllReports();
+            return new ResponseEntity<>(getReport, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(statusCode,
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 
-        if (idAdoption > 0)
-            LOGGER.debug("Method - getUsersWithReport was called");
-        return reportService.getReport(idAdoption, date);
+    /**
+     * Возвращает отчеты по статусу
+     * @param status статус отчета
+     * @return отчеты имеющиеся в БД.
+     * @throws NotFoundException
+     */
+    @GetMapping(path = "/getAllReportsBy_Status")
+    public ResponseEntity<?> findReportByAdoption_Status(String status) throws NotFoundException {
+        try {
+            return new ResponseEntity<>(reportService.findReportByAdoption_Status(status), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(statusCode,
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -84,7 +139,7 @@ public class TelegramBotController {
      * Получает список участников приюта указанной роли.
      */
     @Operation(summary = "Получить список участников приюта указанной роли")
-    @GetMapping ("/member/get-by-role")
+    @GetMapping("/member/get-by-role")
     public ResponseEntity<List<Member>> getMembersByRole(@Parameter(description = "Роль участников") @RequestParam(required = true) Member.MemberRole memberRole,
                                                          @Parameter(description = "ID приюта") @RequestParam(required = true) Long idShelter) {
         return ResponseEntity.ok(memberService.getMembersByRole(memberRole, idShelter));
@@ -117,7 +172,7 @@ public class TelegramBotController {
     @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта и изменение статуса")
     @GetMapping("/adoption/update-status/{id}/{status}/{idShelter}")
     public void updateAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "Выберите статус, на который нужно перезаписать") @PathVariable Adoption.AdoptionStatus status, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
-         adoptionService.updateAdoptionStatus_(id, status, idShelter);
+        adoptionService.updateAdoptionStatus_(id, status, idShelter);
     }
 
     /**
@@ -128,4 +183,6 @@ public class TelegramBotController {
     public Optional<Adoption> searchAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
         return adoptionService.searchAdoptionStatus(id, idShelter);
     }
+
+
 }

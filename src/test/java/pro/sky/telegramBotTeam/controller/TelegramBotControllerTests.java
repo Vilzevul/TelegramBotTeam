@@ -1,16 +1,22 @@
 package pro.sky.telegramBotTeam.controller;
 
+import net.minidev.json.JSONObject;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.repository.*;
 import pro.sky.telegramBotTeam.service.*;
+
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -46,6 +52,15 @@ class TelegramBotControllerTests {
 
     @InjectMocks
     private TelegramBotController telegramBotController;
+    @Autowired
+    private TestRestTemplate restTemplate;
+    @LocalServerPort
+    private int port;
+
+    @Test
+    void contextLoads() throws Exception {
+        Assertions.assertThat(telegramBotController).isNotNull();
+    }
 
     @Test
     public void shouldReturnCountEntriesWhenUpdateRole() throws Exception {
@@ -70,10 +85,42 @@ class TelegramBotControllerTests {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    void getUsersWithReport() throws Exception {
-//        Assertions
-//                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/users_report", String.class))
-//                .isNotNull();
-//    }
+    @Test
+    void reportByIdAndDate() throws Exception {
+        Assertions
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/reportByIdAndDate", String.class))
+                .isNotNull();
+
+        Long id = 1L;
+        LocalDate date = LocalDate.parse("2022-09-19");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/reports/reportByIdAndDate" + id + date)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getCompletedReport() throws Exception {
+        Assertions
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/completedReport", String.class))
+                .isNotNull();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/reports/completedReport")
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllReport() throws Exception {
+        Assertions
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/getAllReports", String.class))
+                .isNotNull();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/reports/getAllReports")
+                )
+                .andExpect(status().isOk());
+    }
 }
