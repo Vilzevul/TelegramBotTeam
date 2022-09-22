@@ -42,6 +42,13 @@ public class Adoption {
     @ColumnDefault("'ACTIVE'")
     private AdoptionStatus status;
 
+    public Adoption(Member parent, Member volunteer, Date startDate, Date endDate) {
+        this.parent = parent;
+        this.volunteer = volunteer;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public Adoption() {
     }
 

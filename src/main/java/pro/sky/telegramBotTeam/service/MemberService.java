@@ -31,6 +31,14 @@ public class MemberService {
         return memberRepository.findFirstByUser_IdAndShelter_Id(idUser, idShelter).orElse(null);
     }
 
+    public Member getMemberByIdUser(Long idUser) {
+        return memberRepository.findFirstByUser_Id(idUser).orElse(null);
+    }
+
+    public Member getMemberUser(Long idUser, Long idShelter, Member.MemberRole memberRole) {
+        return memberRepository.findFirstUser(idUser, idShelter, memberRole.toString()).orElse(null);
+    }
+
     /**
      * Получить список участников приюта указанной роли.
      *
