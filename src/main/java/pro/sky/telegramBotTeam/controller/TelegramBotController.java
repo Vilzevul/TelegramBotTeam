@@ -1,10 +1,15 @@
 package pro.sky.telegramBotTeam.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.model.Report;
@@ -12,6 +17,7 @@ import pro.sky.telegramBotTeam.service.*;
 
 import javax.transaction.NotSupportedException;
 import java.io.IOException;
+import java.nio.channels.AlreadyConnectedException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -67,8 +73,18 @@ public class TelegramBotController {
      * Добавляет пользователя в усыновители
      * @throws Exception возвращает если нет пользователя в базе и если ползователь уже усыновитель
      */
+    @Operation(
+            summary = "Добавить пользователя в таблицу усыновителей",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Пользователь добавлен"),
+                    @ApiResponse(responseCode = "400", description = "Пользователь с такими данными не найден")
+
+            }
+    )
     @PutMapping(path = "/add_adoption")
-    public ResponseEntity<Adoption> uploadAdoption(@RequestParam Long idUser, Long idShelter, @RequestParam(required = false) Long idVol) throws Exception {
+    public ResponseEntity<Adoption> uploadAdoption(@Parameter(description = "ИД чата пользователя") @RequestParam Long idUser,
+                                                   @Parameter(description = "код приюта") @RequestParam Long idShelter,
+                                                   @Parameter(description = "ИД чата волонтера, если известен") @RequestParam(required = false) Long idVol) throws Exception {
         LocalDate date = LocalDate.now();
         LocalDate date30 = date.plusDays(30);
         Member memberU = memberService.getMemberUser(idUser, idShelter, Member.MemberRole.USER);
@@ -91,10 +107,8 @@ public class TelegramBotController {
                 adoption = new Adoption(memberU, memberV, java.sql.Date.valueOf(date), java.sql.Date.valueOf(date30));
                 adoptionService.createAdoption(adoption);
                 return ResponseEntity.ok(adoption);
-            } else throw new NotSupportedException("Этот пользователь уже является усыновителем");
-        } else throw new NotSupportedException("Нет совпадений в таблице members для "
+            } else throw new NotFoundException("Этот пользователь уже является усыновителем");
+        } else throw new NotFoundException("Нет совпадений в таблице members для "
                 + idUser.toString() + " " + idShelter.toString() + " USERS");
-        //if(member!=null)
-        //  return ResponseEntity.notFound().build();
     }
 }//class TelegramBotController
