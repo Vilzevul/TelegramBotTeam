@@ -4,20 +4,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Report;
+import pro.sky.telegramBotTeam.model.Shelter;
 import pro.sky.telegramBotTeam.repository.ReportRepository;
+import pro.sky.telegramBotTeam.repository.ShelterRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
-
     private final ReportRepository reportRepository;
 
-    public ReportService(ReportRepository reportRepository) {
+    private final ShelterRepository shelterRepository;
+
+    public ReportService(ReportRepository reportRepository, ShelterRepository shelterRepository) {
         this.reportRepository = reportRepository;
+        this.shelterRepository = shelterRepository;
     }
 
     /**
@@ -33,12 +39,18 @@ public class ReportService {
     /**
      * Возвращает отчет указанной даты для указанной записи по усыновлению.
      *
-     * @param date дата отчета.
+     * @param date       дата отчета.
      * @param idAdoption id записи об усыновлении.
      * @return отчет. Может вернуть null, если такой отчет отсутствует.
      */
     public Report getReport(Long idAdoption, LocalDate date) {
         return reportRepository.findFirstByAdoption_IdAndReportDate(idAdoption, date).orElse(null);
+    }
+    /**
+     * Возвращает все отчеты присутствующие в базе.
+     */
+    public List<Report> getAllReports() {
+        return reportRepository.findAll();
     }
 
     /**
@@ -46,7 +58,7 @@ public class ReportService {
      * При этом ведется поиск полного отчета, т.е. в нем должны быть заполнены
      * оба поля: изображение и сообщение.
      *
-     * @param date дата отчета.
+     * @param date       дата отчета.
      * @param idAdoption id записи об усыновлении.
      * @return полный отчет. Может вернуть null, если такой отчет отсутствует.
      */
@@ -59,17 +71,17 @@ public class ReportService {
      *
      * @param report отчет.
      */
-    public Report createReport(Report report){
+    public Report createReport(Report report) {
         Report reportDate = getReport(report.getAdoption().getId(), LocalDate.now());
         if (reportDate == null) {
             LOGGER.info("Добавлен новый отчет");
             return reportRepository.save(report);
         } else {
             LOGGER.info("Отчет обновлен");
-            if(report.getReportMessage() != null) {
+            if (report.getReportMessage() != null) {
                 reportDate.setReportMessage(report.getReportMessage());
             }
-            if(report.getReportImage() != null) {
+            if (report.getReportImage() != null) {
                 reportDate.setReportImage(report.getReportImage());
             }
             return reportRepository.save(reportDate);
@@ -85,5 +97,8 @@ public class ReportService {
     public void deleteReports(Long idAdoption) {
         int count = reportRepository.deleteReportsByIdAdoption(idAdoption);
         LOGGER.info("{} отчетов удалено для записи об усыновлении {}", count, idAdoption);
+    }
+    public Report findReportByAdoption_Status(String status) {
+        return reportRepository.findReportByAdoption_Status(status).orElse(null);
     }
 }
