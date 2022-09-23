@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TelegramBotController.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TelegramBotControllerTests {
     @Autowired
     private MockMvc mockMvc;
@@ -89,27 +88,23 @@ class TelegramBotControllerTests {
                         .param("memberRole", Member.MemberRole.USER.toString()))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     public void updateAdoptionStatusTest() throws Exception {
-        doNothing().when(adoptionService).updateAdoptionStatus_(any(Long.class), any(Adoption.AdoptionStatus.class),any(int.class));
+        doNothing().when(adoptionService).updateAdoptionStatus_(any(Long.class), any(Adoption.AdoptionStatus.class), any(int.class));
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/adoption/update-status/{id}/{status}/{idShelter}",1313205863,Adoption.AdoptionStatus.SUCCESS.toString(),"1"))
+                        .get("/adoption/update-status/{id}/{status}/{idShelter}", 1313205863, Adoption.AdoptionStatus.SUCCESS.toString(), "1"))
                 .andExpect(status().isOk());
 
     }
 
     @Test
     void reportByIdAndDate() throws Exception {
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/reportByIdAndDate", String.class))
-                .isNotNull();
-
         Long id = 1L;
-        LocalDate date = LocalDate.of(2022,9,19);
+        LocalDate date = LocalDate.of(2022, 9, 19);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/reports/reportByIdAndDate" + id + date)
-                )
+                        .get("/report/reportByIdAndDate/{idAdoption}/{date}", id, date))
                 .andExpect(status().isOk());
     }
 
@@ -128,11 +123,11 @@ class TelegramBotControllerTests {
     @Test
     void getAllReport() throws Exception {
         Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/getAllReports", String.class))
+                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/report/getAllReports", String.class))
                 .isNotNull();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/reports/getAllReports")
+                        .get("/report/getAllReports")
                 )
                 .andExpect(status().isOk());
     }

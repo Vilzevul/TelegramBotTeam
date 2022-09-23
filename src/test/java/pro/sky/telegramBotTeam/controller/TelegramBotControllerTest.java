@@ -14,8 +14,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.telegramBotTeam.exception.NotFoundException;
-import pro.sky.telegramBotTeam.repository.MemberRepository;
-import pro.sky.telegramBotTeam.repository.ReportRepository;
+import pro.sky.telegramBotTeam.model.repository.MemberRepository;
 import pro.sky.telegramBotTeam.service.ReportService;
 
 import java.time.LocalDate;
@@ -51,19 +50,11 @@ class TelegramBotControllerTest {
 
     @Test
     void reportByIdAndDate() throws Exception {
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/reportByIdAndDate", String.class))
-                .isNotNull();
-
         Long id = 1L;
-        LocalDate date = LocalDate.parse("2022-09-19");
-
-        JSONObject userObject = new JSONObject();
-        userObject.put(String.valueOf(id), date);
+        LocalDate date = LocalDate.of(2022, 9, 19);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/reports/reportByIdAndDate"+id+date)
-                )
+                        .get("/report/reportByIdAndDate/{idAdoption}/{date}", id, date))
                 .andExpect(status().isOk());
     }
 
