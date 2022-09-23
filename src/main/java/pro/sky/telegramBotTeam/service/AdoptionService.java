@@ -49,7 +49,7 @@ public class AdoptionService {
      * @return информация по усыновлению. Может вернуть null, если такая запись отсутствует.
      */
     public Adoption getAdoptionOnStatus(Long idParent, Adoption.AdoptionStatus status) {
-        return adoptionRepository.findFirstByParent_IdAndStatus(idParent, status.toString()).orElse(null);
+        return adoptionRepository.findFirstByParent_IdAndStatus(idParent, status).orElse(null);
     }
 
     /**

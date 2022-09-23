@@ -12,8 +12,7 @@ import java.util.Optional;
 public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
     Optional<Adoption> findFirstByParent_Id(Long idParent);
 
-    @Query(value = "SELECT * FROM adoptions WHERE id_parent = :idParent AND status = :status LIMIT 1", nativeQuery = true)
-    Optional<Adoption> findFirstByParent_IdAndStatus(Long idParent, String status);
+    Optional<Adoption> findFirstByParent_IdAndStatus(Long idParent, Adoption.AdoptionStatus status);
 
     @Modifying
     @Query(value = "UPDATE adoptions SET status = :status WHERE id = :id", nativeQuery = true)

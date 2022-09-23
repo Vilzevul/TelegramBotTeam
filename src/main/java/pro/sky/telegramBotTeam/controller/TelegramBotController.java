@@ -132,7 +132,7 @@ public class TelegramBotController {
         }
 
         if (memberU != null) {
-            Adoption adoption = adoptionService.getAdoptionOnStatus(/*memberU.getId()*/1L, Adoption.AdoptionStatus.ACTIVE);
+            Adoption adoption = adoptionService.getAdoptionOnStatus(memberU.getId(), Adoption.AdoptionStatus.ACTIVE);
             if (adoption == null) {
                 adoption = new Adoption(memberU, memberV, java.sql.Date.valueOf(date), java.sql.Date.valueOf(date30));
                 adoptionService.createAdoption(adoption);

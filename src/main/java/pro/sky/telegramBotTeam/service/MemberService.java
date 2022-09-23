@@ -53,7 +53,7 @@ public class MemberService {
      * @return участник приюта. Может вернуть null, если такой отсутствует.
      */
     public Member getMemberOfShelterWithRole(Long idUser, Long idShelter, Member.MemberRole role) {
-        return memberRepository.findFirstUser(idUser, idShelter, role.toString()).orElse(null);
+        return memberRepository.findFirstByUser_IdAndShelter_IdAndRole(idUser, idShelter, role).orElse(null);
     }
 
     /**

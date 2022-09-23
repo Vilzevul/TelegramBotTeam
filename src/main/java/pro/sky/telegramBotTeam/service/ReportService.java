@@ -55,7 +55,7 @@ public class ReportService {
      * @return полный отчет. Может вернуть null, если такой отчет отсутствует.
      */
     public Report getCompletedReportForDate(Long idAdoption, LocalDate date) {
-        return reportRepository.findCompletedByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
+        return reportRepository.findFirstCompetedByAdoption_IdAndReportDate(idAdoption, date).orElse(null);
     }
 
     /**

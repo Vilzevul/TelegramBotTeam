@@ -59,7 +59,7 @@ class TelegramBotControllerTests {
 
     @Test
     void shouldReturnOkWhenGetMembersByRole() throws Exception {
-        when(memberService.getMembersOfShelterWithRole(any(Long.class), isNotNull())).thenReturn(Collections.emptyList());
+        when(memberService.getMembersOfShelterWithRole(any(Long.class), any(Member.MemberRole.class))).thenReturn(Collections.emptyList());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/member/get-by-role")
@@ -104,8 +104,8 @@ class TelegramBotControllerTests {
 
     @Test
     public void shouldReturnOkWhenAddUserInAdoption() throws Exception {
-        when(memberRepository.findFirstUser(any(Long.class), any(Long.class), any(String.class))).thenReturn(Optional.of(new Member()));
-        when(adoptionRepository.findFirstByParent_IdAndStatus(any(Long.class), any(String.class))).thenReturn(Optional.empty());
+        when(memberRepository.findFirstByUser_IdAndShelter_IdAndRole(any(Long.class), any(Long.class), any(Member.MemberRole.class))).thenReturn(Optional.of(new Member()));
+        when(adoptionRepository.findFirstByParent_IdAndStatus(any(Long.class), any(Adoption.AdoptionStatus.class))).thenReturn(Optional.empty());
         when(adoptionService.createAdoption(any(Adoption.class))).thenReturn(new Adoption());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -117,25 +117,13 @@ class TelegramBotControllerTests {
 
     @Test
     public void shouldReturnNotFoundWhenAddUserInAdoption() throws Exception {
-        when(memberRepository.findFirstUser(any(Long.class), any(Long.class), any(String.class))).thenReturn(Optional.empty());
+        when(memberRepository.findFirstByUser_IdAndShelter_IdAndRole(any(Long.class), any(Long.class), any(Member.MemberRole.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/adoption/add-parent")
                         .param("idUser", "1")
                         .param("idShelter", "2"))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void shouldReturnAlreadyExistsWhenAddUserInAdoption() throws Exception {
-        when(memberRepository.findFirstUser(any(Long.class), any(Long.class), any(String.class))).thenReturn(Optional.of(new Member()));
-        doReturn(Optional.of(new Adoption())).when(adoptionRepository).findFirstByParent_IdAndStatus(any(Long.class), any(String.class));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put("/adoption/add-parent")
-                        .param("idUser", "1")
-                        .param("idShelter", "2"))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -177,7 +165,7 @@ class TelegramBotControllerTests {
         Long idAdoption = 1L;
         LocalDate date = LocalDate.of(2022, 9, 19);
 
-        when(reportRepository.findCompletedByIdAdoptionAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(new Report()));
+        when(reportRepository.findFirstCompetedByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(new Report()));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/report/get-by-date-completed/{idAdoption}/{date}", idAdoption, date))
@@ -189,7 +177,7 @@ class TelegramBotControllerTests {
         final Long idAdoption = 1L;
         final LocalDate date = LocalDate.of(2022, 9, 19);
 
-        when(reportRepository.findCompletedByIdAdoptionAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.empty());
+        when(reportRepository.findFirstCompetedByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/report/get-by-date-completed/{idAdoption}/{date}", idAdoption, date))

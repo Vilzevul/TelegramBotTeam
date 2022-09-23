@@ -22,6 +22,6 @@ public class ShelterService {
      * @return запись о приюте. Может вернуть null, если такая отсутствует.
      */
     public Shelter getShelter(Shelter.ShelterType name) {
-        return shelterRepository.findByName(name.toString()).orElse(null);
+        return shelterRepository.findByName(name).orElse(null);
     }
 }

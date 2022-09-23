@@ -9,6 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ShelterRepository extends JpaRepository<Shelter, Long> {
-    @Query(value = "SELECT * FROM shelters WHERE name = :name", nativeQuery = true)
-    Optional<Shelter> findByName(String name);
+    Optional<Shelter> findByName(Shelter.ShelterType name);
 }

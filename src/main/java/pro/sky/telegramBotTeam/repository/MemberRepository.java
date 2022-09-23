@@ -12,11 +12,9 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findFirstByUser_Id(Long idUser);
 
-    //    @Query(value = "SELECT * FROM members WHERE id_user = :idUser AND id_shelter = :idShelter LIMIT 1", nativeQuery = true)
     Optional<Member> findFirstByUser_IdAndShelter_Id(Long idUser, Long idShelter);
 
-    @Query(value = "SELECT * FROM members WHERE id_user = :idUser AND id_shelter = :idShelter AND role = :role LIMIT 1", nativeQuery = true)
-    Optional<Member> findFirstUser(Long idUser, Long idShelter, String role);
+    Optional<Member> findFirstByUser_IdAndShelter_IdAndRole(Long idUser, Long idShelter, Member.MemberRole role);
 
     @Modifying
     @Query(value = "UPDATE members SET role = :role WHERE id_user = :idUser", nativeQuery = true)
