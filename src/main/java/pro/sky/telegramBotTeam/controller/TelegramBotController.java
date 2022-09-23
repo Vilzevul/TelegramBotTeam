@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +70,8 @@ public class TelegramBotController {
      * @throws NotFoundException если соответствие не найдено
      */
     @GetMapping(path = "/report/reportByIdAndDate/{idAdoption}/{date}")
-    public ResponseEntity<?> getUsersWithReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
+    public ResponseEntity<?> getUsersWithReport(@PathVariable(required = true) Long idAdoption,
+                                                @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws NotFoundException {
         int statusCode = HttpStatus.NOT_FOUND.value();
         try {
             Report getReport = reportService.getReport(idAdoption, date);
@@ -88,8 +90,9 @@ public class TelegramBotController {
      * @return полный отчет.
      * @throws NotFoundException если соответствие не найдено
      */
-    @GetMapping(path = "/report/completedReport")
-    public ResponseEntity<?> getCompletedReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
+    @GetMapping(path = "/report/completedReport/{idAdoption}/{date}")
+    public ResponseEntity<?> getCompletedReport(@PathVariable(required = true) Long idAdoption,
+                                                @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws NotFoundException {
         int statusCode = HttpStatus.NOT_FOUND.value();
         try {
             Report getReport = reportService.getCompletedReport(idAdoption, date);
@@ -132,9 +135,6 @@ public class TelegramBotController {
             return new ResponseEntity<>(reportService.findReportByAdoption_Status(status),
                     HttpStatus.NOT_FOUND);
         }
-     /*   if (idAdoption > 0){
-            LOGGER.debug("Method - getUsersWithReport was called");}
-        return reportService.getReport(idAdoption, date);*/
     }
 
     /**

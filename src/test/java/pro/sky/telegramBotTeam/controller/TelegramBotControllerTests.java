@@ -3,6 +3,7 @@ package pro.sky.telegramBotTeam.controller;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,15 +12,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
+import pro.sky.telegramBotTeam.model.Report;
 import pro.sky.telegramBotTeam.model.repository.*;
 //import pro.sky.telegramBotTeam.repository.*;
 import pro.sky.telegramBotTeam.service.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -56,10 +61,6 @@ class TelegramBotControllerTests {
 
     @InjectMocks
     private TelegramBotController telegramBotController;
-    @Autowired
-    private TestRestTemplate restTemplate;
-    @LocalServerPort
-    private int port;
 
     @Test
     void contextLoads() throws Exception {
@@ -103,6 +104,10 @@ class TelegramBotControllerTests {
         Long id = 1L;
         LocalDate date = LocalDate.of(2022, 9, 19);
 
+        Report report = new Report(null, date, null, "hello");
+
+        when(reportRepository.findFirstByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(report));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/report/reportByIdAndDate/{idAdoption}/{date}", id, date))
                 .andExpect(status().isOk());
@@ -110,22 +115,23 @@ class TelegramBotControllerTests {
 
     @Test
     void getCompletedReport() throws Exception {
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/reports/completedReport", String.class))
-                .isNotNull();
+        Long id = 1L;
+        LocalDate date = LocalDate.of(2022, 9, 19);
+        Adoption adoption = new Adoption();
+        Report report = new Report(adoption, date, null, "hello");
+
+        when(reportRepository.findFirstByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(report));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/reports/completedReport")
-                )
+                        .get("/reports/completedReport/{idAdoption}/{date}", id, date))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getAllReport() throws Exception {
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/report/getAllReports", String.class))
-                .isNotNull();
+        List<Report> list = List.of();
 
+        when(reportService.getAllReports()).thenReturn(list);
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/report/getAllReports")
                 )
