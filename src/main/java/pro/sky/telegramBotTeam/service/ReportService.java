@@ -46,6 +46,16 @@ public class ReportService {
     public Report getReport(Long idAdoption, LocalDate date) {
         return reportRepository.findFirstByAdoption_IdAndReportDate(idAdoption, date).orElse(null);
     }
+
+    /**
+     * Возвращает отчет по усыновлению.
+     * @param idAdoption id записи об усыновлении.
+     * @return
+     */
+    public Report getReportById(Long idAdoption) {
+        return reportRepository.findReportById(idAdoption).orElse(null);
+    }
+
     /**
      * Возвращает все отчеты присутствующие в базе.
      */

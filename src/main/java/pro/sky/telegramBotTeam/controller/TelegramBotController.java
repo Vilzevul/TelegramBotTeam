@@ -32,7 +32,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 @RestController
 @SuppressWarnings("unused")
 public class TelegramBotController {
@@ -70,7 +69,7 @@ public class TelegramBotController {
      * @return отчет.
      * @throws NotFoundException если соответствие не найдено
      */
-    @GetMapping(path = "/reportByIdAndDate")
+    @GetMapping(path = "/report/reportByIdAndDate/{idAdoption}/{date}")
     public ResponseEntity<?> getUsersWithReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
         try {
             Report getReport = reportService.getReport(idAdoption, date);
@@ -89,7 +88,7 @@ public class TelegramBotController {
      * @return полный отчет.
      * @throws NotFoundException если соответствие не найдено
      */
-    @GetMapping(path = "/completedReport")
+    @GetMapping(path = "/report/completedReport")
     public ResponseEntity<?> getCompletedReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
         try {
             Report getReport = reportService.getCompletedReport(idAdoption, date);
@@ -106,7 +105,7 @@ public class TelegramBotController {
      * @return отчеты имеющиеся в БД.
      * @throws NotFoundException если отчеты в БД отсутствуют
      */
-    @GetMapping(path = "/getAllReports")
+    @GetMapping(path = "/report/getAllReports")
     public ResponseEntity<?> getAllReport() throws NotFoundException {
         try {
             List<Report> getReport = reportService.getAllReports();
@@ -123,7 +122,7 @@ public class TelegramBotController {
      * @return отчеты имеющиеся в БД.
      * @throws NotFoundException
      */
-    @GetMapping(path = "/getAllReportsBy_Status")
+    @GetMapping(path = "/report/getAllReportsBy_Status")
     public ResponseEntity<?> findReportByAdoption_Status(String status) throws NotFoundException {
         try {
             return new ResponseEntity<>(reportService.findReportByAdoption_Status(status), HttpStatus.OK);
