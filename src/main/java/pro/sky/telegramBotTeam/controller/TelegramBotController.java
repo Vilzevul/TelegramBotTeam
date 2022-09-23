@@ -59,26 +59,11 @@ public class TelegramBotController {
     public Report updateUsersWithReport(@RequestParam(required = true) Long idAdoption, LocalDate date) {
 
 
-        if (idAdoption > 0)
-            LOGGER.debug("Method - getUsersWithReport was called");
+        if (idAdoption > 0){
+            LOGGER.debug("Method - getUsersWithReport was called");}
         return reportService.getReport(idAdoption, date);
     }
 
-    /**
-     * Возвращает список таблицы adoptions
-     */
-    @GetMapping(path = "/list_adoptions")
-    public List<Adoption> printList() {
-        return adoptionService.getAllAdoptions();
-    }
-
-    /**
-     * Возвращает список таблицы adoptions по id
-     */
-    @GetMapping("/adoption/{id}")
-    public Adoption getAdoptionInfo(@PathVariable Long id) throws Exception {
-        return adoptionService.getAdoption(id);
-    }
 
     /**
      * Получает список участников приюта указанной роли.
@@ -114,7 +99,13 @@ public class TelegramBotController {
     /**
      * Обновляет статус усыновителя
      */
-    @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта и изменение статуса")
+    @Operation(
+            summary = "Поиск данных по ИД чата и по ИД приюта и изменение статуса",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Статус успешно обновлен"),
+                    @ApiResponse(responseCode = "404", description = "Пользователь с указанным ID не является участником приюта")
+            }
+    )
     @GetMapping("/adoption/update-status/{id}/{status}/{idShelter}")
     public void updateAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "Выберите статус, на который нужно перезаписать") @PathVariable Adoption.AdoptionStatus status, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
          adoptionService.updateAdoptionStatus_(id, status, idShelter);

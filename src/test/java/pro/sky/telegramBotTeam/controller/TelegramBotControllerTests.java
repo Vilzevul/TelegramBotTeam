@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
 import pro.sky.telegramBotTeam.repository.*;
 import pro.sky.telegramBotTeam.service.*;
@@ -68,6 +69,18 @@ class TelegramBotControllerTests {
                         .param("idUser", "0")
                         .param("memberRole", Member.MemberRole.USER.toString()))
                 .andExpect(status().isNotFound());
+    }
+  /* @Test
+    public void updateAdoptionStatusTest() throws Exception {
+            when(adoptionService.updateAdoptionStatus_(any(Long.class), any(Adoption.AdoptionStatus.class),any(int.class))).thenReturn(0);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/adoption/update-status/{id}/{idShelter}")
+                        .param("id", "0")
+                        .param("status", Adoption.AdoptionStatus.SUCCESS.toString())
+                        .param("idShelter", 1))
+                .andExpect(status().isOk());*/
+
     }
 
 //    @Test
