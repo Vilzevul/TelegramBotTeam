@@ -1,16 +1,16 @@
 package pro.sky.telegramBotTeam.api;
 
-import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
+import static pro.sky.telegramBotTeam.api.FileUtility.readFile;
 
-import static pro.sky.telegramBotTeam.api.Code.readFile;
-
+/**
+ * Класс для работы с интерфейсом пользователя в телеграмм-боте.
+ */
 @Component
 public class KeyBoardButton {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyBoardButton.class);
@@ -18,8 +18,6 @@ public class KeyBoardButton {
     public final static String CONTACTS = "Оставить контакты";
     public final static String INLINECONTACTSDOG = "Оставьте свои контакты";
     public final static String INLINECONTACTSCAT = "Оставить свои контакты";
-    public final static String DOCUMENT = "DOCUMENT";
-    public final static String ERROR = "ERROR";
     public final static String BACK = "Назад";
 
     public final static String DOGSEND = "Прислать отчет";
@@ -31,7 +29,6 @@ public class KeyBoardButton {
     public final static String SEND_END = "Отправка отчета - закончена";
 
     public final static String HELP = "❔ Помощь";
-    public final static String SERVICE = "Оставить сообщение";
     public final static String DOGMAIN = "\uD83E\uDDAE Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
@@ -52,14 +49,14 @@ public class KeyBoardButton {
     private final String DOGRECOMMENDATION = "Рекомендации кинолога для дальнейшего обращения к ним";
     private final String DOGREFUSAL = "Список причин отказа в заборе собаки из приюта";
     private final String CATREFUSAL = "Список причин отказа в заборе животного из приюта";
-    private final String VOLONTER = "Связаться с волонтером";
+    private final String VOLUNTEER = "Связаться с волонтером";
 
-    public static final String MESSAGEFORDOGVOLONTER = "Сообщение приюту для собак";
+    public static final String MESSAGEFORDOGVOLUNTEER = "Сообщение приюту для собак";
     public static final String CATMAIN = "\uD83D\uDC08 Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
     public final static String CATTAKE = "Как взять кошку из приюта";
-    public static final String MESSAGEFORCATVOLONTER = "Сообщение приюту для кошек";
+    public static final String MESSAGEFORCATVOLUNTEER = "Сообщение приюту для кошек";
     public final static String START = "/start";
     public static final String ESCAPE = "Отмена";
     public static final String ESCAPECONTACTDOG = "Отмена контакта";
@@ -67,13 +64,7 @@ public class KeyBoardButton {
     private final String FORVARD = "Дальше";
     public final static String NOTCOMMAND = "Пожалуйста, воспользуйтесь клавиатурой\uD83D\uDC47";
 
-
-    public final String STATE_HELP = "HELP";
-    public final String STATE_DOG = "DOG";
-    public final String STATE_CAT = "CAT";
-    public final String STATE_SEND_LETTER = "SEND_LETTER";
     public final String STATE_START = "START";
-    public final String STATE_SERVICE = "SERVICE";
 
     /**
      * Создание основной клавиатуры.
@@ -136,7 +127,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGABOUT).callbackData(DOGABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGRULES).callbackData(DOGRULES));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGTAKE).callbackData(DOGTAKE));
-            inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData(MESSAGEFORDOGVOLONTER));
+            inlineKeyboard.addRow(new InlineKeyboardButton(VOLUNTEER).callbackData(MESSAGEFORDOGVOLUNTEER));
             inlineKeyboard.addRow(new InlineKeyboardButton(DOGSEND).callbackData(DOGSEND_MSG));
         }
 
@@ -144,7 +135,7 @@ public class KeyBoardButton {
             inlineKeyboard.addRow(new InlineKeyboardButton(CATABOUT).callbackData(CATABOUT));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATRULES).callbackData("CATRULES"));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATTAKE).callbackData(CATTAKE));
-            inlineKeyboard.addRow(new InlineKeyboardButton(VOLONTER).callbackData(MESSAGEFORCATVOLONTER));
+            inlineKeyboard.addRow(new InlineKeyboardButton(VOLUNTEER).callbackData(MESSAGEFORCATVOLUNTEER));
             inlineKeyboard.addRow(new InlineKeyboardButton(CATSEND).callbackData(CATSEND_MSG));
         }
 
@@ -223,7 +214,7 @@ public class KeyBoardButton {
             case DOGRULES:
             case DOGTAKE:
             case DOGABOUT:
-            case MESSAGEFORDOGVOLONTER:
+            case MESSAGEFORDOGVOLUNTEER:
             case ESCAPECONTACTDOG:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(DOGMAIN));
         }
@@ -232,7 +223,7 @@ public class KeyBoardButton {
             case CATABOUT:
             case CATTAKE:
             case "CATRULES":
-            case MESSAGEFORCATVOLONTER:
+            case MESSAGEFORCATVOLUNTEER:
             case ESCAPECONTACTCAT:
                 inlineKeyboard.addRow(new InlineKeyboardButton(BACK).callbackData(CATMAIN));
         }
@@ -244,7 +235,7 @@ public class KeyBoardButton {
      * Возвращает имя нажатой кнопки соответствующей команде пользователя.
      *
      * @param command команда пользователя.
-     * @param status  результат, который возвращается в случае отсутствия совпадений.
+     * @param status результат, который возвращается в случае отсутствия совпадений.
      * @return имя кнопки.
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
@@ -340,8 +331,8 @@ public class KeyBoardButton {
             return DOGSEND_TXT;
         }
 
-        if (command.equals(MESSAGEFORDOGVOLONTER)) {
-            return MESSAGEFORDOGVOLONTER;
+        if (command.equals(MESSAGEFORDOGVOLUNTEER)) {
+            return MESSAGEFORDOGVOLUNTEER;
         }
 
         if (command.equals(CATSEND)) {
@@ -396,8 +387,8 @@ public class KeyBoardButton {
             return CATABOUT;
         }
 
-        if (command.equals(MESSAGEFORCATVOLONTER)) {
-            return MESSAGEFORCATVOLONTER;
+        if (command.equals(MESSAGEFORCATVOLUNTEER)) {
+            return MESSAGEFORCATVOLUNTEER;
         }
 
         return status;
@@ -407,22 +398,24 @@ public class KeyBoardButton {
      * Возвращает текст сообщения для пользователя.
      *
      * @param command команда пользователя.
+     * @param status имя нажатой кнопки.
      * @return текст сообщения для пользователя. Может быть null.
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
     @Nullable
-    public String getMessage(String command,String status) {
+    public String getMessage(String command, String status) {
         if (command == null) {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
         }
+
         if (command.equals(DOGMAIN)) {
             return DOGMAIN;
         }
+
         if (command.equals(CATMAIN)) {
             return CATMAIN;
         }
-
 
         if (command.equals(CONTACTS)) {
             return "Спасибо за предоставленные контакты. Будем на связи!";
@@ -440,11 +433,11 @@ public class KeyBoardButton {
             return "<b>" + HELP + "</b> \n " + readFile("documents/HELP.txt");
         }
 
-        if (command.equals(MESSAGEFORDOGVOLONTER)) {
+        if (command.equals(MESSAGEFORDOGVOLUNTEER)) {
             return "<b>" + "\nОставьте сообщение для работников приюта\n" + "</b>  ";
         }
 
-        if (command.equals(MESSAGEFORCATVOLONTER)) {
+        if (command.equals(MESSAGEFORCATVOLUNTEER)) {
             return "<b>" + "\nОставьте сообщение для работников приюта\n" + "</b>  ";
         }
 
@@ -543,12 +536,15 @@ public class KeyBoardButton {
         if (command.equals("CATREFUSAL")) {
             return "<b>" + CATREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
         }
+
         if (command.equals(DOGTAKE)) {
             return DOGTAKE;
         }
+
         if (command.equals(CATTAKE)) {
             return CATTAKE;
         }
+
         if (command.equals("DOGTRANSPORT")) {
             return "<b>" + DOGTRANSPORT + "</b> \n " + readFile("documents/CATTRANSPORT.txt");
         }
@@ -556,10 +552,16 @@ public class KeyBoardButton {
         if (command.equals(ESCAPE)) {
             return ESCAPE;
         }
+
         String message = NOTCOMMAND;
-if(status.equals(KeyBoardButton.MESSAGEFORCATVOLONTER)) message=command;
-if(status.equals(KeyBoardButton.MESSAGEFORDOGVOLONTER)) message=command;
-        //  return command;
+
+        if (status.equals(KeyBoardButton.MESSAGEFORCATVOLUNTEER)) {
+            message = command;
+        }
+
+        if (status.equals(KeyBoardButton.MESSAGEFORDOGVOLUNTEER)) {
+            message = command;
+        }
 
         return message;
     }

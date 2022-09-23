@@ -4,24 +4,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Report;
-import pro.sky.telegramBotTeam.model.repository.ReportRepository;
-import pro.sky.telegramBotTeam.model.repository.ShelterRepository;
+import pro.sky.telegramBotTeam.repository.ReportRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Сервис для работы с отчетами.
+ */
 @Service
 public class ReportService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
+
     private final ReportRepository reportRepository;
 
-    private final ShelterRepository shelterRepository;
-
-    public ReportService(ReportRepository reportRepository, ShelterRepository shelterRepository) {
+    public ReportService(ReportRepository reportRepository) {
         this.reportRepository = reportRepository;
-        this.shelterRepository = shelterRepository;
     }
 
     /**
@@ -35,43 +35,36 @@ public class ReportService {
     }
 
     /**
-     * Возвращает отчет указанной даты для указанной записи по усыновлению.
+     * Возвращает отчет указанной даты.
      *
-     * @param date       дата отчета.
      * @param idAdoption id записи об усыновлении.
+     * @param date дата отчета.
      * @return отчет. Может вернуть null, если такой отчет отсутствует.
      */
-    public Report getReport(Long idAdoption, LocalDate date) {
+    public Report getReportForDate(Long idAdoption, LocalDate date) {
         return reportRepository.findFirstByAdoption_IdAndReportDate(idAdoption, date).orElse(null);
     }
 
     /**
-     * Возвращает отчет по усыновлению.
+     * Возвращает отчет указанной даты.
+     * При этом ведется поиск полного отчета, т.е. в нем должны быть заполнены
+     * оба поля: изображение и сообщение.
+     *
      * @param idAdoption id записи об усыновлении.
-     * @return
+     * @param date дата отчета.
+     * @return полный отчет. Может вернуть null, если такой отчет отсутствует.
      */
-    public Report getReportById(Long idAdoption) {
-        return reportRepository.findReportById(idAdoption).orElse(null);
+    public Report getCompletedReportForDate(Long idAdoption, LocalDate date) {
+        return reportRepository.findCompletedByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
     }
 
     /**
      * Возвращает все отчеты присутствующие в базе.
+     *
+     * @return список всех отчетов.
      */
     public List<Report> getAllReports() {
         return reportRepository.findAll();
-    }
-
-    /**
-     * Возвращает отчет указанной даты для указанной записи по усыновлению.
-     * При этом ведется поиск полного отчета, т.е. в нем должны быть заполнены
-     * оба поля: изображение и сообщение.
-     *
-     * @param date       дата отчета.
-     * @param idAdoption id записи об усыновлении.
-     * @return полный отчет. Может вернуть null, если такой отчет отсутствует.
-     */
-    public Report getCompletedReport(Long idAdoption, LocalDate date) {
-        return reportRepository.findCompletedByIdAdoptionAndReportDate(idAdoption, date).orElse(null);
     }
 
     /**
@@ -80,7 +73,7 @@ public class ReportService {
      * @param report отчет.
      */
     public Report createReport(Report report) {
-        Report reportDate = getReport(report.getAdoption().getId(), LocalDate.now());
+        Report reportDate = getReportForDate(report.getAdoption().getId(), LocalDate.now());
         if (reportDate == null) {
             LOGGER.info("Добавлен новый отчет");
             return reportRepository.save(report);
@@ -105,8 +98,5 @@ public class ReportService {
     public void deleteReports(Long idAdoption) {
         int count = reportRepository.deleteReportsByIdAdoption(idAdoption);
         LOGGER.info("{} отчетов удалено для записи об усыновлении {}", count, idAdoption);
-    }
-    public Report findReportByAdoption_Status(String status) {
-        return reportRepository.findReportByAdoption_Status(status).orElse(null);
     }
 }

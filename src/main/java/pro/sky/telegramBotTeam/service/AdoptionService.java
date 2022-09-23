@@ -4,12 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Adoption;
-import pro.sky.telegramBotTeam.model.repository.AdoptionRepository;
+import pro.sky.telegramBotTeam.repository.AdoptionRepository;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.List;
 
+/**
+ * Сервис для работы с усыновителями.
+ */
 @Service
 public class AdoptionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdoptionService.class);
@@ -30,7 +32,7 @@ public class AdoptionService {
     }
 
     /**
-     * Возвращает информацию по усыновлению для указанного усыновителя.
+     * Возвращает информацию по усыновлению для усыновителя.
      *
      * @param idParent id усыновителя (ссылка на Member).
      * @return информация по усыновлению. Может вернуть null, если такая запись отсутствует.
@@ -39,6 +41,13 @@ public class AdoptionService {
         return adoptionRepository.findFirstByParent_Id(idParent).orElse(null);
     }
 
+    /**
+     * Возвращает информацию по усыновлению для усыновителя с указанным статусом.
+     *
+     * @param idParent id усыновителя (ссылка на Member).
+     * @param status статус.
+     * @return информация по усыновлению. Может вернуть null, если такая запись отсутствует.
+     */
     public Adoption getAdoptionOnStatus(Long idParent, Adoption.AdoptionStatus status) {
         return adoptionRepository.findFirstByParent_IdAndStatus(idParent, status.toString()).orElse(null);
     }
@@ -49,41 +58,33 @@ public class AdoptionService {
      * @param adoption запись усыновления.
      */
     public Adoption createAdoption(Adoption adoption) {
-
-        adoptionRepository.save(adoption);
-
-        return adoption;
-    }
-
-    //delete
-    public Adoption findAdoptionOrCreate(Long id) throws IOException {
-        return adoptionRepository.findFirstByParent_Id(id).orElse(new Adoption());
+        LOGGER.info("Добавлена новая запись усыновления");
+        return adoptionRepository.save(adoption);
     }
 
     /**
      * Обновить текущий статус для записи усыновления.
      *
-     * @param id     ID записи усыновления.
+     * @param id ID записи усыновления.
      * @param status новый статус.
      */
     @Transactional
     public void updateAdoptionStatus(Long id, Adoption.AdoptionStatus status) {
         LOGGER.info("Запись усыновления {} изменила статус: {}", id, status);
-        adoptionRepository.updateAdoptionStatus(id, status.toString());
+        adoptionRepository.updateAdoptionStatusById(id, status.toString());
     }
 
     /**
      * Обновить текущий статус для записи усыновления.
      *
-     * @param id        ID записи усыновления.
+     * @param idUser ID пользователя (ссылка на Users).
      * @param idShelter ID приюта.
-     * @param status    новый статус.
+     * @param status новый статус.
      */
     @Transactional
-    public void updateAdoptionStatus_(Long id, Adoption.AdoptionStatus status, int idShelter) {
-        LOGGER.info("Запись усыновления {} изменить на статус: {} приют {}", id, status, idShelter);
-        adoptionRepository.updateAdoptionStatus_(id, status.toString(), idShelter);
+    public void updateAdoptionStatus(Long idUser, Long idShelter, Adoption.AdoptionStatus status) {
+        LOGGER.info("Запись усыновления для пользователя {} из приюта {} изменила статус: {} ", idUser, idShelter, status);
+        adoptionRepository.updateAdoptionStatusByIdUserAndIdShelter(idUser, idShelter, status.toString());
     }
-
 }
 

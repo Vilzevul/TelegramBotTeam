@@ -1,15 +1,14 @@
 package pro.sky.telegramBotTeam.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Shelter;
-import pro.sky.telegramBotTeam.model.repository.ShelterRepository;
+import pro.sky.telegramBotTeam.repository.ShelterRepository;
 
+/**
+ * Сервис для работы с приютами.
+ */
 @Service
 public class ShelterService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShelterService.class);
-
     private final ShelterRepository shelterRepository;
 
     public ShelterService(ShelterRepository shelterRepository) {

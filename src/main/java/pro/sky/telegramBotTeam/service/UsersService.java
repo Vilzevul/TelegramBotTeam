@@ -3,9 +3,12 @@ package pro.sky.telegramBotTeam.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.telegramBotTeam.model.repository.UsersRepository;
+import pro.sky.telegramBotTeam.repository.UsersRepository;
 import pro.sky.telegramBotTeam.model.Users;
 
+/**
+ * Сервис для работы с пользователями бота.
+ */
 @Service
 public class UsersService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersService.class);

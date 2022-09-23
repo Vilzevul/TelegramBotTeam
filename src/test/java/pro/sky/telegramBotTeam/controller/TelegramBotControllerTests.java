@@ -3,32 +3,22 @@ package pro.sky.telegramBotTeam.controller;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import pro.sky.telegramBotTeam.model.Adoption;
-import pro.sky.telegramBotTeam.model.Member;
-import pro.sky.telegramBotTeam.model.Report;
-import pro.sky.telegramBotTeam.model.repository.*;
-//import pro.sky.telegramBotTeam.repository.*;
+import pro.sky.telegramBotTeam.model.*;
+import pro.sky.telegramBotTeam.repository.*;
 import pro.sky.telegramBotTeam.service.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,8 +53,20 @@ class TelegramBotControllerTests {
     private TelegramBotController telegramBotController;
 
     @Test
-    void contextLoads() throws Exception {
+    void contextLoads() {
         Assertions.assertThat(telegramBotController).isNotNull();
+    }
+
+    @Test
+    void shouldReturnOkWhenGetMembersByRole() throws Exception {
+        when(memberService.getMembersOfShelterWithRole(any(Long.class), isNotNull())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/member/get-by-role")
+                        .param("memberRole", Member.MemberRole.USER.toString())
+                        .param("idShelter", "1")
+                )
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -91,50 +93,106 @@ class TelegramBotControllerTests {
     }
 
     @Test
-    public void updateAdoptionStatusTest() throws Exception {
-        doNothing().when(adoptionService).updateAdoptionStatus_(any(Long.class), any(Adoption.AdoptionStatus.class), any(int.class));
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/adoption/update-status/{id}/{status}/{idShelter}", 1313205863, Adoption.AdoptionStatus.SUCCESS.toString(), "1"))
-                .andExpect(status().isOk());
-
-    }
-
-    @Test
-    void reportByIdAndDate() throws Exception {
-        Long id = 1L;
-        LocalDate date = LocalDate.of(2022, 9, 19);
-
-        Report report = new Report(null, date, null, "hello");
-
-        when(reportRepository.findFirstByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(report));
+    public void shouldReturnOkWhenUpdateAdoptionStatus() throws Exception {
+        doNothing().when(adoptionService).updateAdoptionStatus(any(Long.class), any(Long.class), any(Adoption.AdoptionStatus.class));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/report/reportByIdAndDate/{idAdoption}/{date}", id, date))
+                        .get("/adoption/update-status/{idUser}/{idShelter}/{status}",
+                                "1", "1", Adoption.AdoptionStatus.SUCCESS.toString()))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void getCompletedReport() throws Exception {
-        Long id = 1L;
-        LocalDate date = LocalDate.of(2022, 9, 19);
-        Adoption adoption = new Adoption();
-        Report report = new Report(adoption, date, null, "hello");
-
-        when(reportRepository.findCompletedByIdAdoptionAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(report));
+    public void shouldReturnOkWhenAddUserInAdoption() throws Exception {
+        when(memberRepository.findFirstUser(any(Long.class), any(Long.class), any(String.class))).thenReturn(Optional.of(new Member()));
+        when(adoptionRepository.findFirstByParent_IdAndStatus(any(Long.class), any(String.class))).thenReturn(Optional.empty());
+        when(adoptionService.createAdoption(any(Adoption.class))).thenReturn(new Adoption());
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/report/completedReport/{idAdoption}/{date}", id, date))
+                        .put("/adoption/add-parent")
+                        .param("idUser", "1")
+                        .param("idShelter", "2"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void getAllReport() throws Exception {
-        List<Report> list = List.of();
+    public void shouldReturnNotFoundWhenAddUserInAdoption() throws Exception {
+        when(memberRepository.findFirstUser(any(Long.class), any(Long.class), any(String.class))).thenReturn(Optional.empty());
 
-        when(reportService.getAllReports()).thenReturn(list);
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/report/getAllReports")
+                        .put("/adoption/add-parent")
+                        .param("idUser", "1")
+                        .param("idShelter", "2"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnAlreadyExistsWhenAddUserInAdoption() throws Exception {
+        when(memberRepository.findFirstUser(any(Long.class), any(Long.class), any(String.class))).thenReturn(Optional.of(new Member()));
+        doReturn(Optional.of(new Adoption())).when(adoptionRepository).findFirstByParent_IdAndStatus(any(Long.class), any(String.class));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/adoption/add-parent")
+                        .param("idUser", "1")
+                        .param("idShelter", "2"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnOkWhenGetAllReports() throws Exception {
+        when(reportService.getAllReports()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/report/get-all")
                 )
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnOkWhenGetReport() throws Exception {
+        final Long idAdoption = 1L;
+        final LocalDate date = LocalDate.of(2022, 9, 19);
+
+        when(reportRepository.findFirstByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(new Report()));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/report/get-by-date/{idAdoption}/{date}", idAdoption, date))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenGetReport() throws Exception {
+        final Long idAdoption = 1L;
+        final LocalDate date = LocalDate.of(2022, 9, 19);
+
+        when(reportRepository.findFirstByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/report/get-by-date/{idAdoption}/{date}", idAdoption, date))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnOkWhenGetCompletedReport() throws Exception {
+        Long idAdoption = 1L;
+        LocalDate date = LocalDate.of(2022, 9, 19);
+
+        when(reportRepository.findCompletedByIdAdoptionAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(new Report()));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/report/get-by-date-completed/{idAdoption}/{date}", idAdoption, date))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenGetCompletedReport() throws Exception {
+        final Long idAdoption = 1L;
+        final LocalDate date = LocalDate.of(2022, 9, 19);
+
+        when(reportRepository.findCompletedByIdAdoptionAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/report/get-by-date-completed/{idAdoption}/{date}", idAdoption, date))
+                .andExpect(status().isNotFound());
     }
 }

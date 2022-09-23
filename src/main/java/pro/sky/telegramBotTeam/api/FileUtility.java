@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 /**
  * Вспомогательный класс для работы с файлами.
  */
-public class Code {
+public class FileUtility {
     /**
      * Принимает, обрабатывает и возвращает содержимое файла в виде массива байт.
      *
