@@ -30,9 +30,9 @@ public class KeyBoardButton {
     public final static String CATSEND_MSG = "Отправьте фото отчета для кошек";
     public final static String SEND_END = "Отправка отчета - закончена";
 
-    public final static String HELP = "Помощь";
+    public final static String HELP = "❔ Помощь";
     public final static String SERVICE = "Оставить сообщение";
-    public final static String DOGMAIN = "Приют для собак";
+    public final static String DOGMAIN = "\uD83E\uDDAE Приют для собак";
     private final String DOGABOUT = "О приюте для собак";
     private final String DOGRULES = "Правила приюта для собак";
     public final static String DOGTAKE = "Как взять собаку из приюта";
@@ -55,7 +55,7 @@ public class KeyBoardButton {
     private final String VOLONTER = "Связаться с волонтером";
 
     public static final String MESSAGEFORDOGVOLONTER = "Сообщение приюту для собак";
-    public static final String CATMAIN = "Приют для кошек";
+    public static final String CATMAIN = "\uD83D\uDC08 Приют для кошек";
     private final String CATABOUT = "О приюте для кошек";
     private final String CATRULES = "Правила приюта для кошек";
     public final static String CATTAKE = "Как взять кошку из приюта";
@@ -65,6 +65,8 @@ public class KeyBoardButton {
     public static final String ESCAPECONTACTDOG = "Отмена контакта";
     public static final String ESCAPECONTACTCAT = "Отменить контакт";
     private final String FORVARD = "Дальше";
+    public final static String NOTCOMMAND = "Пожалуйста, воспользуйтесь клавиатурой\uD83D\uDC47";
+
 
     public final String STATE_HELP = "HELP";
     public final String STATE_DOG = "DOG";
@@ -196,6 +198,7 @@ public class KeyBoardButton {
             case "DOGZN":
             case "DOGDOCUMENTS":
             case "DOGHOMEPUPPY":
+            case "DOGTRANSPORT":
             case "DOGHOMEDOG":
             case "DOGHOMEDOGLIMITED":
             case "DOGADVICECYNOLOGIST":
@@ -408,11 +411,18 @@ public class KeyBoardButton {
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
     @Nullable
-    public String getMessage(String command) {
+    public String getMessage(String command,String status) {
         if (command == null) {
             LOGGER.error("Command is null");
             throw new NullPointerException("Command is null");
         }
+        if (command.equals(DOGMAIN)) {
+            return DOGMAIN;
+        }
+        if (command.equals(CATMAIN)) {
+            return CATMAIN;
+        }
+
 
         if (command.equals(CONTACTS)) {
             return "Спасибо за предоставленные контакты. Будем на связи!";
@@ -533,7 +543,24 @@ public class KeyBoardButton {
         if (command.equals("CATREFUSAL")) {
             return "<b>" + CATREFUSAL + "</b> \n " + readFile("documents/DOGREFUSAL.txt");
         }
+        if (command.equals(DOGTAKE)) {
+            return DOGTAKE;
+        }
+        if (command.equals(CATTAKE)) {
+            return CATTAKE;
+        }
+        if (command.equals("DOGTRANSPORT")) {
+            return "<b>" + DOGTRANSPORT + "</b> \n " + readFile("documents/CATTRANSPORT.txt");
+        }
 
-        return command;
+        if (command.equals(ESCAPE)) {
+            return ESCAPE;
+        }
+        String message = NOTCOMMAND;
+if(status.equals(KeyBoardButton.MESSAGEFORCATVOLONTER)) message=command;
+if(status.equals(KeyBoardButton.MESSAGEFORDOGVOLONTER)) message=command;
+        //  return command;
+
+        return message;
     }
 }
