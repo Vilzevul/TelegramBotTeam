@@ -55,7 +55,6 @@ public class TelegramBotController {
         this.adoptionService = adoptionService;
     }
 
-    int statusCode = HttpStatus.NOT_FOUND.value();
     @GetMapping
     public String testAPI() {
         return "Web API is working";
@@ -71,6 +70,7 @@ public class TelegramBotController {
      */
     @GetMapping(path = "/report/reportByIdAndDate/{idAdoption}/{date}")
     public ResponseEntity<?> getUsersWithReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
+        int statusCode = HttpStatus.NOT_FOUND.value();
         try {
             Report getReport = reportService.getReport(idAdoption, date);
             return new ResponseEntity<>(getReport, HttpStatus.OK);
@@ -90,12 +90,13 @@ public class TelegramBotController {
      */
     @GetMapping(path = "/report/completedReport")
     public ResponseEntity<?> getCompletedReport(@RequestParam(required = true) Long idAdoption, @RequestParam(required = true) LocalDate date) throws NotFoundException {
+        int statusCode = HttpStatus.NOT_FOUND.value();
         try {
             Report getReport = reportService.getCompletedReport(idAdoption, date);
             return new ResponseEntity<>(getReport, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(statusCode,
-                    HttpStatus.NOT_FOUND);
+                   HttpStatus.NOT_FOUND);
         }
     }
 
@@ -107,6 +108,7 @@ public class TelegramBotController {
      */
     @GetMapping(path = "/report/getAllReports")
     public ResponseEntity<?> getAllReport() throws NotFoundException {
+        int statusCode = HttpStatus.NOT_FOUND.value();
         try {
             List<Report> getReport = reportService.getAllReports();
             return new ResponseEntity<>(getReport, HttpStatus.OK);
@@ -127,25 +129,12 @@ public class TelegramBotController {
         try {
             return new ResponseEntity<>(reportService.findReportByAdoption_Status(status), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(statusCode,
+            return new ResponseEntity<>(reportService.findReportByAdoption_Status(status),
                     HttpStatus.NOT_FOUND);
         }
-    }
-
-    /**
-     * Возвращает список таблицы adoptions
-     */
-    @GetMapping(path = "/list_adoptions")
-    public List<Adoption> printList() {
-        return adoptionService.getAllAdoptions();
-    }
-
-    /**
-     * Возвращает список таблицы adoptions по id
-     */
-    @GetMapping("/adoption/{id}")
-    public Adoption getAdoptionInfo(@PathVariable Long id) throws Exception {
-        return adoptionService.getAdoption(id);
+     /*   if (idAdoption > 0){
+            LOGGER.debug("Method - getUsersWithReport was called");}
+        return reportService.getReport(idAdoption, date);*/
     }
 
     /**
@@ -178,24 +167,22 @@ public class TelegramBotController {
         }
         return ResponseEntity.ok(count);
     }
-
     /**
      * Обновляет статус усыновителя
      */
-    @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта и изменение статуса")
+    @ResponseStatus(value = HttpStatus.OK)
+    @Operation(
+            summary = "Поиск данных по ИД чата и по ИД приюта и изменение статуса",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Статус успешно обновлен"),
+                    @ApiResponse(responseCode = "404", description = "Пользователь с указанным ID не является участником приюта")
+            }
+    )
     @GetMapping("/adoption/update-status/{id}/{status}/{idShelter}")
     public void updateAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "Выберите статус, на который нужно перезаписать") @PathVariable Adoption.AdoptionStatus status, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
         adoptionService.updateAdoptionStatus_(id, status, idShelter);
     }
 
-    /**
-     * Поиск данных по ИД чата и по ИД приюта
-     */
-    @ApiResponse(description = "Поиск данных по ИД чата и по ИД приюта")
-    @GetMapping("/adoption/search/{id}/{idShelter}")
-    public Optional<Adoption> searchAdoptionStatus(@Parameter(description = "ИД чата") @PathVariable Long id, @Parameter(description = "ИД приюта(1-собаки, 2-кошки)") @PathVariable int idShelter) throws Exception {
-        return adoptionService.searchAdoptionStatus(id, idShelter);
-    }
     /**
      * Добавляет пользователя в усыновители
      * @throws Exception возвращает если нет пользователя в базе и если ползователь уже усыновитель
@@ -238,4 +225,4 @@ public class TelegramBotController {
         } else throw new AccountNotFoundException("Нет совпадений в таблице members для "
                 + idUser.toString() + " " + idShelter.toString() + " USERS");
     }
-}//class TelegramBotController
+}

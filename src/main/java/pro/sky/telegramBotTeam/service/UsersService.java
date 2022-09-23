@@ -3,11 +3,8 @@ package pro.sky.telegramBotTeam.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.telegramBotTeam.repository.UsersRepository;
+import pro.sky.telegramBotTeam.model.repository.UsersRepository;
 import pro.sky.telegramBotTeam.model.Users;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UsersService {

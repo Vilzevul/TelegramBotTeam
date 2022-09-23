@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Member;
-import pro.sky.telegramBotTeam.repository.MemberRepository;
+import pro.sky.telegramBotTeam.model.repository.MemberRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;

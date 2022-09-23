@@ -1,4 +1,4 @@
-package pro.sky.telegramBotTeam.repository;
+package pro.sky.telegramBotTeam.model.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +19,7 @@ public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
     @Modifying
     @Query(value = "UPDATE adoptions SET status = :status WHERE id = :id", nativeQuery = true)
     void updateAdoptionStatus(Long id, String status);
+
     @Modifying
     @Query(value = "UPDATE adoptions SET status = :status " +
             "WHERE id = (SELECT a.id " +
@@ -27,14 +28,5 @@ public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
             "where m.id_user=:id and a.status <>'DECIDE'" +
             " and m.id_shelter=:idShelter)", nativeQuery = true)
     void updateAdoptionStatus_(Long id, String status, int idShelter);
-
-    @Query(value = "SELECT a.* " +
-            "FROM adoptions a " +
-            "inner join members m on m.id=a.id_parent " +
-            "where m.id_user=:id and a.status <>'DECIDE'" +
-            " and m.id_shelter=:idShelter", nativeQuery = true)
-    Optional<Adoption> searchAdoptionStatus(Long id, int idShelter);
-
-
 
 }
