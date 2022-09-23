@@ -4,15 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Report;
-import pro.sky.telegramBotTeam.model.Shelter;
-import pro.sky.telegramBotTeam.repository.ReportRepository;
-import pro.sky.telegramBotTeam.repository.ShelterRepository;
+import pro.sky.telegramBotTeam.model.repository.ReportRepository;
+import pro.sky.telegramBotTeam.model.repository.ShelterRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReportService {

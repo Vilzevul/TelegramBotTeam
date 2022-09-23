@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import pro.sky.telegramBotTeam.model.Users;
-import pro.sky.telegramBotTeam.repository.UsersRepository;
+import pro.sky.telegramBotTeam.model.repository.UsersRepository;
 import pro.sky.telegramBotTeam.service.UsersService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

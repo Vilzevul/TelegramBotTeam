@@ -13,7 +13,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import pro.sky.telegramBotTeam.repository.ReportRepository;
 import pro.sky.telegramBotTeam.service.ReportService;
 
 import java.time.LocalDate;

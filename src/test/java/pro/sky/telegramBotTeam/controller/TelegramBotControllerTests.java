@@ -1,6 +1,5 @@
 package pro.sky.telegramBotTeam.controller;
 
-import net.minidev.json.JSONObject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,12 +13,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.telegramBotTeam.model.Adoption;
 import pro.sky.telegramBotTeam.model.Member;
-import pro.sky.telegramBotTeam.repository.*;
+import pro.sky.telegramBotTeam.model.repository.*;
+//import pro.sky.telegramBotTeam.repository.*;
 import pro.sky.telegramBotTeam.service.*;
 
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,16 +86,12 @@ class TelegramBotControllerTests {
                         .param("memberRole", Member.MemberRole.USER.toString()))
                 .andExpect(status().isNotFound());
     }
-  /* @Test
+    @Test
     public void updateAdoptionStatusTest() throws Exception {
-            when(adoptionService.updateAdoptionStatus_(any(Long.class), any(Adoption.AdoptionStatus.class),any(int.class))).thenReturn(0);
-
+        doNothing().when(adoptionService).updateAdoptionStatus_(any(Long.class), any(Adoption.AdoptionStatus.class),any(int.class));
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/adoption/update-status/{id}/{idShelter}")
-                        .param("id", "0")
-                        .param("status", Adoption.AdoptionStatus.SUCCESS.toString())
-                        .param("idShelter", 1))
-                .andExpect(status().isOk());*/
+                        .get("/adoption/update-status/{id}/{status}/{idShelter}",1313205863,Adoption.AdoptionStatus.SUCCESS.toString(),"1"))
+                .andExpect(status().isOk());
 
     }
 
