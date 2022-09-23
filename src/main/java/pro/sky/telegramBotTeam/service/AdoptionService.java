@@ -3,14 +3,12 @@ package pro.sky.telegramBotTeam.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.telegramBotTeam.exception.TelegramBotNotFoundException;
 import pro.sky.telegramBotTeam.model.Adoption;
-import pro.sky.telegramBotTeam.repository.AdoptionRepository;
+import pro.sky.telegramBotTeam.model.repository.AdoptionRepository;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AdoptionService {
@@ -40,8 +38,9 @@ public class AdoptionService {
     public Adoption getAdoption(Long idParent) {
         return adoptionRepository.findFirstByParent_Id(idParent).orElse(null);
     }
-    public Adoption getAdoptionOnStatus(Long idParent,Adoption.AdoptionStatus status) {
-        return adoptionRepository.findFirstByParent_IdAndStatus(idParent,status.toString()).orElse(null);
+
+    public Adoption getAdoptionOnStatus(Long idParent, Adoption.AdoptionStatus status) {
+        return adoptionRepository.findFirstByParent_IdAndStatus(idParent, status.toString()).orElse(null);
     }
 
     /**
@@ -51,7 +50,7 @@ public class AdoptionService {
      */
     public Adoption createAdoption(Adoption adoption) {
 
-            adoptionRepository.save(adoption);
+        adoptionRepository.save(adoption);
 
         return adoption;
     }
@@ -73,18 +72,18 @@ public class AdoptionService {
         adoptionRepository.updateAdoptionStatus(id, status.toString());
     }
 
+    /**
+     * Обновить текущий статус для записи усыновления.
+     *
+     * @param id        ID записи усыновления.
+     * @param idShelter ID приюта.
+     * @param status    новый статус.
+     */
     @Transactional
     public void updateAdoptionStatus_(Long id, Adoption.AdoptionStatus status, int idShelter) {
         LOGGER.info("Запись усыновления {} изменить на статус: {} приют {}", id, status, idShelter);
         adoptionRepository.updateAdoptionStatus_(id, status.toString(), idShelter);
     }
 
-    public Optional<Adoption> searchAdoptionStatus(Long id, int idShelter) {
-        LOGGER.info("Запись усыновления {} изменила статус: {}", id, idShelter);
-        if (id ==null && idShelter ==0 ) {
-            throw new TelegramBotNotFoundException("Пустые входящие данные!");
-        }
-        return adoptionRepository.searchAdoptionStatus(id, idShelter);
-    }
 }
 
