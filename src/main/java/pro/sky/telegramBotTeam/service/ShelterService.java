@@ -4,9 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramBotTeam.model.Shelter;
-import pro.sky.telegramBotTeam.repository.ShelterRepository;
-
-import java.time.LocalDate;
+import pro.sky.telegramBotTeam.model.repository.ShelterRepository;
 
 @Service
 public class ShelterService {
