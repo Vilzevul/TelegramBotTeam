@@ -120,10 +120,10 @@ class TelegramBotControllerTests {
         Adoption adoption = new Adoption();
         Report report = new Report(adoption, date, null, "hello");
 
-        when(reportRepository.findFirstByAdoption_IdAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(report));
+        when(reportRepository.findCompletedByIdAdoptionAndReportDate(any(Long.class), any(LocalDate.class))).thenReturn(Optional.of(report));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/reports/completedReport/{idAdoption}/{date}", id, date))
+                        .get("/report/completedReport/{idAdoption}/{date}", id, date))
                 .andExpect(status().isOk());
     }
 
