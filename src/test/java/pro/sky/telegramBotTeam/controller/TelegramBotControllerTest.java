@@ -13,11 +13,15 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pro.sky.telegramBotTeam.exception.NotFoundException;
+import pro.sky.telegramBotTeam.repository.MemberRepository;
 import pro.sky.telegramBotTeam.repository.ReportRepository;
 import pro.sky.telegramBotTeam.service.ReportService;
 
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -34,6 +38,8 @@ class TelegramBotControllerTest {
     private ReportService reportRepository;
     @Autowired
     private TestRestTemplate restTemplate;
+    @MockBean
+    MemberRepository memberRepository;
 
 
     private static final ObjectMapper om = new ObjectMapper();
@@ -85,4 +91,15 @@ class TelegramBotControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void uploadAdoption() throws Exception {
+        when(memberRepository.findFirstUser(any(Long.class),any(Long.class), any(String.class))).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/add_adoption")
+                        .param("idUser", "1")
+                        .param("idShelter", "2"))
+                .andExpect(status().isNotFound());
+
+    }
 }

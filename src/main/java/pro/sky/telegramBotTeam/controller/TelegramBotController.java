@@ -205,7 +205,7 @@ public class TelegramBotController {
             summary = "Добавить пользователя в таблицу усыновителей",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Пользователь добавлен"),
-                    @ApiResponse(responseCode = "400", description = "Пользователь с такими данными не найден")
+                    @ApiResponse(responseCode = "404", description = "Пользователь с такими данными не найден")
 
             }
     )

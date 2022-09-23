@@ -13,7 +13,7 @@ import javax.transaction.NotSupportedException;
 import java.nio.channels.AlreadyConnectedException;
 
 @RestControllerAdvice
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class ParamException extends RuntimeException{
     @ExceptionHandler({AccountNotFoundException.class})
     public ErrorMessage handleException(AccountNotFoundException exception) {
