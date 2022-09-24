@@ -235,7 +235,7 @@ public class KeyBoardButton {
      * Возвращает имя нажатой кнопки соответствующей команде пользователя.
      *
      * @param command команда пользователя.
-     * @param status результат, который возвращается в случае отсутствия совпадений.
+     * @param status  результат, который возвращается в случае отсутствия совпадений.
      * @return имя кнопки.
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
@@ -398,7 +398,7 @@ public class KeyBoardButton {
      * Возвращает текст сообщения для пользователя.
      *
      * @param command команда пользователя.
-     * @param status имя нажатой кнопки.
+     * @param status  имя нажатой кнопки.
      * @return текст сообщения для пользователя. Может быть null.
      * @throws NullPointerException - параметр <code>command</code> равен null.
      */
@@ -560,6 +560,14 @@ public class KeyBoardButton {
         }
 
         if (status.equals(KeyBoardButton.MESSAGEFORDOGVOLUNTEER)) {
+            message = command;
+        }
+
+        if (status.equals(KeyBoardButton.DOGSEND_TXT)) {
+            message = command;
+        }
+
+        if (status.equals(KeyBoardButton.CATSEND_TXT)) {
             message = command;
         }
 
